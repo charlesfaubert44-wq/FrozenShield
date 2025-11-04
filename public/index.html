@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frozen Shield Studio - Custom Web Development</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <canvas id="codeCanvas" class="code-animation"></canvas>
+        <div class="container">
+            <div class="hero-content">
+                <div class="logo-wrapper">
+                    <div class="ice-particles">
+                        <span class="particle"></span>
+                        <span class="particle"></span>
+                        <span class="particle"></span>
+                        <span class="particle"></span>
+                        <span class="particle"></span>
+                        <span class="particle"></span>
+                        <span class="particle"></span>
+                        <span class="particle"></span>
+                    </div>
+
+                    <h1 class="logo">
+                        <div class="logo-line">
+                            <span data-text="F">F</span><span data-text="R">R</span><span data-text="O">O</span><span data-text="Z">Z</span><span data-text="E">E</span><span data-text="N">N</span>
+                            <span class="space"> </span>
+                            <span data-text="S">S</span><span data-text="H">H</span><span data-text="I">I</span><span data-text="E">E</span><span data-text="L">L</span><span data-text="D">D</span>
+                        </div>
+                        <div class="logo-line studio">
+                            <span data-text="S">S</span><span data-text="T">T</span><span data-text="U">U</span><span data-text="D">D</span><span data-text="I">I</span><span data-text="O">O</span>
+                        </div>
+                    </h1>
+                </div>
+                <p class="tagline">CODE FORGED IN THE CANADIAN SHIELD.</p>
+                <p class="hero-description">We create tailored web applications that solve real problems.</p>
+                <a href="#services" class="btn btn-primary">Start Your Project</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <h2 class="section-title">What We Do</h2>
+            <p class="services-intro">We create websites and web applications designed specifically for your business needs. Clear, fresh, and effective.</p>
+
+            <div class="services-grid">
+                <div class="service-card" data-service="web-apps">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M9 22V12H15V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Built Just for You</h3>
+                    <p>Every website we create is designed and built specifically for your business. You get exactly what you need—not a pre-made template that looks like everyone else's.</p>
+                </div>
+
+                <div class="service-card" data-service="mobile">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="5" y="2" width="14" height="20" rx="2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 18H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Works on Any Device</h3>
+                    <p>Your website will look great and work smoothly whether someone visits from their phone, tablet, or computer. Fast loading times guaranteed.</p>
+                </div>
+
+                <div class="service-card" data-service="database">
+                    <div class="service-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <ellipse cx="12" cy="5" rx="9" ry="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M3 5V19C3 20.66 7.03 22 12 22C16.97 22 21 20.66 21 19V5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M3 12C3 13.66 7.03 15 12 15C16.97 15 21 13.66 21 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Secure & Reliable</h3>
+                    <p>We build the technical foundation that keeps your website running smoothly and securely. Your data stays safe, and your site stays online.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects">
+        <div class="container">
+            <h2 class="section-title">Featured Projects</h2>
+            <div class="projects-grid" id="projectsGrid">
+
+                <div class="project-card" data-project="aurora-tracker">
+                    <div class="project-preview">
+                        <div class="preview-browser">
+                            <div class="browser-bar">
+                                <div class="browser-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                            </div>
+                            <div class="preview-screen">
+                                <div class="preview-placeholder">
+                                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="100" cy="50" r="30" fill="#60a5fa" opacity="0.3"/>
+                                        <path d="M 20 100 Q 60 80, 100 100 T 180 100" stroke="#1d546c" stroke-width="3" fill="none" opacity="0.5"/>
+                                        <path d="M 30 120 Q 70 100, 110 120 T 170 120" stroke="#60a5fa" stroke-width="2" fill="none" opacity="0.4"/>
+                                        <rect y="150" width="90" height="12" fill="#1a3d64" opacity="0.4"/>
+                                        <rect y="170" width="120" height="10" fill="#1a3d64" opacity="0.3"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-overlay">
+                            <button class="view-project-btn">View Details</button>
+                        </div>
+                    </div>
+                    <div class="project-info">
+                        <h3 class="project-title">Aurora Alert System</h3>
+                        <p class="project-description">Real-time northern lights forecast app with SMS notifications. Because sleeping through the aurora is tragic.</p>
+                        <div class="project-tags">
+                            <span class="tag">React</span>
+                            <span class="tag">Weather API</span>
+                            <span class="tag">Twilio</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card" data-project="restaurant-pos">
+                    <div class="project-preview">
+                        <div class="preview-browser">
+                            <div class="browser-bar">
+                                <div class="browser-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                            </div>
+                            <div class="preview-screen">
+                                <div class="preview-placeholder">
+                                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                                        <rect width="200" height="35" fill="#1d546c" opacity="0.3"/>
+                                        <rect x="10" y="50" width="85" height="60" rx="4" fill="#60a5fa" opacity="0.3"/>
+                                        <rect x="105" y="50" width="85" height="60" rx="4" fill="#1a3d64" opacity="0.3"/>
+                                        <rect x="10" y="120" width="85" height="60" rx="4" fill="#0c2b4e" opacity="0.3"/>
+                                        <rect x="105" y="120" width="85" height="60" rx="4" fill="#1d546c" opacity="0.4"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-overlay">
+                            <button class="view-project-btn">View Details</button>
+                        </div>
+                    </div>
+                    <div class="project-info">
+                        <h3 class="project-title">Local Restaurant POS</h3>
+                        <p class="project-description">Custom point-of-sale system for a Yellowknife restaurant. Handles orders, inventory, and works offline when the internet freezes.</p>
+                        <div class="project-tags">
+                            <span class="tag">Vue.js</span>
+                            <span class="tag">Express</span>
+                            <span class="tag">PostgreSQL</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card" data-project="ice-road-tracker">
+                    <div class="project-preview">
+                        <div class="preview-browser">
+                            <div class="browser-bar">
+                                <div class="browser-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                            </div>
+                            <div class="preview-screen">
+                                <div class="preview-placeholder">
+                                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                                        <rect width="200" height="40" fill="#1d546c" opacity="0.3"/>
+                                        <circle cx="50" cy="90" r="20" fill="#60a5fa" opacity="0.4"/>
+                                        <circle cx="120" cy="110" r="15" fill="#1a3d64" opacity="0.4"/>
+                                        <circle cx="160" cy="80" r="18" fill="#0c2b4e" opacity="0.3"/>
+                                        <path d="M 50 90 L 120 110 L 160 80" stroke="#1d546c" stroke-width="2" opacity="0.4" fill="none"/>
+                                        <rect y="150" width="140" height="12" fill="#60a5fa" opacity="0.4"/>
+                                        <rect y="170" width="100" height="10" fill="#1a3d64" opacity="0.3"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-overlay">
+                            <button class="view-project-btn">View Details</button>
+                        </div>
+                    </div>
+                    <div class="project-info">
+                        <h3 class="project-title">Ice Road Conditions Map</h3>
+                        <p class="project-description">Live tracking of winter road conditions and closures. Interactive map that tells you if it's safe to drive or time to stay home.</p>
+                        <div class="project-tags">
+                            <span class="tag">Leaflet.js</span>
+                            <span class="tag">Node.js</span>
+                            <span class="tag">WebSocket</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card" data-project="tourism-booking">
+                    <div class="project-preview">
+                        <div class="preview-browser">
+                            <div class="browser-bar">
+                                <div class="browser-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                            </div>
+                            <div class="preview-screen">
+                                <div class="preview-placeholder">
+                                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                                        <rect width="200" height="45" fill="#1d546c" opacity="0.4"/>
+                                        <rect x="10" y="60" width="60" height="50" fill="#60a5fa" opacity="0.3"/>
+                                        <rect x="10" y="118" width="60" height="8" fill="#1a3d64" opacity="0.4"/>
+                                        <rect x="10" y="132" width="50" height="6" fill="#1a3d64" opacity="0.3"/>
+                                        <rect x="80" y="60" width="60" height="50" fill="#0c2b4e" opacity="0.3"/>
+                                        <rect x="80" y="118" width="60" height="8" fill="#1a3d64" opacity="0.4"/>
+                                        <rect x="150" y="60" width="40" height="50" fill="#1d546c" opacity="0.35"/>
+                                        <rect x="10" y="160" width="80" height="20" rx="4" fill="#60a5fa" opacity="0.5"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-overlay">
+                            <button class="view-project-btn">View Details</button>
+                        </div>
+                    </div>
+                    <div class="project-info">
+                        <h3 class="project-title">Tourism Booking Platform</h3>
+                        <p class="project-description">All-in-one booking system for northern tour operators. Handles flights, lodges, and dog sled reservations in one place.</p>
+                        <div class="project-tags">
+                            <span class="tag">Next.js</span>
+                            <span class="tag">Stripe</span>
+                            <span class="tag">MongoDB</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card" data-project="mining-safety">
+                    <div class="project-preview">
+                        <div class="preview-browser">
+                            <div class="browser-bar">
+                                <div class="browser-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                            </div>
+                            <div class="preview-screen">
+                                <div class="preview-placeholder">
+                                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                                        <rect width="200" height="30" fill="#1d546c" opacity="0.3"/>
+                                        <rect x="10" y="45" width="80" height="140" fill="#60a5fa" opacity="0.2"/>
+                                        <rect x="100" y="45" width="90" height="60" fill="#1a3d64" opacity="0.3"/>
+                                        <circle cx="145" cy="130" r="25" fill="#0c2b4e" opacity="0.4"/>
+                                        <rect x="100" y="165" width="90" height="8" fill="#1d546c" opacity="0.4"/>
+                                        <rect x="100" y="178" width="70" height="6" fill="#1a3d64" opacity="0.3"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-overlay">
+                            <button class="view-project-btn">View Details</button>
+                        </div>
+                    </div>
+                    <div class="project-info">
+                        <h3 class="project-title">Mining Safety Dashboard</h3>
+                        <p class="project-description">Worker check-in system with real-time location tracking. Makes sure everyone comes back up from underground.</p>
+                        <div class="project-tags">
+                            <span class="tag">React</span>
+                            <span class="tag">Socket.io</span>
+                            <span class="tag">GPS API</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="project-card" data-project="community-events">
+                    <div class="project-preview">
+                        <div class="preview-browser">
+                            <div class="browser-bar">
+                                <div class="browser-dots">
+                                    <span></span><span></span><span></span>
+                                </div>
+                            </div>
+                            <div class="preview-screen">
+                                <div class="preview-placeholder">
+                                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                                        <rect width="200" height="40" fill="#1d546c" opacity="0.3"/>
+                                        <rect x="10" y="55" width="180" height="30" rx="4" fill="#60a5fa" opacity="0.3"/>
+                                        <rect x="10" y="95" width="180" height="25" rx="4" fill="#1a3d64" opacity="0.3"/>
+                                        <rect x="10" y="130" width="180" height="25" rx="4" fill="#0c2b4e" opacity="0.3"/>
+                                        <rect x="10" y="165" width="180" height="25" rx="4" fill="#1d546c" opacity="0.35"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-overlay">
+                            <button class="view-project-btn">View Details</button>
+                        </div>
+                    </div>
+                    <div class="project-info">
+                        <h3 class="project-title">Community Events Hub</h3>
+                        <p class="project-description">Central calendar for local events, festivals, and gatherings. From Snowking to Folk on the Rocks, all in one spot.</p>
+                        <div class="project-tags">
+                            <span class="tag">Vue.js</span>
+                            <span class="tag">Firebase</span>
+                            <span class="tag">Calendar API</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title">Let's Work Together</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>Get in touch</h3>
+                    <p>Have a project in mind? We'd love to hear about it. Reach out and let's create something amazing together.</p>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <span class="contact-icon">📧</span>
+                            <a href="mailto:hello@frozenshield.dev">hello@frozenshield.dev</a>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">📱</span>
+                            <a href="tel:+1234567890">+1 (234) 567-890</a>
+                        </div>
+                    </div>
+                </div>
+                <form class="contact-form">
+                    <div class="form-group">
+                        <input type="text" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" placeholder="Your Email" required>
+                    </div>
+                    <div class="form-group">
+                        <textarea placeholder="Tell us about your project" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-nav">
+                    <a href="#services">Services</a>
+                    <a href="#projects">Projects</a>
+                    <a href="#contact">Contact</a>
+                </div>
+                <p>&copy; 2025 Frozen Shield Studio. Building custom solutions, one project at a time.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Project Detail Modal -->
+    <div id="projectModal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <div class="modal-body">
+                <div class="modal-preview">
+                    <div class="preview-browser">
+                        <div class="browser-bar">
+                            <div class="browser-dots">
+                                <span></span><span></span><span></span>
+                            </div>
+                        </div>
+                        <div class="preview-screen" id="modalPreviewScreen">
+                            <!-- Preview will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-info">
+                    <h2 id="modalTitle" class="modal-title"></h2>
+                    <p id="modalDescription" class="modal-description"></p>
+                    <div class="modal-tags" id="modalTags">
+                        <!-- Tags will be inserted here -->
+                    </div>
+                    <div class="modal-note">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 16V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 8H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <p>This is an example project showcasing the type of work we do.</p>
+                    </div>
+                    <button class="btn btn-primary modal-cta">Discuss Your Project</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
