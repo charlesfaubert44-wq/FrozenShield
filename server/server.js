@@ -33,6 +33,9 @@ app.use('/api/contact', require('./routes/contact'));
 app.use('/api/projects', require('./routes/projects'));
 app.use('/api/auth', require('./routes/auth'));
 
+// SEO Routes (before static files to handle sitemap.xml and structured data)
+app.use('/', require('./routes/seo'));
+
 // Serve static files from public directory
 app.use(express.static(path.join(__dirname, '../public')));
 

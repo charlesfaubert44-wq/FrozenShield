@@ -3,7 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frozen Shield Studio - Custom Web Development</title>
+    <title>Frozen Shield Studio - Web Development for Canada's Northern Territories | Yellowknife, NWT</title>
+    <meta name="description" content="Expert web development and custom applications for businesses in Canada's remote territories. Serving Yellowknife, Northwest Territories, Yukon, Nunavut. Offline-first solutions built for northern challenges.">
+    <meta name="keywords" content="web development yellowknife, northwest territories web developer, yukon web design, nunavut software development, northern canada web apps, remote territory development, offline-first applications, canadian north technology, arctic web solutions, yellowknife software, nwt digital solutions">
+
+    <!-- Geographic Meta Tags -->
+    <meta name="geo.region" content="CA-NT">
+    <meta name="geo.placename" content="Yellowknife, Northwest Territories">
+    <meta name="geo.position" content="62.454211;-114.371788">
+    <meta name="ICBM" content="62.454211, -114.371788">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://frozenshield.ca">
+    <meta property="og:title" content="Frozen Shield Studio - Web Development for Canada's Northern Territories">
+    <meta property="og:description" content="Custom web applications built for Canada's remote territories. Offline-first solutions for northern businesses in Yellowknife, NWT, Yukon, and Nunavut.">
+    <meta property="og:site_name" content="Frozen Shield Studio">
+    <meta property="og:locale" content="en_CA">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://frozenshield.ca">
+    <meta name="twitter:title" content="Frozen Shield Studio - Northern Canada Web Development">
+    <meta name="twitter:description" content="Expert web development for businesses in Canada's remote territories. Offline-first solutions built for northern challenges.">
+
+    <link rel="canonical" href="https://frozenshield.ca">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -323,7 +347,7 @@
                     <div class="contact-details">
                         <div class="contact-item">
                             <span class="contact-icon">📧</span>
-                            <a href="mailto:hello@frozenshield.dev">hello@frozenshield.dev</a>
+                            <a href="mailto:hello@frozenshield.ca">hello@frozenshield.ca</a>
                         </div>
                         <div class="contact-item">
                             <span class="contact-icon">📱</span>
@@ -355,6 +379,7 @@
                     <a href="#services">Services</a>
                     <a href="#projects">Projects</a>
                     <a href="#contact">Contact</a>
+                    <a href="https://frozenshield.ca" class="domain-link">frozenshield.ca</a>
                 </div>
                 <p>&copy; 2025 Frozen Shield Studio. Building custom solutions, one project at a time.</p>
             </div>
@@ -398,6 +423,85 @@
             </div>
         </div>
     </div>
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json" id="structured-data">
+    {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "LocalBusiness",
+                "@id": "https://frozenshield.ca/#organization",
+                "name": "Frozen Shield Studio",
+                "url": "https://frozenshield.ca",
+                "logo": "https://frozenshield.ca/logo.png",
+                "description": "Expert web development and custom applications for businesses in Canada's remote territories",
+                "address": {
+                    "@type": "PostalAddress",
+                    "addressLocality": "Yellowknife",
+                    "addressRegion": "NT",
+                    "addressCountry": "CA"
+                },
+                "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": "62.454211",
+                    "longitude": "-114.371788"
+                },
+                "areaServed": [
+                    {
+                        "@type": "State",
+                        "name": "Northwest Territories",
+                        "containedIn": "Canada"
+                    },
+                    {
+                        "@type": "State",
+                        "name": "Yukon",
+                        "containedIn": "Canada"
+                    },
+                    {
+                        "@type": "State",
+                        "name": "Nunavut",
+                        "containedIn": "Canada"
+                    }
+                ],
+                "sameAs": [],
+                "email": "hello@frozenshield.ca"
+            },
+            {
+                "@type": "WebSite",
+                "@id": "https://frozenshield.ca/#website",
+                "url": "https://frozenshield.ca",
+                "name": "Frozen Shield Studio",
+                "publisher": {
+                    "@id": "https://frozenshield.ca/#organization"
+                },
+                "potentialAction": {
+                    "@type": "SearchAction",
+                    "target": "https://frozenshield.ca/#search={search_term_string}",
+                    "query-input": "required name=search_term_string"
+                }
+            },
+            {
+                "@type": "ProfessionalService",
+                "name": "Frozen Shield Studio",
+                "url": "https://frozenshield.ca",
+                "description": "Custom web development and applications for Canada's northern territories",
+                "serviceType": [
+                    "Web Development",
+                    "Custom Web Applications",
+                    "Database Integration",
+                    "Offline-First Development",
+                    "Mobile-Responsive Design"
+                ],
+                "areaServed": {
+                    "@type": "Country",
+                    "name": "Canada"
+                },
+                "slogan": "We create tailored web applications that solve real problems"
+            }
+        ]
+    }
+    </script>
 
     <script src="script.js"></script>
 </body>

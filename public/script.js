@@ -452,10 +452,29 @@ function initProjectCards() {
     });
 }
 
+// Load dynamic structured data from server
+async function updateStructuredData() {
+    try {
+        const response = await fetch(`${API_URL.replace('/api', '')}/structured-data.json`);
+        if (response.ok) {
+            const structuredData = await response.json();
+
+            // Update the structured data script tag
+            const existingScript = document.getElementById('structured-data');
+            if (existingScript) {
+                existingScript.textContent = JSON.stringify(structuredData, null, 4);
+            }
+        }
+    } catch (error) {
+        console.log('Using static structured data');
+    }
+}
+
 // Initialize interactivity when DOM is loaded
 window.addEventListener('DOMContentLoaded', () => {
     initServiceCards();
     initProjectCards();
+    updateStructuredData(); // Load dynamic SEO data
 
     // Add staggered fade-in animation to cards
     const cards = document.querySelectorAll('.service-card, .project-card');

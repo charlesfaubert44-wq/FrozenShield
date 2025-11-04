@@ -1,0 +1,15 @@
+# robots.txt for Frozen Shield Studio
+# https://frozenshield.ca
+
+User-agent: *
+Allow: /
+
+# Disallow admin areas
+Disallow: /admin/
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://frozenshield.ca/sitemap.xml
+
+# Crawl-delay (optional, helps with server load)
+Crawl-delay: 1
