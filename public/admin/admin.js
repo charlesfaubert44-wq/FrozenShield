@@ -4,22 +4,16 @@ let allProjects = [];
 let allContacts = [];
 let currentAdmin = null;
 
-// Screen Management
-function showScreen(screenId) {
-    document.querySelectorAll('.screen').forEach(screen => {
-        screen.classList.remove('active');
-    });
-    document.getElementById(screenId).classList.add('active');
-}
-
-// Check authentication on load
+// Check authentication on load - MUST be authenticated to access dashboard
 document.addEventListener('DOMContentLoaded', () => {
-    if (authToken) {
-        verifyToken();
-    } else {
-        showScreen('login-screen');
+    // Redirect to login if no token
+    if (!authToken) {
+        window.location.href = '/admin/login';
+        return;
     }
 
+    // Verify token is valid
+    verifyToken();
     setupEventListeners();
 });
 
@@ -35,33 +29,22 @@ async function verifyToken() {
         if (response.ok) {
             const result = await response.json();
             currentAdmin = result.data;
-            showScreen('dashboard-screen');
             loadDashboard();
         } else {
+            // Token invalid, redirect to login
             localStorage.removeItem('adminToken');
-            authToken = null;
-            showScreen('login-screen');
+            window.location.href = '/admin/login';
         }
     } catch (error) {
         console.error('Token verification error:', error);
-        showScreen('login-screen');
+        localStorage.removeItem('adminToken');
+        window.location.href = '/admin/login';
     }
 }
 
 // Setup Event Listeners
 function setupEventListeners() {
-    // Login/Register navigation
-    document.getElementById('show-register').addEventListener('click', () => {
-        showScreen('register-screen');
-    });
-
-    document.getElementById('show-login').addEventListener('click', () => {
-        showScreen('login-screen');
-    });
-
-    // Forms
-    document.getElementById('login-form').addEventListener('submit', handleLogin);
-    document.getElementById('register-form').addEventListener('submit', handleRegister);
+    // Logout
     document.getElementById('logout-btn').addEventListener('click', handleLogout);
 
     // Navigation
@@ -121,78 +104,11 @@ function setupEventListeners() {
     document.getElementById('delete-all-contacts').addEventListener('click', deleteAllContacts);
 }
 
-// Authentication Handlers
-async function handleLogin(e) {
-    e.preventDefault();
-
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-    const errorEl = document.getElementById('login-error');
-
-    try {
-        const response = await fetch(`${API_URL}/auth/login`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username, password })
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-            authToken = result.token;
-            localStorage.setItem('adminToken', authToken);
-            currentAdmin = result.admin;
-            showScreen('dashboard-screen');
-            loadDashboard();
-        } else {
-            errorEl.textContent = result.message || 'Login failed';
-        }
-    } catch (error) {
-        console.error('Login error:', error);
-        errorEl.textContent = 'An error occurred. Please try again.';
-    }
-}
-
-async function handleRegister(e) {
-    e.preventDefault();
-
-    const username = document.getElementById('reg-username').value;
-    const email = document.getElementById('reg-email').value;
-    const password = document.getElementById('reg-password').value;
-    const errorEl = document.getElementById('register-error');
-
-    try {
-        const response = await fetch(`${API_URL}/auth/register`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username, email, password })
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-            authToken = result.token;
-            localStorage.setItem('adminToken', authToken);
-            currentAdmin = result.admin;
-            showScreen('dashboard-screen');
-            loadDashboard();
-        } else {
-            errorEl.textContent = result.message || 'Registration failed';
-        }
-    } catch (error) {
-        console.error('Register error:', error);
-        errorEl.textContent = 'An error occurred. Please try again.';
-    }
-}
-
+// Logout Handler
 function handleLogout() {
     localStorage.removeItem('adminToken');
     authToken = null;
-    showScreen('login-screen');
+    window.location.href = '/admin/login';
 }
 
 // Section Navigation

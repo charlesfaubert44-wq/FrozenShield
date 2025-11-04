@@ -36,12 +36,21 @@ app.use('/api/auth', require('./routes/auth'));
 // Serve static files from public directory
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Serve admin panel
-app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, '../public/admin/index.html'));
+// Admin routes
+app.get('/admin/login', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/admin/login.html'));
 });
 
-// Serve main site
+app.get('/admin/dashboard', (req, res) => {
+    res.sendFile(path.join(__dirname, '../public/admin/dashboard.html'));
+});
+
+// Redirect /admin to login page
+app.get('/admin', (req, res) => {
+    res.redirect('/admin/login');
+});
+
+// Serve main site for all other routes
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../public/index.html'));
 });
