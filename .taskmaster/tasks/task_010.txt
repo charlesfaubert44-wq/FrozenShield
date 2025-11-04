@@ -1,0 +1,25 @@
+# Task ID: 10
+# Title: Testing, security hardening, optimization, and deployment
+# Status: pending
+# Dependencies: 7, 9
+# Priority: high
+# Description: Comprehensive testing, security audit, database optimization, production configuration, deployment documentation, and go-live.
+# Details:
+1. Comprehensive testing: All API endpoints with Postman, auth flows, CRUD operations, edge cases, rate limiting, multi-browser (Chrome/Firefox/Safari/Edge), mobile (iOS/Android), accessibility, Lighthouse audit (>90 score)
+
+2. Security hardening: Verify Helmet headers, test CORS, strong JWT_SECRET, test injection/XSS attempts, verify password hashing, npm audit and fix, OWASP Top 10 review
+
+3. Database optimization: Verify indexes with getIndexes(), test query performance with explain(), implement connection pooling
+
+4. Production config: Create .env.example, document MongoDB Atlas setup, generate secure JWT_SECRET, configure CORS for prod domain, set NODE_ENV=production, enable retry logic, configure error logging (Sentry)
+
+5. Deployment docs: Update README with prerequisites, installation, env vars, first-time setup, API docs, deployment instructions (Heroku/Railway/Render/DO), deployment checklist, backup strategy
+
+6. Performance: Minify CSS/JS, optimize images (compress, WebP), caching headers, CDN consideration, test load times (FCP <1.5s, LCP <2.5s, TTI <3.5s)
+
+7. Deploy: Choose platform, create MongoDB Atlas cluster, whitelist IPs, set env vars, git push deploy, register first admin, add sample projects, test contact form, configure domain/SSL, set up monitoring (UptimeRobot)
+
+8. Post-deployment: Test all features in prod, verify SSL, check security headers (securityheaders.com), test rate limiting, verify error logging, confirm backups, monitor 24hrs
+
+# Test Strategy:
+Run full API test suite. Security scan with npm audit and OWASP ZAP. Lighthouse scores >90. Load testing with Apache Bench. Backup/restore testing. Production smoke test of all user flows. SSL verification. CORS test from unauthorized origin. Rate limit testing. Database performance checks under load

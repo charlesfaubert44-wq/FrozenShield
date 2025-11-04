@@ -1,0 +1,29 @@
+# Task ID: 6
+# Title: Build responsive public portfolio frontend HTML/CSS
+# Status: pending
+# Dependencies: 1
+# Priority: high
+# Description: Create complete HTML structure and responsive CSS for portfolio site with hero, services, projects, contact sections and mobile-first design.
+# Details:
+1. Create public/index.html:
+- Hero section with canvas#codeCanvas, animated logo, description, CTA button
+- Services section with 3 cards (Custom Dev, Responsive, Secure)
+- Projects section with projects-grid div (JS populated)
+- Contact section with form (name, email, message)
+- Footer with nav links
+- Project modal overlay
+
+2. Create public/styles.css:
+- CSS variables: --bg-primary: #0a0a0f, --accent-1: #6366f1, --accent-2: #8b5cf6
+- Global reset, body dark theme
+- Hero min-height 100vh, canvas absolute positioned
+- Services/projects grid: grid-template-columns repeat(auto-fit, minmax(300px, 1fr))
+- Cards with hover transform translateY(-8px)
+- Form inputs styled, gradient buttons
+- Modal fixed overlay
+- Responsive @media (max-width: 768px): single column, adjust padding/font-sizes
+
+3. Add CSS animations: fadeIn, slideUp
+
+# Test Strategy:
+Visual testing in browser. Responsive testing at 375px, 768px, 1920px widths. Verify all sections present. Test hover states. Verify gradient accents. Test dark theme consistent. Mobile emulation testing. W3C HTML validation. Cross-browser: Chrome, Firefox, Safari, Edge

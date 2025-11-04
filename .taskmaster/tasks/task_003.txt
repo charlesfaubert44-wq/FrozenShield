@@ -1,0 +1,18 @@
+# Task ID: 3
+# Title: Implement JWT authentication system with registration and login
+# Status: pending
+# Dependencies: 2
+# Priority: high
+# Description: Build complete authentication including admin registration (first-admin-only), login with JWT tokens, auth middleware, and session validation endpoint.
+# Details:
+1. Create server/routes/auth.js:
+- POST /api/auth/register: Check admin count, if >0 return 403. Create admin, generate JWT (30d exp), return token
+- POST /api/auth/login: Find by email, verify password with comparePassword(), generate JWT, return token
+- GET /api/auth/me (protected): Return current admin data excluding password
+
+2. Create server/middleware/auth.js: Extract Bearer token from Authorization header, verify with jsonwebtoken.verify(), attach admin ID to req.admin, handle errors (401)
+
+3. Mount routes: app.use('/api/auth', authRoutes)
+
+# Test Strategy:
+Test registration with valid data, verify password hashed in DB. Test first-admin-only (second attempt returns 403). Test login with correct/incorrect credentials. Test /api/auth/me with valid token. Test expired/invalid tokens return 401. Test missing token returns 401

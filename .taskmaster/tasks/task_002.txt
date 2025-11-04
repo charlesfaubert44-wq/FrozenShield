@@ -1,0 +1,15 @@
+# Task ID: 2
+# Title: Create Mongoose database models for Admin, Project, and Contact
+# Status: pending
+# Dependencies: 1
+# Priority: high
+# Description: Define MongoDB schemas and models using Mongoose for all three core entities with proper validation, indexes, and timestamps.
+# Details:
+1. Create server/models/Admin.js with schema: username (unique, required), email (unique, required), password (required, min 6), role (default 'admin'), createdAt. Add indexes on email/username. Implement pre-save hook for bcrypt password hashing. Add comparePassword() method
+
+2. Create server/models/Project.js with schema: title (required), description (required), imageUrl, projectUrl, tags (array), featured (boolean), order (number), createdAt, updatedAt. Add compound index {featured: 1, order: 1}. Pre-save hook for updatedAt
+
+3. Create server/models/Contact.js with schema: name (required), email (required), message (required, min 10), status (enum: new/read/replied), notes, submittedAt. Add indexes on status and submittedAt
+
+# Test Strategy:
+Test Admin model password hashing and comparePassword method. Test unique constraints. Test Project model timestamps and indexes. Test Contact model status enum. Verify all indexes created. Test validation for required fields, email formats, minimum lengths

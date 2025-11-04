@@ -1,0 +1,33 @@
+# Task ID: 9
+# Title: Implement admin panel JavaScript for authentication and management
+# Status: pending
+# Dependencies: 3, 4, 5, 8
+# Priority: high
+# Description: Create admin JS for login/registration, JWT localStorage management, dashboard data, project/contact CRUD, and settings.
+# Details:
+1. Create public/admin/admin.js:
+
+2. Auth state: Check localStorage token on load, validate with GET /api/auth/me, show dashboard if valid or login if not
+
+3. Login handler: POST credentials to /api/auth/login, store token in localStorage, show dashboard
+
+4. Registration handler: POST to /api/auth/register, store token, show dashboard
+
+5. Logout: Clear localStorage, redirect to login
+
+6. Dashboard loading: Fetch projects/contacts/featured counts, update stat cards, load recent items
+
+7. Projects management: Load list, add (open modal → POST), edit (populate modal → PUT), delete (confirm → DELETE), toggle featured
+
+8. Contacts management: Load list, search/filter, update status (PATCH), delete (confirm → DELETE), export CSV
+
+9. Settings: Display admin info (read-only), password change (POST), export data (JSON download), clear cache, danger zone bulk deletes
+
+10. Analytics: Calculate stats from data, display trends
+
+11. Navigation: Switch sections, manage active states
+
+12. Error handling: Check response.ok, display toast notifications
+
+# Test Strategy:
+Test login stores token and loads dashboard. Test invalid login shows error. Test registration creates first admin, blocks second. Test token validation. Test dashboard stats match DB. Test add/edit/delete project. Test contact status update. Test search filtering. Test CSV export downloads. Test logout clears token. Test navigation switches sections. Test password change. Test with no token shows login

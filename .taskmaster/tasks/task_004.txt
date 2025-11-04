@@ -1,0 +1,20 @@
+# Task ID: 4
+# Title: Build Project management API with full CRUD operations
+# Status: pending
+# Dependencies: 3
+# Priority: high
+# Description: Implement RESTful API for projects with public GET endpoints and protected POST/PUT/DELETE with authentication and validation.
+# Details:
+1. Create server/routes/projects.js:
+- GET /api/projects: Find all, sort by {featured: -1, order: 1}
+- GET /api/projects/featured: Find {featured: true}, sort by order
+- GET /api/projects/:id: Find by ID, return 404 if not found
+- POST /api/projects (protected): Validate required fields, create project
+- PUT /api/projects/:id (protected): Update project, return 404 if not found
+- DELETE /api/projects/:id (protected): Delete project, return 404 if not found
+
+2. Add input validation with express-validator
+3. Mount routes: app.use('/api/projects', projectRoutes)
+
+# Test Strategy:
+Test GET all projects sorted correctly. Test GET featured returns only featured=true. Test GET single by ID and 404 for invalid. Test POST without auth returns 401. Test POST with valid data creates project. Test validation rejects missing fields. Test PUT updates persist. Test DELETE removes from DB

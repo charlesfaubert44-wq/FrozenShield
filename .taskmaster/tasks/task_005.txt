@@ -1,0 +1,18 @@
+# Task ID: 5
+# Title: Implement Contact form API with rate limiting and management
+# Status: pending
+# Dependencies: 3
+# Priority: high
+# Description: Create public contact submission endpoint with spam protection and protected admin endpoints for managing submissions.
+# Details:
+1. Create server/routes/contact.js:
+- POST /api/contact: Rate limit 10/hour per IP, validate name/email/message, check honeypot field, create contact with status='new', return success message
+- GET /api/contact (protected): Support filtering by status, search by name/email, sort by submittedAt desc
+- PATCH /api/contact/:id (protected): Update status and notes fields only
+- DELETE /api/contact/:id (protected): Delete contact
+
+2. Add CSV export utility
+3. Mount routes: app.use('/api/contact', contactRoutes)
+
+# Test Strategy:
+Test POST submission saves with status='new'. Test rate limiting (11th request returns 429). Test validation for missing/invalid fields. Test honeypot silently discards. Test GET returns all sorted by date. Test filtering by status. Test search by email. Test PATCH updates status. Test DELETE removes. Test auth required for admin endpoints

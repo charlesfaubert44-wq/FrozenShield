@@ -1,0 +1,435 @@
+<context>
+# Overview
+Frozen Shield Studio is a modern, fullstack portfolio website designed to showcase custom web development services and projects. The platform targets freelance developers, development studios, and agencies who need a professional online presence with backend capabilities for content management. The product solves the problem of static portfolio sites that require code changes for updates by providing an admin panel with full CRUD operations for projects and contact management. This creates value by enabling non-technical team members to manage content while maintaining a professional, performant frontend experience.
+
+# Core Features
+1. **Public Portfolio Website**
+   - Responsive dark-themed UI with gradient accents that works seamlessly across mobile, tablet, and desktop devices
+   - Smooth scrolling navigation with fade-in animations on scroll for enhanced user experience
+   - Dynamic project showcase loaded from MongoDB database with technology tags and descriptions
+   - Contact form with backend integration and validation for lead capture
+   - Important: Creates professional first impression while being performant (fast load times)
+
+2. **Admin Panel**
+   - Secure JWT-based authentication system with bcrypt password hashing
+   - Dashboard with statistics overview showing total projects, contacts, new submissions, and featured projects
+   - Full CRUD operations for projects including title, description, image URLs, project URLs, tags, and display order
+   - Contact submission management with status tracking (new, read, replied) and search functionality
+   - Analytics section with contact submission trends and project breakdowns
+   - Important: Enables content updates without requiring code deployments or developer intervention
+
+3. **Backend API**
+   - RESTful Express.js API with rate limiting (100 requests per 15 minutes)
+   - MongoDB database with Mongoose ODM for data persistence
+   - Security features including Helmet.js headers, CORS configuration, and input validation
+   - Separate public and protected endpoints with middleware authentication
+   - Important: Provides secure, scalable foundation for portfolio management
+
+4. **Authentication System**
+   - First-admin registration with automatic lockout after initial setup
+   - JWT token-based authentication for admin sessions
+   - Password change functionality from settings panel
+   - Automatic logout after inactivity
+   - Important: Prevents unauthorized access while remaining user-friendly
+
+# User Experience
+
+**User Personas:**
+
+1. **Portfolio Visitor** (Primary External User)
+   - Tech-savvy potential client researching development services
+   - Wants to quickly understand capabilities and see previous work
+   - Expects modern, fast-loading website with clear navigation
+   - Needs easy way to initiate contact
+
+2. **Studio Admin** (Primary Internal User)
+   - Business owner or marketing team member managing content
+   - May have limited technical knowledge
+   - Needs to update project portfolio regularly
+   - Wants to track and respond to contact submissions
+
+3. **Developer/Maintainer** (Secondary Internal User)
+   - Technical team member maintaining the platform
+   - Needs clean, documented codebase
+   - Requires secure deployment process
+   - Expects proper separation of concerns
+
+**Key User Flows:**
+
+1. **Visitor Browsing Portfolio:**
+   - Land on homepage with animated hero section
+   - Scroll through services section to understand offerings
+   - Browse project gallery with visual previews
+   - Click project card to view modal with detailed information
+   - Navigate to contact section and submit inquiry form
+   - Receive confirmation of submission
+
+2. **Admin Managing Projects:**
+   - Navigate to /admin and login with credentials
+   - View dashboard showing current statistics
+   - Click "Projects" section to see all projects
+   - Click "Add New Project" to open project form modal
+   - Fill in project details: title, description, image URL, project URL, tags, display order, featured status
+   - Save project and see it appear on public portfolio immediately
+   - Edit or delete existing projects as needed
+
+3. **Admin Managing Contacts:**
+   - Login to admin panel
+   - Navigate to "Contacts" section
+   - View list of contact submissions with status badges
+   - Search contacts by name or email
+   - Click contact to view full message details
+   - Update status from "new" to "read" or "replied"
+   - Export contacts to CSV for external CRM
+
+**UI/UX Considerations:**
+
+- Dark theme (#0a0a0f background) with indigo/purple gradient accents creates modern, professional aesthetic
+- Consistent spacing and typography using system font stack for performance
+- Card-based layouts for scannable content organization
+- Modal overlays for detailed views without page navigation
+- Toast notifications for action confirmations (save, delete, etc.)
+- Loading states for asynchronous operations
+- Mobile-first responsive design with breakpoints at 768px and 1024px
+- Smooth transitions (0.3s) for interactive elements
+- Clear visual hierarchy with section titles, stat cards, and content grouping
+</context>
+
+<PRD>
+# Technical Architecture
+
+**System Components:**
+
+1. **Frontend Layer**
+   - Static HTML5/CSS3/Vanilla JavaScript (no framework dependencies for performance)
+   - Separate public site (index.html) and admin panel (admin/index.html)
+   - Canvas-based background animation for hero section
+   - Fetch API for backend communication with async/await patterns
+   - LocalStorage for JWT token persistence and user session management
+
+2. **Backend Layer**
+   - Node.js runtime with Express.js web framework (v4.18.2)
+   - MongoDB database with Mongoose ODM (v8.0.3)
+   - RESTful API architecture with JSON request/response format
+   - Middleware stack: Helmet (security headers), CORS, express-rate-limit, body-parser, JWT authentication
+   - Environment-based configuration using dotenv
+
+3. **Database Models:**
+   - **Admin**: username (unique, required), email (unique, required), password (hashed), createdAt, role
+   - **Project**: title, description, imageUrl, projectUrl, tags[], featured (boolean), order (number), createdAt, updatedAt
+   - **Contact**: name, email, message, status (new/read/replied), submittedAt, notes
+
+4. **API Structure:**
+   - `/api/auth/*` - Authentication endpoints (register, login, me)
+   - `/api/projects/*` - Project CRUD endpoints (public GET, protected POST/PUT/DELETE)
+   - `/api/contact/*` - Contact form endpoints (public POST, protected GET/PATCH/DELETE)
+
+5. **Security Implementation:**
+   - bcryptjs for password hashing with salt rounds: 10
+   - JWT tokens with expiration (30 days) stored in localStorage
+   - Authorization middleware checking for valid JWT on protected routes
+   - Rate limiting to prevent abuse (100 requests per 15 minutes per IP)
+   - Helmet.js for setting security HTTP headers
+   - CORS configuration for cross-origin request handling
+   - Input validation and sanitization on all endpoints
+
+6. **Infrastructure Requirements:**
+   - Node.js v14+ runtime environment
+   - MongoDB database (local or MongoDB Atlas cluster)
+   - Environment variables: PORT, MONGODB_URI, JWT_SECRET, NODE_ENV
+   - Static file serving from /public directory
+   - Process manager for production (PM2 recommended)
+
+# Development Roadmap
+
+**Phase 1: Foundation & Core Infrastructure (MVP)**
+- Set up Node.js/Express server with middleware stack
+- Configure MongoDB connection with Mongoose
+- Implement environment variable configuration
+- Create database models (Admin, Project, Contact)
+- Set up static file serving for public directory
+- Implement basic error handling and logging
+- Deliverable: Server successfully connects to database and serves static files
+
+**Phase 2: Authentication System**
+- Build Admin model with password hashing
+- Implement registration endpoint with first-admin-only logic
+- Create login endpoint with JWT token generation
+- Build authentication middleware for protected routes
+- Add "Get Current Admin" endpoint for session validation
+- Implement password change functionality
+- Deliverable: Complete authentication system with security best practices
+
+**Phase 3: Project Management Backend**
+- Create Project model with all required fields
+- Implement GET /api/projects (public, returns all projects sorted by order)
+- Implement GET /api/projects/featured (public, returns featured projects only)
+- Implement GET /api/projects/:id (public, returns single project)
+- Implement POST /api/projects (protected, creates new project)
+- Implement PUT /api/projects/:id (protected, updates project)
+- Implement DELETE /api/projects/:id (protected, removes project)
+- Add input validation for project fields
+- Deliverable: Full CRUD API for projects with proper authorization
+
+**Phase 4: Contact Form Backend**
+- Create Contact model with status tracking
+- Implement POST /api/contact (public, accepts contact form submissions)
+- Implement GET /api/contact (protected, returns all contacts with filtering)
+- Implement PATCH /api/contact/:id (protected, updates contact status/notes)
+- Implement DELETE /api/contact/:id (protected, removes contact)
+- Add rate limiting specifically for contact form to prevent spam
+- Deliverable: Contact management system with spam protection
+
+**Phase 5: Public Portfolio Frontend**
+- Build homepage HTML structure: hero, services, projects, contact sections
+- Implement responsive CSS with dark theme and gradient accents
+- Create canvas animation for hero background (falling code effect)
+- Implement smooth scroll navigation
+- Add intersection observer for fade-in animations on scroll
+- Build dynamic project loading from API with error handling
+- Create project card components with modal functionality
+- Implement contact form with validation and submission handling
+- Add loading states and user feedback (success/error messages)
+- Deliverable: Fully functional public-facing portfolio website
+
+**Phase 6: Admin Panel Frontend**
+- Build admin panel HTML structure with login, register, and dashboard screens
+- Implement admin-specific CSS styling with data tables and forms
+- Create login form with JWT token storage in localStorage
+- Build registration form (with first-admin-only client-side check)
+- Implement dashboard with statistics cards fetching data from API
+- Create projects management section with CRUD operations
+- Build project form modal for add/edit functionality
+- Implement contacts management section with status updates
+- Add analytics section with charts and breakdowns
+- Create settings section with profile view and password change
+- Implement data export functionality (CSV for contacts, JSON for all data)
+- Add logout functionality with token removal
+- Deliverable: Complete admin panel for content management
+
+**Phase 7: Enhancement & Polish**
+- Add project image upload capability (vs. URL-only)
+- Implement search/filter functionality for projects
+- Add sorting options for project display
+- Create email notifications for new contact submissions
+- Add more analytics: visitor tracking, popular projects
+- Implement draft/published status for projects
+- Add bulk actions for contact management
+- Create project categories/filters for organization
+- Deliverable: Enhanced features for better usability and insights
+
+**Phase 8: Testing & Deployment**
+- Write API endpoint tests for all routes
+- Test authentication flows and edge cases
+- Perform security audit (OWASP Top 10)
+- Optimize database queries with indexes
+- Implement logging system for production errors
+- Create deployment documentation
+- Set up MongoDB Atlas production database
+- Configure environment variables for production
+- Deploy to hosting platform (Heroku/Railway/Render/Digital Ocean)
+- Set up custom domain and SSL certificate
+- Test production deployment thoroughly
+- Deliverable: Production-ready application with documentation
+
+# Logical Dependency Chain
+
+**Foundation First (Must be completed first):**
+1. Server setup with Express and middleware configuration
+2. MongoDB connection with Mongoose
+3. Environment variable configuration
+4. Database models definition
+
+**Authentication Second (Blocks admin features):**
+5. Admin model with password hashing
+6. Registration and login endpoints
+7. JWT authentication middleware
+8. Protected route infrastructure
+
+**Backend APIs Third (Enables frontend development):**
+9. Project CRUD endpoints
+10. Contact form endpoints
+11. Input validation and error handling
+12. Rate limiting implementation
+
+**Public Frontend Fourth (Creates visible product):**
+13. Homepage HTML/CSS structure
+14. Responsive design implementation
+15. Canvas hero animation
+16. Dynamic project loading from API
+17. Contact form integration
+18. Scroll animations and interactions
+
+**Admin Panel Fifth (Enables content management):**
+19. Admin login/register screens
+20. Dashboard with statistics
+21. Project management interface
+22. Contact management interface
+23. Settings and utilities
+
+**Enhancements Sixth (Iterative improvements):**
+24. Image uploads
+25. Advanced filtering/search
+26. Email notifications
+27. Additional analytics
+28. Bulk operations
+
+**Deployment Last (Requires stable codebase):**
+29. Testing suite
+30. Security hardening
+31. Production database setup
+32. Platform deployment
+33. Domain and SSL configuration
+
+**Pacing Strategy:**
+- Phases 1-4: Get to working API as quickly as possible (foundation + backend complete)
+- Phase 5: Create visible MVP that can be demoed (public site working)
+- Phase 6: Enable self-service content management (admin panel complete)
+- Phases 7-8: Polish and production readiness
+
+Each phase is atomic and can be tested independently, but builds upon previous phases. The goal is to reach Phase 5 completion ASAP to have a functional portfolio site, then layer in admin capabilities.
+
+# Risks and Mitigations
+
+**Technical Challenges:**
+
+1. **Risk:** MongoDB connection failures in production
+   - **Mitigation:** Implement connection retry logic with exponential backoff, use MongoDB Atlas with automatic failover, add health check endpoint
+
+2. **Risk:** JWT token security vulnerabilities (token theft, XSS attacks)
+   - **Mitigation:** Use httpOnly cookies instead of localStorage (future enhancement), implement short token expiration with refresh token pattern, add CSRF protection
+
+3. **Risk:** Unoptimized database queries causing slow load times
+   - **Mitigation:** Add Mongoose indexes on frequently queried fields (featured, order), implement pagination for large datasets, use projection to limit returned fields
+
+4. **Risk:** Contact form spam and abuse
+   - **Mitigation:** Implement aggressive rate limiting (10 submissions per hour per IP), add CAPTCHA or honeypot field, require email verification
+
+5. **Risk:** File upload vulnerabilities if image upload is added
+   - **Mitigation:** Use established service like Cloudinary or AWS S3, validate file types and sizes, scan uploads for malware
+
+**MVP Scope:**
+
+1. **Risk:** Feature creep delaying launch
+   - **Mitigation:** Strictly define MVP as Phases 1-6 only, defer all Phase 7 enhancements to post-launch, create backlog for future iterations
+
+2. **Risk:** Over-engineering authentication system
+   - **Mitigation:** Start with single admin user support (can expand to multi-admin later), use proven JWT pattern without custom implementations, skip role-based permissions in MVP
+
+3. **Risk:** Spending too much time on animations and polish
+   - **Mitigation:** Use CSS transitions for all animations (no complex libraries), limit canvas animation to simple falling code effect, focus on functionality over aesthetics initially
+
+**Resource Constraints:**
+
+1. **Risk:** MongoDB Atlas free tier limitations (500MB storage, 100 connections)
+   - **Mitigation:** Start with free tier but monitor usage, implement connection pooling to reduce concurrent connections, plan for paid tier upgrade if needed
+
+2. **Risk:** Deployment platform costs and limitations
+   - **Mitigation:** Research free tiers (Render, Railway, Fly.io) before deploying, optimize for cold start times, consider serverless architecture if costs become issue
+
+3. **Risk:** No automated testing increasing regression bugs
+   - **Mitigation:** Write at least basic endpoint tests for critical paths (auth, CRUD operations), implement manual testing checklist, add automated tests in Phase 8
+
+4. **Risk:** Single developer knowledge bottleneck
+   - **Mitigation:** Document all architecture decisions in README, use conventional project structure, write inline comments for complex logic, maintain clear git commit history
+
+# Appendix
+
+**Research Findings:**
+
+1. **Portfolio Website Best Practices:**
+   - Load time under 3 seconds is critical for user retention
+   - Project showcase should be above the fold
+   - Contact form should be visible without excessive scrolling
+   - Mobile traffic typically 60%+ for portfolio sites
+   - Dark themes popular in developer/tech industry
+
+2. **Security Considerations:**
+   - OWASP Top 10 threats relevant to web applications
+   - JWT tokens should expire and not contain sensitive data
+   - Rate limiting essential for public endpoints
+   - Admin registration should be restricted after initial setup
+   - Regular dependency updates for security patches
+
+3. **Technology Choices Rationale:**
+   - Vanilla JavaScript over frameworks: Faster load times, smaller bundle size, easier maintenance for simple site
+   - MongoDB over PostgreSQL: Flexible schema good for portfolio projects with varying data structures, easier local development
+   - JWT over sessions: Stateless authentication better for API-first architecture, easier to scale horizontally
+   - Express over alternatives: Most popular Node.js framework, extensive middleware ecosystem, well-documented
+
+**Technical Specifications:**
+
+1. **Performance Targets:**
+   - First Contentful Paint (FCP): < 1.5s
+   - Largest Contentful Paint (LCP): < 2.5s
+   - Time to Interactive (TTI): < 3.5s
+   - Lighthouse Performance Score: > 90
+
+2. **Browser Support:**
+   - Chrome/Edge: Last 2 versions
+   - Firefox: Last 2 versions
+   - Safari: Last 2 versions
+   - Mobile Safari: iOS 12+
+   - Chrome Mobile: Android 8+
+
+3. **API Response Format:**
+   ```json
+   {
+     "success": true,
+     "data": { /* response payload */ },
+     "message": "Optional success message"
+   }
+
+   // Error format:
+   {
+     "success": false,
+     "error": "Error message",
+     "details": { /* optional error details */ }
+   }
+   ```
+
+4. **Database Indexes:**
+   - Admin: `email` (unique), `username` (unique)
+   - Project: `featured` + `order` (compound for homepage query), `createdAt` (for date sorting)
+   - Contact: `status` (for filtering), `submittedAt` (for date sorting)
+
+5. **Environment Variables Reference:**
+   - `PORT`: Server port (default: 5000)
+   - `MONGODB_URI`: Full MongoDB connection string with credentials
+   - `JWT_SECRET`: Random 256-bit string for signing tokens (use crypto.randomBytes(32).toString('hex'))
+   - `NODE_ENV`: 'development' or 'production' (affects logging and error details)
+   - `RATE_LIMIT_WINDOW_MS`: Rate limit window in milliseconds (default: 900000 = 15 min)
+   - `RATE_LIMIT_MAX_REQUESTS`: Max requests per window (default: 100)
+
+6. **Deployment Checklist:**
+   - [ ] Environment variables configured in hosting platform
+   - [ ] MongoDB Atlas cluster created with whitelist IP addresses
+   - [ ] JWT_SECRET generated with cryptographically secure method
+   - [ ] Admin registration completed for first admin user
+   - [ ] Sample projects added through admin panel
+   - [ ] Contact form tested end-to-end
+   - [ ] SSL certificate active on custom domain
+   - [ ] Error logging configured (e.g., Sentry)
+   - [ ] Backup strategy for MongoDB data
+   - [ ] Rate limiting tested and confirmed working
+   - [ ] Security headers verified with securityheaders.com
+   - [ ] CORS configuration matches production domain
+   - [ ] 404 and 500 error pages implemented
+   - [ ] Monitoring/uptime checks configured
+
+**Future Enhancement Ideas (Post-MVP):**
+- Blog/articles section for content marketing
+- Client testimonials management
+- Project case studies with detailed writeups
+- Integration with GitHub API to show repositories
+- Email marketing integration (Mailchimp, SendGrid)
+- Multi-language support (i18n)
+- Dark/light theme toggle
+- Project filters by technology/industry
+- Admin activity log for audit trail
+- Two-factor authentication for admin
+- Webhook integrations for notifications
+- Public API for third-party integrations
+- Progressive Web App (PWA) capabilities
+- Server-side rendering for SEO improvement
+</PRD>

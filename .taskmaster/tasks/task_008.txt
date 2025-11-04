@@ -1,0 +1,32 @@
+# Task ID: 8
+# Title: Build admin panel HTML structure and styling
+# Status: pending
+# Dependencies: 6
+# Priority: high
+# Description: Create admin panel frontend with login, registration, dashboard, projects/contacts management, analytics, and settings pages.
+# Details:
+1. Create public/admin/index.html:
+- Three screens: login-screen, register-screen, dashboard-screen
+- Login: username/password form, "show register" button
+- Register: username/email/password form, "back to login" button
+- Dashboard: Nav bar with buttons (Dashboard, Projects, Contacts, Analytics, Settings, Logout)
+  * Dashboard section: 4 stat cards, recent contacts/projects lists
+  * Projects section: "Add New Project" button, projects table/cards
+  * Contacts section: search input, export button, contacts table with status badges
+  * Analytics section: chart placeholders, stats breakdown
+  * Settings section: profile form, password change, data export, danger zone
+- Project modal: form with title, description, imageUrl, projectUrl, tags, order, featured checkbox
+
+2. Create public/admin/admin.css:
+- Screen management: .screen.active {display: block}
+- Login/register: centered card, max-width 400px
+- Admin nav: sticky top bar, flex layout, active state
+- Stat cards: gradient background, flex with icon/info
+- Tables: full width, striped rows, hover effects
+- Status badges: color-coded (new=green, read=blue, replied=purple)
+- Buttons: .btn-primary, .btn-secondary, .btn-danger, .btn-small
+- Modal: overlay with backdrop blur
+- Responsive: @media (max-width: 768px) stack layout
+
+# Test Strategy:
+Open /admin in browser. Verify only login visible initially. Test register button switches screens. Verify dashboard has all sections. Test responsive resize to mobile. Test table hover effects. Test status badge colors. Test button variants render. Validate HTML. Test navigation active states

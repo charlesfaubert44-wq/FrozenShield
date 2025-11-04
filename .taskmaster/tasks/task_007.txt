@@ -1,0 +1,25 @@
+# Task ID: 7
+# Title: Implement frontend JavaScript for dynamic loading and interactions
+# Status: pending
+# Dependencies: 4, 5, 6
+# Priority: high
+# Description: Create client-side JS for project loading, canvas animation, contact form, modals, scroll animations, and smooth navigation.
+# Details:
+1. Create public/script.js:
+
+2. Canvas animation: falling code effect with requestAnimationFrame
+
+3. Project loading: DOMContentLoaded → fetch('/api/projects') → generate cards → append to grid
+
+4. Project modal: openProjectModal(project) populates and shows modal, close on backdrop/button click
+
+5. Contact form: submit handler with validation, fetch POST to /api/contact, show success/error, clear on success, include hidden honeypot field
+
+6. Scroll animations: IntersectionObserver on cards, add 'visible' class when intersecting
+
+7. Smooth scroll: nav links use scrollIntoView({behavior: 'smooth'})
+
+8. Error handling: try-catch on fetches, user-friendly messages
+
+# Test Strategy:
+Test canvas animation runs smoothly and resizes. Verify /api/projects called and projects render. Test empty state handling. Test modal opens with correct data and closes. Test contact form submission, validation, success message. Test scroll animations trigger. Test smooth scroll navigation. Test error handling with API disconnected. Test loading states with throttled network

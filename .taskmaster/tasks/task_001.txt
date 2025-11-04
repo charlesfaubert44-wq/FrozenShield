@@ -1,0 +1,22 @@
+# Task ID: 1
+# Title: Set up Node.js/Express server with middleware stack and MongoDB connection
+# Status: pending
+# Dependencies: None
+# Priority: high
+# Description: Initialize the backend foundation with Express.js web server, configure essential middleware (Helmet, CORS, rate limiting, body-parser), establish MongoDB connection with Mongoose ODM, and implement environment-based configuration using dotenv.
+# Details:
+1. Initialize Node.js project with package.json
+2. Install dependencies: express@^4.18.2, mongoose@^8.0.3, dotenv@^16.3.1, cors@^2.8.5, helmet@^7.1.0, express-rate-limit@^7.1.5, bcryptjs@^2.4.3, jsonwebtoken@^9.0.2, nodemailer@^6.9.7
+3. Create server/server.js as main entry point
+4. Configure Express middleware: helmet(), cors(), express.json(), rate-limit (100 req/15min)
+5. Set up static file serving from /public
+6. Create server/config/db.js with MongoDB connection using mongoose.connect()
+7. Implement connection retry logic with exponential backoff
+8. Load .env variables: PORT, MONGODB_URI, JWT_SECRET, NODE_ENV
+9. Add error handling middleware
+10. Implement graceful shutdown (SIGTERM/SIGINT)
+11. Add health check endpoint GET /api/health
+12. Start server on configured PORT
+
+# Test Strategy:
+Verify server starts and listens on port, MongoDB connects successfully, health check returns 200, static files serve correctly, security headers present, rate limiting works (429 on 101st request), graceful shutdown executes, environment variables load correctly
