@@ -43,6 +43,9 @@ const projectSchema = new mongoose.Schema({
     }
 });
 
+// Indexes
+projectSchema.index({ featured: 1, order: 1 });
+
 // Update the updatedAt timestamp before saving
 projectSchema.pre('save', function(next) {
     this.updatedAt = Date.now();

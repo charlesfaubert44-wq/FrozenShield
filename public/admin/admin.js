@@ -1,3 +1,6 @@
+// DEV MODE: Set to true to bypass login (DISABLE IN PRODUCTION!)
+const DEV_MODE = false;
+
 const API_URL = window.location.origin + '/api';
 let authToken = localStorage.getItem('adminToken');
 let allProjects = [];
@@ -6,6 +9,21 @@ let currentAdmin = null;
 
 // Check authentication on load - MUST be authenticated to access dashboard
 document.addEventListener('DOMContentLoaded', () => {
+    if (DEV_MODE) {
+        // Skip authentication in dev mode
+        console.warn('DEV MODE: Authentication bypassed!');
+        currentAdmin = { username: 'dev', email: 'dev@localhost' };
+
+        // Hide login screen and show dashboard
+        document.getElementById('login-screen').classList.remove('active');
+        document.getElementById('register-screen').classList.remove('active');
+        document.getElementById('dashboard-screen').classList.add('active');
+
+        setupEventListeners();
+        loadDashboard();
+        return;
+    }
+
     // Redirect to login if no token
     if (!authToken) {
         window.location.href = '/admin/login';

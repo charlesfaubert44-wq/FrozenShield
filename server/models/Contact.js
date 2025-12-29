@@ -25,10 +25,23 @@ const contactSchema = new mongoose.Schema({
         enum: ['new', 'read', 'replied'],
         default: 'new'
     },
+    notes: {
+        type: String,
+        trim: true,
+        maxlength: [500, 'Notes cannot be more than 500 characters']
+    },
+    submittedAt: {
+        type: Date,
+        default: Date.now
+    },
     createdAt: {
         type: Date,
         default: Date.now
     }
 });
+
+// Indexes
+contactSchema.index({ status: 1 });
+contactSchema.index({ submittedAt: -1 });
 
 module.exports = mongoose.model('Contact', contactSchema);

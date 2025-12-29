@@ -105,7 +105,7 @@ router.get('/structured-data.json', async (req, res) => {
                     "name": "Frozen Shield Studio",
                     "url": baseUrl,
                     "logo": `${baseUrl}/logo.png`,
-                    "description": "Expert web development and custom applications for businesses in Canada's remote territories",
+                    "description": "Professional photography, cinematic videography, and custom web development for businesses in Canada's remote territories",
                     "address": {
                         "@type": "PostalAddress",
                         "addressLocality": "Yellowknife",
@@ -155,19 +155,24 @@ router.get('/structured-data.json', async (req, res) => {
                     "@type": "ProfessionalService",
                     "name": "Frozen Shield Studio",
                     "url": baseUrl,
-                    "description": "Custom web development and applications for Canada's northern territories",
+                    "description": "Professional photography, cinematic videography, and custom web development for Canada's northern territories",
                     "serviceType": [
+                        "Photography",
+                        "Videography",
                         "Web Development",
+                        "Landscape Photography",
+                        "Event Photography",
+                        "Commercial Photography",
+                        "Drone Videography",
+                        "Corporate Video Production",
                         "Custom Web Applications",
-                        "Database Integration",
-                        "Offline-First Development",
-                        "Mobile-Responsive Design"
+                        "E-commerce Development"
                     ],
                     "areaServed": {
                         "@type": "Country",
                         "name": "Canada"
                     },
-                    "slogan": "We create tailored web applications that solve real problems",
+                    "slogan": "We fish, we tell stories, and we build apps. Sometimes in that order.",
                     "knowsAbout": Array.from(allTags)
                 },
                 {

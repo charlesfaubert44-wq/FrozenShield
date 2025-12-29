@@ -15,12 +15,16 @@ A modern, fullstack portfolio website for showcasing custom web development serv
 
 ### Backend & Admin
 - RESTful API with Express.js
-- MongoDB database with Mongoose ODM
-- JWT-based authentication
+- MongoDB database with Mongoose ODM with automatic reconnection
+- JWT-based authentication (30-day token expiration)
 - Admin panel for content management
-- Contact form submission storage
+- Contact form submission storage with spam protection
 - Full CRUD operations for projects
-- Rate limiting and security headers
+- Rate limiting (100 req/15min global, 10 req/hour for contact form)
+- Security headers with Helmet.js
+- Graceful shutdown handling
+- Health check endpoint
+- SEO optimization with sitemap and structured data
 
 ## Tech Stack
 
@@ -112,19 +116,27 @@ FrozenShield/
 
 ### First Time Setup
 
+**Option 1: Via Admin Panel**
 1. Navigate to `http://localhost:5000/admin`
 2. Click "Register Admin" (only works for the first admin)
 3. Create your admin account
 4. Login and start managing your portfolio!
 
+**Option 2: Via Command Line**
+```bash
+npm run create-admin
+```
+Follow the prompts to create your admin account.
+
 ## API Endpoints
 
 ### Public Endpoints
 
-- `GET /api/projects` - Get all projects
-- `GET /api/projects/featured` - Get featured projects
-- `GET /api/projects/:id` - Get single project
-- `POST /api/contact` - Submit contact form
+- `GET /api/health` - Health check endpoint
+- `GET /api/projects` - Get all projects (sorted by order and date)
+- `GET /api/projects/featured` - Get featured projects only
+- `GET /api/projects/:id` - Get single project by ID
+- `POST /api/contact` - Submit contact form (10 req/hour rate limit, honeypot protected)
 
 ### Protected Endpoints (Admin only)
 
@@ -139,9 +151,9 @@ FrozenShield/
 - `DELETE /api/projects/:id` - Delete project
 
 **Contacts:**
-- `GET /api/contact` - Get all contact submissions
-- `PATCH /api/contact/:id` - Update contact status
-- `DELETE /api/contact/:id` - Delete contact
+- `GET /api/contact` - Get all contact submissions (sorted by date)
+- `PATCH /api/contact/:id` - Update contact status and notes
+- `DELETE /api/contact/:id` - Delete contact submission
 
 ## Customization
 
@@ -178,38 +190,95 @@ Projects added through the admin panel will automatically appear on the portfoli
 
 ## Deployment
 
+FrozenShield is ready to deploy to multiple platforms with comprehensive configuration files included.
+
+### Quick Start Deployment
+
+**For detailed, step-by-step instructions, see [docs/deployment-guide.md](docs/deployment-guide.md)**
+
+The project includes pre-configured files for:
+- **Docker**: `Dockerfile`, `docker-compose.yml`, `.dockerignore`
+- **Railway**: `railway.json`
+- **Render**: `render.yaml`
+- **Vercel**: `vercel.json`
+- **Heroku**: `Procfile`
+
+### Platform Quick Reference
+
+#### Railway (Recommended for Beginners)
+```bash
+# One-click deployment with GitHub integration
+# Railway auto-detects configuration from railway.json
+```
+[Deploy to Railway →](https://railway.app/new)
+
+#### Render
+```bash
+# Auto-deployment using render.yaml blueprint
+# Includes MongoDB database provisioning
+```
+[Deploy to Render →](https://render.com)
+
+#### Docker
+```bash
+# Local deployment with Docker Compose
+docker-compose up -d
+
+# Or with custom MongoDB Atlas
+docker build -t frozenshield .
+docker run -p 5000:5000 --env-file .env frozenshield
+```
+
+#### Heroku
+```bash
+heroku create your-app-name
+heroku config:set MONGODB_URI=your-mongodb-uri
+heroku config:set JWT_SECRET=your-jwt-secret
+git push heroku main
+```
+
+#### Vercel
+```bash
+vercel --prod
+```
+
+### Required Environment Variables
+
+All platforms require these variables:
+- `NODE_ENV=production`
+- `MONGODB_URI` - MongoDB Atlas connection string
+- `JWT_SECRET` - Secure random string (64+ chars)
+
+Optional (for email notifications):
+- `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`
+
 ### MongoDB Atlas Setup
 
 1. Create a free account at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
-2. Create a cluster
-3. Get your connection string
-4. Update `MONGODB_URI` in your `.env` file
+2. Create a cluster (Free M0 tier available)
+3. Configure database access (username/password)
+4. Whitelist IP addresses (0.0.0.0/0 for all platforms)
+5. Get connection string from "Connect" → "Connect your application"
 
-### Heroku Deployment
+### Deployment Checklist
 
-```bash
-# Install Heroku CLI
-heroku login
+Before deploying, review [DEPLOYMENT-CHECKLIST.md](DEPLOYMENT-CHECKLIST.md) to ensure:
+- [ ] Environment variables configured
+- [ ] MongoDB Atlas set up
+- [ ] JWT secret generated
+- [ ] Dependencies updated
+- [ ] Security audit passed
 
-# Create new app
-heroku create your-app-name
+### Post-Deployment
 
-# Set environment variables
-heroku config:set MONGODB_URI=your-mongodb-uri
-heroku config:set JWT_SECRET=your-jwt-secret
+After deployment:
+1. Create admin user: `npm run create-admin` (or via platform shell)
+2. Verify health: `https://your-app-url.com/api/health`
+3. Test admin login: `https://your-app-url.com/admin`
+4. Configure custom domain (optional)
+5. Set up monitoring and backups
 
-# Deploy
-git push heroku main
-
-# Open your app
-heroku open
-```
-
-### Railway / Render / Digital Ocean
-
-1. Connect your GitHub repository
-2. Set environment variables in the platform
-3. Deploy automatically on push
+For comprehensive deployment instructions, troubleshooting, and platform-specific guides, see [docs/deployment-guide.md](docs/deployment-guide.md).
 
 ## Environment Variables
 
@@ -220,14 +289,22 @@ heroku open
 | `JWT_SECRET` | Secret key for JWT signing | Yes |
 | `NODE_ENV` | Environment (development/production) | No |
 
-## Security Notes
+## Security Features
 
-- Change `JWT_SECRET` to a strong random string in production
-- Admin registration is automatically disabled after the first admin is created
-- All admin routes are protected with JWT authentication
-- Rate limiting is enabled on API routes (100 requests per 15 minutes)
-- Helmet.js provides security headers
-- Passwords are hashed with bcrypt
+- **JWT Authentication**: 30-day token expiration, secure signing
+- **Password Security**: Bcrypt hashing with salt rounds
+- **Admin Registration**: Automatically disabled after first admin created
+- **Rate Limiting**:
+  - Global: 100 requests per 15 minutes per IP
+  - Contact form: 10 submissions per hour per IP
+- **Spam Protection**: Honeypot field on contact form
+- **Security Headers**: Helmet.js with CSP, XSS protection, etc.
+- **Input Validation**: Server-side validation on all endpoints
+- **Graceful Shutdown**: Proper cleanup of connections on SIGTERM/SIGINT
+- **MongoDB Security**: Connection retry logic with exponential backoff
+- **Login Flexibility**: Support for login via username or email
+
+**Important**: Always change `JWT_SECRET` to a cryptographically random string in production!
 
 ## Development
 
@@ -249,6 +326,81 @@ npm start
 - Safari (latest)
 - Edge (latest)
 
+---
+
+## Documentation
+
+Comprehensive documentation is available in the `/docs` directory:
+
+- **[Architecture Guide](./docs/architecture.md)** - System architecture, design patterns, and technical overview
+- **[API Reference](./docs/api-reference.md)** - Complete API documentation with examples
+- **[Troubleshooting Guide](./docs/troubleshooting.md)** - Common issues and solutions
+- **[Maintenance Guide](./docs/maintenance.md)** - Maintenance procedures, backup strategies, and monitoring
+- **[SEO System](./docs/SEO-SYSTEM.md)** - SEO implementation and optimization guide
+- **[Contributing Guide](./CONTRIBUTING.md)** - Guidelines for contributing to the project
+
+---
+
+## Quick Links
+
+### For Developers
+- [Getting Started](#getting-started) - Installation and setup
+- [API Endpoints](#api-endpoints) - Quick API reference
+- [Customization](#customization) - Customize the site
+- [Security Features](#security-features) - Security implementation
+
+### For Administrators
+- [First Time Setup](#first-time-setup) - Create admin account
+- [Managing Projects](#managing-projects) - Content management
+- [Admin Panel](http://localhost:5000/admin) - Access admin dashboard
+
+### For Operations
+- [Deployment](#deployment) - Deploy to production
+- [Maintenance Guide](./docs/maintenance.md) - Regular maintenance tasks
+- [Troubleshooting](./docs/troubleshooting.md) - Fix common issues
+- [Backup Strategies](./docs/maintenance.md#backup-strategies) - Data backup procedures
+
+---
+
+## Support
+
+For help and support:
+
+- **Email**: hello@frozenshield.ca
+- **Documentation**: See `/docs` directory
+- **Issues**: Check [Troubleshooting Guide](./docs/troubleshooting.md)
+
+---
+
+## Contributing
+
+We welcome contributions! Please read our [Contributing Guide](./CONTRIBUTING.md) for details on:
+- Code of conduct
+- Development workflow
+- Coding standards
+- Pull request process
+
+---
+
 ## License
 
-Free to use and modify for your business needs.
+MIT License - Free to use and modify for your business needs.
+
+---
+
+## Acknowledgments
+
+Built with:
+- [Node.js](https://nodejs.org/) - JavaScript runtime
+- [Express](https://expressjs.com/) - Web framework
+- [MongoDB](https://www.mongodb.com/) - Database
+- [Mongoose](https://mongoosejs.com/) - MongoDB ODM
+- [JWT](https://jwt.io/) - Authentication
+
+---
+
+**FrozenShield Studio** - Custom web development for Canada's northern territories
+
+Website: [frozenshield.ca](https://frozenshield.ca)
+Email: hello@frozenshield.ca
+Location: Yellowknife, Northwest Territories, Canada

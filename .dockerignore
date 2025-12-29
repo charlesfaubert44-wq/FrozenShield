@@ -1,0 +1,73 @@
+# Node modules
+node_modules
+npm-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Git
+.git
+.gitignore
+.gitattributes
+.github
+
+# IDE and editor files
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+.cursor
+.clinerules
+.gemini
+.kilo
+.kiro
+.roo
+.trae
+.windsurf
+.zed
+
+# Documentation
+*.md
+!README.md
+docs/*.md
+
+# AI and agent files
+AGENT.md
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+.rules
+opencode.json
+.mcp.json
+.taskmaster
+
+# Test files
+test
+tests
+*.test.js
+*.spec.js
+coverage
+
+# Build files
+dist
+build
+
+# Logs
+logs
+*.log
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Temporary files
+tmp
+temp
+*.tmp

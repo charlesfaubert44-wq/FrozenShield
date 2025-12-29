@@ -22,11 +22,19 @@ const adminSchema = new mongoose.Schema({
         lowercase: true,
         match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email']
     },
+    role: {
+        type: String,
+        default: 'admin',
+        enum: ['admin', 'super_admin']
+    },
     createdAt: {
         type: Date,
         default: Date.now
     }
 });
+
+// Note: email and username indexes are created automatically by the unique constraint
+// No need to explicitly define them
 
 // Hash password before saving
 adminSchema.pre('save', async function(next) {

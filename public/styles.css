@@ -6,9 +6,9 @@
 }
 
 :root {
-    --bg-primary: #0a0a0f;
-    --bg-secondary: #13131a;
-    --bg-card: #1a1a24;
+    --bg-primary: #050509;
+    --bg-secondary: #0a0a10;
+    --bg-card: #0f0f18;
     --text-primary: #ffffff;
     --text-secondary: #a0a0b0;
     --accent-1: #6366f1;
@@ -42,6 +42,8 @@ body {
     justify-content: center;
     margin-bottom: 3rem;
     position: relative;
+    width: 100%;
+    overflow: visible;
 }
 
 .logo-wrapper::before {
@@ -50,8 +52,8 @@ body {
     width: 120%;
     height: 150%;
     background: radial-gradient(ellipse at center,
-        rgba(116, 192, 252, 0.12) 0%,
-        rgba(52, 152, 219, 0.08) 30%,
+        rgba(116, 192, 252, 0.05) 0%,
+        rgba(52, 152, 219, 0.03) 30%,
         transparent 70%);
     filter: blur(50px);
     animation: auraGlow 6s ease-in-out infinite;
@@ -62,19 +64,21 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
+    gap: 1rem;
+    position: relative;
 }
 
+
 .logo {
-    font-size: 7rem;
+    font-size: 6rem;
     font-weight: 950;
     display: flex;
     flex-direction: column;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.15em;
     text-align: center;
     position: relative;
     margin: 0;
-    line-height: 1;
+    line-height: 0.95;
 }
 
 .logo-line {
@@ -151,13 +155,19 @@ body {
 
 /* Studio text - bold and strong like main logo */
 .studio-text {
-    font-size: 1.5rem;
-    font-weight: 900;
-    letter-spacing: 0.6em;
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: 0.3em;
     text-transform: uppercase;
-    color: rgba(160, 210, 250, 0.8);
-    padding-left: 0.6em;
-    margin-top: 0.25rem;
+    background: linear-gradient(135deg,
+        rgba(116, 192, 252, 0.5) 0%,
+        rgba(74, 171, 247, 0.6) 50%,
+        rgba(51, 154, 240, 0.5) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    padding-left: 0.3em;
+    margin-top: 0;
     position: relative;
 }
 
@@ -214,7 +224,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    opacity: 0.08;
+    opacity: 0.03;
     z-index: 0;
     pointer-events: none;
 }
@@ -226,7 +236,7 @@ body {
     left: 50%;
     width: 800px;
     height: 800px;
-    background: radial-gradient(circle, rgba(29, 84, 108, 0.15) 0%, rgba(26, 61, 100, 0.1) 50%, transparent 70%);
+    background: radial-gradient(circle, rgba(29, 84, 108, 0.06) 0%, rgba(26, 61, 100, 0.04) 50%, transparent 70%);
     transform: translateX(-50%);
     pointer-events: none;
     z-index: 1;
@@ -288,6 +298,39 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(29, 84, 108, 0.4);
     background: linear-gradient(135deg, #1a3d64 0%, #0c2b4e 100%);
+}
+
+/* Scroll Down Arrow */
+.scroll-down-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 3rem;
+    text-decoration: none;
+    color: rgba(116, 192, 252, 0.3);
+    transition: all 0.3s ease;
+    animation: scrollBounce 2s ease-in-out infinite;
+}
+
+.scroll-down-arrow:hover {
+    color: rgba(116, 192, 252, 0.5);
+    transform: translateY(-4px);
+}
+
+.scroll-down-arrow svg {
+    stroke: currentColor;
+    filter: drop-shadow(0 2px 8px rgba(116, 192, 252, 0.1));
+}
+
+
+@keyframes scrollBounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(10px);
+    }
 }
 
 /* Scroll Indicator */
@@ -456,6 +499,53 @@ section {
     background-color: var(--bg-primary);
 }
 
+/* Portfolio Filters */
+.portfolio-filters {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 2.5rem 0 3rem;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 0.75rem 2rem;
+    background: linear-gradient(135deg, rgba(29, 84, 108, 0.2) 0%, rgba(12, 43, 78, 0.2) 100%);
+    border: 2px solid rgba(116, 192, 252, 0.2);
+    border-radius: 50px;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.filter-btn:hover {
+    background: linear-gradient(135deg, rgba(29, 84, 108, 0.3) 0%, rgba(12, 43, 78, 0.3) 100%);
+    border-color: rgba(116, 192, 252, 0.4);
+    color: rgba(116, 192, 252, 0.9);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(116, 192, 252, 0.2);
+}
+
+.filter-btn.active {
+    background: linear-gradient(135deg, #1d546c 0%, #0c2b4e 100%);
+    border-color: rgba(116, 192, 252, 0.6);
+    color: #ffffff;
+    box-shadow:
+        0 0 20px rgba(116, 192, 252, 0.3),
+        inset 0 0 20px rgba(116, 192, 252, 0.1);
+}
+
+.filter-btn.active:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 4px 16px rgba(116, 192, 252, 0.4),
+        inset 0 0 20px rgba(116, 192, 252, 0.15);
+}
+
 .projects-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -538,11 +628,56 @@ section {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
 }
 
 .preview-placeholder svg {
     width: 100%;
     height: 100%;
+}
+
+/* Video Badge for Videography Projects */
+.video-placeholder {
+    position: relative;
+}
+
+.video-badge {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.9) 0%, rgba(220, 38, 38, 0.9) 100%);
+    border-radius: 50px;
+    color: white;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow:
+        0 4px 12px rgba(239, 68, 68, 0.4),
+        inset 0 0 20px rgba(255, 255, 255, 0.1);
+    animation: videoPulse 2s ease-in-out infinite;
+}
+
+.video-badge svg {
+    width: 18px;
+    height: 18px;
+}
+
+@keyframes videoPulse {
+    0%, 100% {
+        box-shadow:
+            0 4px 12px rgba(239, 68, 68, 0.4),
+            inset 0 0 20px rgba(255, 255, 255, 0.1);
+    }
+    50% {
+        box-shadow:
+            0 4px 16px rgba(239, 68, 68, 0.6),
+            inset 0 0 25px rgba(255, 255, 255, 0.15);
+    }
 }
 
 /* Project Info */
@@ -1057,16 +1192,21 @@ section {
 /* Medium devices (tablets, 992px and down) */
 @media (max-width: 992px) {
     .logo {
-        font-size: 5.5rem;
+        font-size: 5rem;
     }
 
     .studio-text {
-        font-size: 1.3rem;
-        letter-spacing: 0.5em;
+        font-size: 1.9rem;
+        letter-spacing: 0.3em;
+        padding-left: 0.3em;
     }
 
     .hero-description {
         font-size: 1.15rem;
+    }
+
+    .brand-container {
+        gap: 0.8rem;
     }
 }
 
@@ -1077,13 +1217,22 @@ section {
     }
 
     .logo {
-        font-size: 4rem;
+        font-size: 3.5rem;
         letter-spacing: 0.1em;
     }
 
     .studio-text {
-        font-size: 1.1rem;
-        letter-spacing: 0.5em;
+        font-size: 1.5rem;
+        letter-spacing: 0.25em;
+        padding-left: 0.25em;
+    }
+
+    .brand-container {
+        gap: 0.7rem;
+    }
+
+    .logo-wrapper {
+        margin-bottom: 2rem;
     }
 
     .logo span {
@@ -1096,7 +1245,7 @@ section {
 
     .logo-wrapper::before {
         filter: blur(35px);
-        opacity: 0.6;
+        opacity: 0.3;
     }
 
     .ice-particles .particle {
@@ -1121,8 +1270,27 @@ section {
         font-size: 1rem;
     }
 
+    .scroll-down-arrow {
+        margin-top: 2.5rem;
+    }
+
+    .scroll-down-arrow svg {
+        width: 35px;
+        height: 35px;
+    }
+
     .hero-title {
         font-size: 2.5rem;
+    }
+
+    .portfolio-filters {
+        gap: 0.75rem;
+        margin: 2rem 0;
+    }
+
+    .filter-btn {
+        padding: 0.6rem 1.5rem;
+        font-size: 0.9rem;
     }
 
     .projects-grid {
@@ -1155,6 +1323,7 @@ section {
     .hero {
         padding: 2rem 0;
     }
+
 }
 
 @media (max-width: 480px) {
@@ -1174,18 +1343,27 @@ section {
     }
 
     .logo {
-        font-size: 2.8rem;
-        letter-spacing: 0.08em;
+        font-size: 2rem;
+        letter-spacing: 0.05em;
     }
 
     .logo .space {
-        width: 0.3em;
+        width: 0.25em;
     }
 
     .studio-text {
-        font-size: 0.9rem;
-        letter-spacing: 0.5em;
-        margin-top: 0.5rem;
+        font-size: 1rem;
+        letter-spacing: 0.2em;
+        margin-top: 0;
+        padding-left: 0.2em;
+    }
+
+    .brand-container {
+        gap: 0.75rem;
+    }
+
+    .container {
+        padding: 0 0.75rem;
     }
 
     .logo span {
@@ -1207,7 +1385,7 @@ section {
 
     .logo-wrapper::before {
         filter: blur(30px);
-        opacity: 0.5;
+        opacity: 0.2;
     }
 
     .brand-container {
@@ -1233,12 +1411,31 @@ section {
         font-size: 0.95rem;
     }
 
+    .scroll-down-arrow {
+        margin-top: 2rem;
+    }
+
+    .scroll-down-arrow svg {
+        width: 32px;
+        height: 32px;
+    }
+
     .container {
         padding: 0 1rem;
     }
 
     section {
         padding: 3rem 0;
+    }
+
+    .portfolio-filters {
+        gap: 0.5rem;
+        margin: 1.5rem 0 2rem;
+    }
+
+    .filter-btn {
+        padding: 0.5rem 1.2rem;
+        font-size: 0.85rem;
     }
 
     .projects-grid {
@@ -1304,5 +1501,41 @@ section {
     .modal-cta {
         padding: 1rem 1.5rem;
         font-size: 1rem;
+    }
+}
+
+/* Extra small devices (360px and down) */
+@media (max-width: 360px) {
+    .logo {
+        font-size: 1.6rem;
+        letter-spacing: 0.03em;
+    }
+
+    .logo .space {
+        width: 0.2em;
+    }
+
+    .studio-text {
+        font-size: 0.85rem;
+        letter-spacing: 0.15em;
+        padding-left: 0.15em;
+    }
+
+    .brand-container {
+        gap: 0.6rem;
+    }
+
+    .container {
+        padding: 0 0.5rem;
+    }
+
+    .hero-description {
+        font-size: 0.95rem;
+        padding: 0 0.25rem;
+    }
+
+    .btn-primary {
+        padding: 0.8rem 1.5rem;
+        font-size: 0.9rem;
     }
 }

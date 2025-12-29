@@ -49,8 +49,8 @@ router.post('/register', async (req, res) => {
         // Create token
         const token = jwt.sign(
             { id: admin._id, username: admin.username },
-            process.env.JWT_SECRET || 'your-secret-key-change-in-production',
-            { expiresIn: '7d' }
+            process.env.JWT_SECRET,
+            { expiresIn: '30d' }
         );
 
         res.status(201).json({
@@ -84,12 +84,14 @@ router.post('/login', async (req, res) => {
         if (!username || !password) {
             return res.status(400).json({
                 success: false,
-                message: 'Please provide username and password'
+                message: 'Please provide username/email and password'
             });
         }
 
-        // Check if admin exists
-        const admin = await Admin.findOne({ username });
+        // Check if admin exists (allow login by username or email)
+        const admin = await Admin.findOne({
+            $or: [{ username }, { email: username.toLowerCase() }]
+        });
         if (!admin) {
             return res.status(401).json({
                 success: false,
@@ -109,8 +111,8 @@ router.post('/login', async (req, res) => {
         // Create token
         const token = jwt.sign(
             { id: admin._id, username: admin.username },
-            process.env.JWT_SECRET || 'your-secret-key-change-in-production',
-            { expiresIn: '7d' }
+            process.env.JWT_SECRET,
+            { expiresIn: '30d' }
         );
 
         res.json({

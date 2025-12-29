@@ -1,23 +1,55 @@
 {
   "name": "frozenshield",
   "version": "1.0.0",
-  "description": "A modern, minimalistic portfolio website with fullstack capabilities",
+  "description": "Modern fullstack portfolio website for showcasing custom web development services. Features MongoDB backend, JWT authentication, admin panel, contact form, and comprehensive SEO optimization for Canada's northern territories.",
   "main": "server/server.js",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
   "scripts": {
     "start": "node server/server.js",
     "dev": "nodemon server/server.js",
     "create-admin": "node server/scripts/createAdmin.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "echo 'No build step required for Node.js backend'",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "echo 'Run: npm install -D eslint && npx eslint .'",
+    "security-check": "npm audit",
+    "update-deps": "npm outdated && npm update",
+    "docker:build": "docker build -t frozenshield:latest .",
+    "docker:run": "docker run -p 5000:5000 --env-file .env frozenshield:latest",
+    "docker:compose": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f"
   },
   "keywords": [
     "portfolio",
     "web-development",
-    "fullstack"
+    "fullstack",
+    "nodejs",
+    "express",
+    "mongodb",
+    "mongoose",
+    "jwt-authentication",
+    "admin-panel",
+    "contact-form",
+    "seo-optimization",
+    "yellowknife",
+    "northwest-territories",
+    "yukon",
+    "nunavut",
+    "canada",
+    "web-design",
+    "responsive-design",
+    "rest-api",
+    "rate-limiting",
+    "security"
   ],
-  "author": "FrozenShield",
+  "author": "FrozenShield Studio <hello@frozenshield.ca>",
   "license": "MIT",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "compression": "^1.7.4",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
@@ -26,7 +58,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.20.0",
     "mongoose": "^8.0.3",
-    "nodemailer": "^6.9.7"
+    "morgan": "^1.10.0",
+    "nodemailer": "^7.0.12"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"

@@ -1,3 +1,6 @@
+// DEV MODE: Set to true to bypass login (DISABLE IN PRODUCTION!)
+const DEV_MODE = false;
+
 const API_URL = window.location.origin + '/api';
 
 // Screen Management
@@ -10,6 +13,13 @@ function showScreen(screenId) {
 
 // Setup Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
+    // DEV MODE: Auto-redirect to dashboard
+    if (DEV_MODE) {
+        console.warn('DEV MODE: Auto-redirecting to dashboard (login bypassed)');
+        window.location.href = '/admin/dashboard';
+        return;
+    }
+
     // Check if already logged in
     const token = localStorage.getItem('adminToken');
     if (token) {

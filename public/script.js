@@ -1,5 +1,6 @@
-// Code Animation Background
-class CodeAnimation {
+// Northwest Territories Ice Crystals Animation
+// Inspired by the aurora borealis, diamond dust, and frozen landscapes of the NWT
+class IceCrystalsAnimation {
     constructor() {
         this.canvas = document.getElementById('codeCanvas');
         if (!this.canvas) return;
@@ -7,29 +8,28 @@ class CodeAnimation {
         this.ctx = this.canvas.getContext('2d');
         this.setCanvasSize();
 
-        // Code snippets to display
-        this.codeSnippets = [
-            'const', 'function', 'return', 'import', 'export', 'class',
-            'async', 'await', 'if', 'else', 'for', 'while',
-            '=>', '{}', '[]', '()', '===', '!==',
-            'React', 'Node', 'Express', 'MongoDB', 'API',
-            'const app', 'app.get', 'useState', 'useEffect',
-            'fetch()', 'async function', 'try catch', 'await',
-            'map()', 'filter()', 'reduce()', 'forEach()',
-            '{ }', '[ ]', '< >', '/ >', 'npm', 'git'
+        // Aurora Borealis color palette - inspired by Northwest Territories night sky
+        this.auroraColors = [
+            { r: 0, g: 255, b: 150, name: 'Northern Green' },      // Aurora green
+            { r: 100, g: 220, b: 255, name: 'Glacial Blue' },      // Ice blue
+            { r: 150, g: 150, b: 255, name: 'Arctic Purple' },     // Aurora purple
+            { r: 0, g: 255, b: 200, name: 'Tundra Cyan' },         // Cyan
+            { r: 200, g: 240, b: 255, name: 'Diamond White' },     // Ice white
+            { r: 80, g: 200, b: 255, name: 'Midnight Blue' }       // Deep blue
         ];
 
-        this.columns = Math.floor(this.canvas.width / 20);
-        this.drops = [];
-        this.speeds = [];
-        this.colors = [];
+        // Initialize particle systems
+        this.crystals = [];
+        this.diamondDust = [];
+        this.shimmerParticles = [];
+        this.time = 0;
 
-        for (let i = 0; i < this.columns; i++) {
-            this.drops[i] = Math.random() * -100;
-            this.speeds[i] = 0.1 + Math.random() * 0.2; // Slower speed
-            this.colors[i] = this.getRandomColor();
-        }
+        // Create ice crystal formations
+        this.initializeCrystals();
+        this.initializeDiamondDust();
+        this.initializeShimmer();
 
+        // Start animation loop
         this.animate();
         window.addEventListener('resize', () => this.handleResize());
     }
@@ -41,48 +41,314 @@ class CodeAnimation {
 
     handleResize() {
         this.setCanvasSize();
-        this.columns = Math.floor(this.canvas.width / 20);
-        this.drops = [];
-        this.speeds = [];
-        this.colors = [];
-        for (let i = 0; i < this.columns; i++) {
-            this.drops[i] = Math.random() * -100;
-            this.speeds[i] = 0.1 + Math.random() * 0.2; // Slower speed
-            this.colors[i] = this.getRandomColor();
+        this.initializeCrystals();
+        this.initializeDiamondDust();
+        this.initializeShimmer();
+    }
+
+    initializeCrystals() {
+        this.crystals = [];
+        const numCrystals = Math.floor((this.canvas.width * this.canvas.height) / 40000);
+
+        for (let i = 0; i < numCrystals; i++) {
+            this.crystals.push({
+                x: Math.random() * this.canvas.width,
+                y: Math.random() * this.canvas.height,
+                size: 15 + Math.random() * 35,
+                rotation: Math.random() * Math.PI * 2,
+                rotationSpeed: (Math.random() - 0.5) * 0.01,
+                opacity: 0.3 + Math.random() * 0.4,
+                complexity: Math.floor(Math.random() * 3), // 0: simple, 1: detailed, 2: complex
+                color: this.auroraColors[Math.floor(Math.random() * this.auroraColors.length)],
+                glowIntensity: 0.5 + Math.random() * 0.5,
+                driftX: (Math.random() - 0.5) * 0.3,
+                driftY: Math.random() * 0.2 + 0.1,
+                pulsePhase: Math.random() * Math.PI * 2,
+                pulseSpeed: 0.02 + Math.random() * 0.03
+            });
         }
     }
 
-    getRandomColor() {
-        const colors = [
-            'rgba(29, 84, 108, 0.8)',    // Medium blue
-            'rgba(26, 61, 100, 0.8)',    // Medium dark blue
-            'rgba(12, 43, 78, 0.8)',     // Dark blue
-            'rgba(96, 165, 250, 0.8)',   // Light blue
-            'rgba(244, 244, 244, 0.6)'   // White/ice
-        ];
-        return colors[Math.floor(Math.random() * colors.length)];
+    initializeDiamondDust() {
+        // Diamond dust - tiny ice particles suspended in arctic air
+        this.diamondDust = [];
+        const numParticles = Math.floor((this.canvas.width * this.canvas.height) / 8000);
+
+        for (let i = 0; i < numParticles; i++) {
+            this.diamondDust.push({
+                x: Math.random() * this.canvas.width,
+                y: Math.random() * this.canvas.height,
+                size: 1 + Math.random() * 2,
+                speed: 0.1 + Math.random() * 0.5,
+                opacity: 0.3 + Math.random() * 0.5,
+                twinkle: Math.random() * Math.PI * 2,
+                twinkleSpeed: 0.05 + Math.random() * 0.1,
+                drift: (Math.random() - 0.5) * 0.2
+            });
+        }
+    }
+
+    initializeShimmer() {
+        // Shimmer particles for magical aurora-like sparkle effect
+        this.shimmerParticles = [];
+        const numShimmers = 30;
+
+        for (let i = 0; i < numShimmers; i++) {
+            this.shimmerParticles.push({
+                x: Math.random() * this.canvas.width,
+                y: Math.random() * this.canvas.height,
+                life: Math.random(),
+                maxLife: 60 + Math.random() * 120,
+                size: 2 + Math.random() * 4,
+                color: this.auroraColors[Math.floor(Math.random() * this.auroraColors.length)]
+            });
+        }
+    }
+
+    drawHexagonalCrystal(x, y, size, rotation, complexity, color, opacity, glowIntensity) {
+        this.ctx.save();
+        this.ctx.translate(x, y);
+        this.ctx.rotate(rotation);
+
+        // Create radial gradient for aurora-like glow
+        const gradient = this.ctx.createRadialGradient(0, 0, 0, 0, 0, size * 1.5);
+        gradient.addColorStop(0, `rgba(${color.r}, ${color.g}, ${color.b}, ${opacity * glowIntensity})`);
+        gradient.addColorStop(0.5, `rgba(${color.r}, ${color.g}, ${color.b}, ${opacity * 0.3})`);
+        gradient.addColorStop(1, `rgba(${color.r}, ${color.g}, ${color.b}, 0)`);
+
+        // Draw outer glow
+        this.ctx.fillStyle = gradient;
+        this.ctx.beginPath();
+        this.ctx.arc(0, 0, size * 1.5, 0, Math.PI * 2);
+        this.ctx.fill();
+
+        // Configure crystal appearance
+        this.ctx.strokeStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${opacity})`;
+        this.ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${opacity * 0.15})`;
+        this.ctx.lineWidth = 1.5;
+
+        // Draw main hexagonal structure
+        this.ctx.beginPath();
+        for (let i = 0; i < 6; i++) {
+            const angle = (Math.PI / 3) * i;
+            const pointX = Math.cos(angle) * size;
+            const pointY = Math.sin(angle) * size;
+            if (i === 0) {
+                this.ctx.moveTo(pointX, pointY);
+            } else {
+                this.ctx.lineTo(pointX, pointY);
+            }
+        }
+        this.ctx.closePath();
+        this.ctx.fill();
+        this.ctx.stroke();
+
+        // Add complexity - dendrite patterns (like real ice crystals)
+        if (complexity >= 1) {
+            // Inner hexagon
+            const innerSize = size * 0.5;
+            this.ctx.beginPath();
+            for (let i = 0; i < 6; i++) {
+                const angle = (Math.PI / 3) * i;
+                const pointX = Math.cos(angle) * innerSize;
+                const pointY = Math.sin(angle) * innerSize;
+                if (i === 0) {
+                    this.ctx.moveTo(pointX, pointY);
+                } else {
+                    this.ctx.lineTo(pointX, pointY);
+                }
+            }
+            this.ctx.closePath();
+            this.ctx.stroke();
+
+            // Radial spokes connecting inner and outer hexagons
+            for (let i = 0; i < 6; i++) {
+                const angle = (Math.PI / 3) * i;
+                this.ctx.beginPath();
+                this.ctx.moveTo(Math.cos(angle) * innerSize, Math.sin(angle) * innerSize);
+                this.ctx.lineTo(Math.cos(angle) * size, Math.sin(angle) * size);
+                this.ctx.stroke();
+            }
+        }
+
+        if (complexity >= 2) {
+            // Complex dendritic branching (snowflake-like patterns)
+            for (let i = 0; i < 6; i++) {
+                const angle = (Math.PI / 3) * i;
+                const startX = Math.cos(angle) * (size * 0.5);
+                const startY = Math.sin(angle) * (size * 0.5);
+                const endX = Math.cos(angle) * size;
+                const endY = Math.sin(angle) * size;
+
+                // Draw intricate branch patterns
+                this.ctx.lineWidth = 1;
+                const branches = 3;
+                for (let b = 1; b <= branches; b++) {
+                    const t = b / (branches + 1);
+                    const branchX = startX + (endX - startX) * t;
+                    const branchY = startY + (endY - startY) * t;
+
+                    // Side branches creating dendritic structure
+                    const branchAngle1 = angle + Math.PI / 6;
+                    const branchAngle2 = angle - Math.PI / 6;
+                    const branchLength = size * 0.15;
+
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(branchX, branchY);
+                    this.ctx.lineTo(
+                        branchX + Math.cos(branchAngle1) * branchLength,
+                        branchY + Math.sin(branchAngle1) * branchLength
+                    );
+                    this.ctx.stroke();
+
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(branchX, branchY);
+                    this.ctx.lineTo(
+                        branchX + Math.cos(branchAngle2) * branchLength,
+                        branchY + Math.sin(branchAngle2) * branchLength
+                    );
+                    this.ctx.stroke();
+                }
+            }
+
+            // Center star pattern
+            this.ctx.lineWidth = 1.5;
+            for (let i = 0; i < 6; i++) {
+                const angle = (Math.PI / 3) * i + Math.PI / 6;
+                this.ctx.beginPath();
+                this.ctx.moveTo(0, 0);
+                this.ctx.lineTo(Math.cos(angle) * size * 0.3, Math.sin(angle) * size * 0.3);
+                this.ctx.stroke();
+            }
+        }
+
+        this.ctx.restore();
     }
 
     animate() {
-        this.ctx.fillStyle = 'rgba(10, 10, 15, 0.05)';
+        // Create atmospheric gradient background
+        const bgGradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
+        bgGradient.addColorStop(0, 'rgba(10, 10, 15, 0.3)');
+        bgGradient.addColorStop(1, 'rgba(10, 10, 15, 0.3)');
+        this.ctx.fillStyle = bgGradient;
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        this.ctx.font = '14px "Fira Code", "Courier New", monospace';
+        this.time += 1;
 
-        for (let i = 0; i < this.drops.length; i++) {
-            const text = this.codeSnippets[Math.floor(Math.random() * this.codeSnippets.length)];
-            this.ctx.fillStyle = this.colors[i];
-            this.ctx.fillText(text, i * 20, this.drops[i] * 20);
+        // Animate diamond dust particles (falling ice crystals in air)
+        this.diamondDust.forEach(particle => {
+            particle.y += particle.speed;
+            particle.x += particle.drift;
+            particle.twinkle += particle.twinkleSpeed;
 
-            if (this.drops[i] * 20 > this.canvas.height && Math.random() > 0.975) {
-                this.drops[i] = 0;
-                this.colors[i] = this.getRandomColor();
+            // Wrap particles around screen
+            if (particle.y > this.canvas.height) {
+                particle.y = -10;
+                particle.x = Math.random() * this.canvas.width;
+            }
+            if (particle.x < 0 || particle.x > this.canvas.width) {
+                particle.x = Math.random() * this.canvas.width;
             }
 
-            this.drops[i] += this.speeds[i];
-        }
+            // Twinkling effect (like real diamond dust catching light)
+            const twinkleOpacity = particle.opacity * (0.5 + 0.5 * Math.sin(particle.twinkle));
 
-        requestAnimationFrame(() => this.animate());
+            // Draw particle with subtle glow
+            this.ctx.shadowBlur = 4;
+            this.ctx.shadowColor = `rgba(200, 240, 255, ${twinkleOpacity})`;
+            this.ctx.fillStyle = `rgba(200, 240, 255, ${twinkleOpacity})`;
+            this.ctx.beginPath();
+            this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+            this.ctx.fill();
+            this.ctx.shadowBlur = 0;
+        });
+
+        // Animate main ice crystal formations
+        this.crystals.forEach(crystal => {
+            // Pulsing glow effect (aurora-like breathing)
+            crystal.pulsePhase += crystal.pulseSpeed;
+            const pulseFactor = 0.7 + 0.3 * Math.sin(crystal.pulsePhase);
+
+            // Gentle drift animation
+            crystal.x += crystal.driftX;
+            crystal.y += crystal.driftY;
+            crystal.rotation += crystal.rotationSpeed;
+
+            // Wrap crystals around screen edges
+            if (crystal.x < -100) crystal.x = this.canvas.width + 100;
+            if (crystal.x > this.canvas.width + 100) crystal.x = -100;
+            if (crystal.y > this.canvas.height + 100) {
+                crystal.y = -100;
+                crystal.x = Math.random() * this.canvas.width;
+            }
+
+            // Draw the ice crystal
+            this.drawHexagonalCrystal(
+                crystal.x,
+                crystal.y,
+                crystal.size,
+                crystal.rotation,
+                crystal.complexity,
+                crystal.color,
+                crystal.opacity,
+                crystal.glowIntensity * pulseFactor
+            );
+        });
+
+        // Animate shimmer/sparkle particles (aurora-like magic)
+        this.shimmerParticles.forEach((shimmer, index) => {
+            shimmer.life++;
+
+            if (shimmer.life > shimmer.maxLife) {
+                // Respawn shimmer
+                shimmer.x = Math.random() * this.canvas.width;
+                shimmer.y = Math.random() * this.canvas.height;
+                shimmer.life = 0;
+                shimmer.maxLife = 60 + Math.random() * 120;
+                shimmer.color = this.auroraColors[Math.floor(Math.random() * this.auroraColors.length)];
+            }
+
+            // Smooth fade in/out
+            const lifeRatio = shimmer.life / shimmer.maxLife;
+            let opacity;
+            if (lifeRatio < 0.2) {
+                opacity = lifeRatio / 0.2;
+            } else if (lifeRatio > 0.8) {
+                opacity = (1 - lifeRatio) / 0.2;
+            } else {
+                opacity = 1;
+            }
+
+            // Draw four-pointed star sparkle
+            this.ctx.shadowBlur = 8;
+            this.ctx.shadowColor = `rgba(${shimmer.color.r}, ${shimmer.color.g}, ${shimmer.color.b}, ${opacity})`;
+            this.ctx.fillStyle = `rgba(${shimmer.color.r}, ${shimmer.color.g}, ${shimmer.color.b}, ${opacity * 0.8})`;
+
+            this.ctx.save();
+            this.ctx.translate(shimmer.x, shimmer.y);
+            this.ctx.beginPath();
+            for (let i = 0; i < 4; i++) {
+                const angle = (Math.PI / 2) * i;
+                const x = Math.cos(angle) * shimmer.size;
+                const y = Math.sin(angle) * shimmer.size;
+                if (i === 0) {
+                    this.ctx.moveTo(x, y);
+                } else {
+                    this.ctx.lineTo(x, y);
+                }
+            }
+            this.ctx.closePath();
+            this.ctx.fill();
+            this.ctx.restore();
+            this.ctx.shadowBlur = 0;
+        });
+
+        // Continue animation loop (with tab visibility optimization)
+        if (!document.hidden) {
+            requestAnimationFrame(() => this.animate());
+        } else {
+            setTimeout(() => this.animate(), 100);
+        }
     }
 }
 
@@ -194,11 +460,20 @@ class AuroraAnimation {
     }
 }
 
+// Pause animations when tab is hidden (performance optimization)
+let iceCrystalsAnimation;
+
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden && iceCrystalsAnimation) {
+        // Animation will naturally pause as RAF stops when tab is hidden
+        // This is handled automatically by requestAnimationFrame
+    }
+});
+
 // Initialize animations when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    // Aurora disabled due to performance issues
-    // new AuroraAnimation();
-    new CodeAnimation();
+    // Initialize the Northwest Territories Ice Crystals animation
+    iceCrystalsAnimation = new IceCrystalsAnimation();
 });
 
 // Smooth scrolling for navigation links
@@ -305,24 +580,21 @@ if (contactForm) {
     });
 }
 
-// Add parallax effect to hero section
+// Consolidated scroll handler for parallax and scroll indicator
 window.addEventListener('scroll', () => {
     const scrolled = window.pageYOffset;
-    const heroContent = document.querySelector('.hero-content');
 
+    // Parallax effect on hero section
+    const heroContent = document.querySelector('.hero-content');
     if (heroContent && scrolled < window.innerHeight) {
         heroContent.style.transform = `translateY(${scrolled * 0.5}px)`;
         heroContent.style.opacity = 1 - (scrolled / window.innerHeight);
     }
-});
 
-// Hide scroll indicator on scroll
-window.addEventListener('scroll', () => {
+    // Hide scroll indicator after scrolling
     const scrollIndicator = document.querySelector('.scroll-indicator');
-    if (scrollIndicator && window.pageYOffset > 100) {
-        scrollIndicator.style.opacity = '0';
-    } else if (scrollIndicator) {
-        scrollIndicator.style.opacity = '1';
+    if (scrollIndicator) {
+        scrollIndicator.style.opacity = scrolled > 100 ? '0' : '1';
     }
 });
 
@@ -470,10 +742,48 @@ async function updateStructuredData() {
     }
 }
 
+// Portfolio Filter Functionality
+function initPortfolioFilters() {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const projectCards = document.querySelectorAll('.project-card');
+
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const filterValue = this.getAttribute('data-filter');
+
+            // Update active button state
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+
+            // Filter project cards
+            projectCards.forEach(card => {
+                const category = card.getAttribute('data-category');
+
+                if (filterValue === 'all' || category === filterValue) {
+                    // Show card with fade-in animation
+                    card.style.display = 'block';
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 10);
+                } else {
+                    // Hide card with fade-out
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        card.style.display = 'none';
+                    }, 300);
+                }
+            });
+        });
+    });
+}
+
 // Initialize interactivity when DOM is loaded
 window.addEventListener('DOMContentLoaded', () => {
     initServiceCards();
     initProjectCards();
+    initPortfolioFilters(); // Initialize portfolio filters
     updateStructuredData(); // Load dynamic SEO data
 
     // Add staggered fade-in animation to cards
