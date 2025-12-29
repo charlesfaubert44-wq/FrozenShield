@@ -781,13 +781,13 @@ function initPortfolioFilters() {
 
 // Initialize interactivity when DOM is loaded
 window.addEventListener('DOMContentLoaded', () => {
-    initServiceCards();
+    initServicesCarousel(); // Initialize carousel instead of cards
     initProjectCards();
     initPortfolioFilters(); // Initialize portfolio filters
     updateStructuredData(); // Load dynamic SEO data
 
-    // Add staggered fade-in animation to cards
-    const cards = document.querySelectorAll('.service-card, .project-card');
+    // Add staggered fade-in animation to project cards only
+    const cards = document.querySelectorAll('.project-card');
     cards.forEach((card, index) => {
         card.style.opacity = '0';
         card.style.transform = 'translateY(30px)';
@@ -799,3 +799,138 @@ window.addEventListener('DOMContentLoaded', () => {
         }, index * 100);
     });
 });
+
+// Services Carousel
+function initServicesCarousel() {
+    const track = document.querySelector('.carousel-track');
+    const slides = Array.from(document.querySelectorAll('.service-slide'));
+    const dots = Array.from(document.querySelectorAll('.carousel-dot'));
+    const prevBtn = document.querySelector('.carousel-prev');
+    const nextBtn = document.querySelector('.carousel-next');
+
+    let currentSlide = 0;
+    let isTransitioning = false;
+    let autoPlayInterval;
+
+    // Move to specific slide
+    function goToSlide(index) {
+        if (isTransitioning) return;
+        isTransitioning = true;
+
+        // Remove active class from current slide
+        slides[currentSlide].classList.remove('active');
+        dots[currentSlide].classList.remove('active');
+
+        // Update current slide
+        currentSlide = index;
+
+        // Add active class to new slide
+        slides[currentSlide].classList.add('active');
+        dots[currentSlide].classList.add('active');
+
+        // Move track
+        track.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+        setTimeout(() => {
+            isTransitioning = false;
+        }, 600);
+    }
+
+    // Next slide
+    function nextSlide() {
+        const next = (currentSlide + 1) % slides.length;
+        goToSlide(next);
+    }
+
+    // Previous slide
+    function prevSlide() {
+        const prev = (currentSlide - 1 + slides.length) % slides.length;
+        goToSlide(prev);
+    }
+
+    // Event listeners
+    prevBtn.addEventListener('click', () => {
+        prevSlide();
+        resetAutoPlay();
+    });
+
+    nextBtn.addEventListener('click', () => {
+        nextSlide();
+        resetAutoPlay();
+    });
+
+    // Dot navigation
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            goToSlide(index);
+            resetAutoPlay();
+        });
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') {
+            prevSlide();
+            resetAutoPlay();
+        } else if (e.key === 'ArrowRight') {
+            nextSlide();
+            resetAutoPlay();
+        }
+    });
+
+    // Touch/swipe support
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    track.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    });
+
+    track.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    });
+
+    function handleSwipe() {
+        const swipeThreshold = 50;
+        if (touchStartX - touchEndX > swipeThreshold) {
+            nextSlide();
+            resetAutoPlay();
+        }
+        if (touchEndX - touchStartX > swipeThreshold) {
+            prevSlide();
+            resetAutoPlay();
+        }
+    }
+
+    // Auto-play
+    function startAutoPlay() {
+        autoPlayInterval = setInterval(nextSlide, 5000); // Change slide every 5 seconds
+    }
+
+    function stopAutoPlay() {
+        clearInterval(autoPlayInterval);
+    }
+
+    function resetAutoPlay() {
+        stopAutoPlay();
+        startAutoPlay();
+    }
+
+    // Start auto-play
+    startAutoPlay();
+
+    // Pause auto-play on hover
+    const carousel = document.querySelector('.carousel-container');
+    carousel.addEventListener('mouseenter', stopAutoPlay);
+    carousel.addEventListener('mouseleave', startAutoPlay);
+
+    // Pause auto-play when page is not visible
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            stopAutoPlay();
+        } else {
+            startAutoPlay();
+        }
+    });
+}
