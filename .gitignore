@@ -11,7 +11,7 @@ Thumbs.db
 
 # Dependencies
 node_modules/
-package-lock.json
+# package-lock.json (needed for Docker builds)
 yarn.lock
 pnpm-lock.yaml
 
