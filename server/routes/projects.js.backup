@@ -251,16 +251,24 @@ router.delete('/:id', auth, async (req, res) => {
 });
 
 // @route   POST /api/projects/:id/media
-// @desc    Add media item to project
+// @desc    Add media to project
 // @access  Private (Admin only)
 router.post('/:id/media', auth, async (req, res) => {
     try {
         const { url, type, caption, order } = req.body;
 
+        // Validation
         if (!url || !type) {
             return res.status(400).json({
                 success: false,
                 message: 'Please provide url and type'
+            });
+        }
+
+        if (!['image', 'video'].includes(type)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Type must be either image or video'
             });
         }
 
@@ -273,16 +281,19 @@ router.post('/:id/media', auth, async (req, res) => {
             });
         }
 
-        project.media.push({
+        // Add new media item
+        const newMedia = {
             url,
             type,
             caption: caption || '',
-            order: order || project.media.length
-        });
+            order: order !== undefined ? order : project.media.length
+        };
 
+        project.media.push(newMedia);
+        project.updatedAt = Date.now();
         await project.save();
 
-        res.json({
+        res.status(201).json({
             success: true,
             message: 'Media added successfully',
             data: project
@@ -298,7 +309,7 @@ router.post('/:id/media', auth, async (req, res) => {
 });
 
 // @route   DELETE /api/projects/:id/media/:mediaId
-// @desc    Delete media item from project
+// @desc    Remove media from project
 // @access  Private (Admin only)
 router.delete('/:id/media/:mediaId', auth, async (req, res) => {
     try {
@@ -311,35 +322,49 @@ router.delete('/:id/media/:mediaId', auth, async (req, res) => {
             });
         }
 
-        project.media = project.media.filter(m => m._id.toString() !== req.params.mediaId);
+        // Find and remove the media item
+        const mediaIndex = project.media.findIndex(
+            item => item._id.toString() === req.params.mediaId
+        );
+
+        if (mediaIndex === -1) {
+            return res.status(404).json({
+                success: false,
+                message: 'Media not found'
+            });
+        }
+
+        project.media.splice(mediaIndex, 1);
+        project.updatedAt = Date.now();
         await project.save();
 
         res.json({
             success: true,
-            message: 'Media deleted successfully',
+            message: 'Media removed successfully',
             data: project
         });
     } catch (error) {
-        console.error('Delete media error:', error);
+        console.error('Remove media error:', error);
         res.status(500).json({
             success: false,
-            message: 'Failed to delete media',
+            message: 'Failed to remove media',
             error: error.message
         });
     }
 });
 
 // @route   PUT /api/projects/:id/media/reorder
-// @desc    Reorder media items in project
+// @desc    Reorder media in project
 // @access  Private (Admin only)
 router.put('/:id/media/reorder', auth, async (req, res) => {
     try {
-        const { newOrder } = req.body;
+        const { mediaOrder } = req.body;
 
-        if (!Array.isArray(newOrder)) {
+        // Validation
+        if (!Array.isArray(mediaOrder)) {
             return res.status(400).json({
                 success: false,
-                message: 'Please provide newOrder array'
+                message: 'mediaOrder must be an array of {mediaId, order} objects'
             });
         }
 
@@ -353,15 +378,18 @@ router.put('/:id/media/reorder', auth, async (req, res) => {
         }
 
         // Update order for each media item
-        newOrder.forEach((mediaId, index) => {
-            const mediaItem = project.media.find(m => m._id.toString() === mediaId);
+        mediaOrder.forEach(({ mediaId, order }) => {
+            const mediaItem = project.media.find(
+                item => item._id.toString() === mediaId
+            );
             if (mediaItem) {
-                mediaItem.order = index;
+                mediaItem.order = order;
             }
         });
 
-        // Sort media by order
+        // Sort media array by order
         project.media.sort((a, b) => a.order - b.order);
+        project.updatedAt = Date.now();
         await project.save();
 
         res.json({
@@ -374,48 +402,6 @@ router.put('/:id/media/reorder', auth, async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Failed to reorder media',
-            error: error.message
-        });
-    }
-});
-
-// @route   PUT /api/projects/:id/media/:mediaId
-// @desc    Update media item caption
-// @access  Private (Admin only)
-router.put('/:id/media/:mediaId', auth, async (req, res) => {
-    try {
-        const { caption } = req.body;
-
-        const project = await Project.findById(req.params.id);
-
-        if (!project) {
-            return res.status(404).json({
-                success: false,
-                message: 'Project not found'
-            });
-        }
-
-        const mediaItem = project.media.find(m => m._id.toString() === req.params.mediaId);
-        if (!mediaItem) {
-            return res.status(404).json({
-                success: false,
-                message: 'Media item not found'
-            });
-        }
-
-        mediaItem.caption = caption || '';
-        await project.save();
-
-        res.json({
-            success: true,
-            message: 'Media caption updated successfully',
-            data: project
-        });
-    } catch (error) {
-        console.error('Update media caption error:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Failed to update media caption',
             error: error.message
         });
     }

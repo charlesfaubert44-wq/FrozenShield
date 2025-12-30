@@ -73,6 +73,8 @@ app.get('/api/health', (req, res) => {
 app.use('/api/contact', require('./routes/contact'));
 app.use('/api/projects', require('./routes/projects'));
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/invoices', require('./routes/invoices'));
+app.use('/api/media', require('./routes/media'));
 
 // SEO Routes (before static files to handle sitemap.xml and structured data)
 app.use('/', require('./routes/seo'));
