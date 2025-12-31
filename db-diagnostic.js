@@ -40,7 +40,14 @@ async function runDiagnostic() {
         console.log('Connecting to MongoDB...');
         console.log(`Target: ${MONGODB_URI.replace(/\/\/.*:.*@/, '//****:****@')}\n`);
 
-        await mongoose.connect(MONGODB_URI, {
+        // Ensure authSource=admin is set for root user
+        let mongoUri = MONGODB_URI;
+        if (mongoUri.includes('root:') && !mongoUri.includes('authSource=')) {
+            mongoUri += (mongoUri.includes('?') ? '&' : '?') + 'authSource=admin';
+            console.log('Note: Added authSource=admin for root user authentication\n');
+        }
+
+        await mongoose.connect(mongoUri, {
             serverSelectionTimeoutMS: 10000,
             connectTimeoutMS: 10000
         });

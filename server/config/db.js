@@ -25,7 +25,16 @@ const connectDB = async (retries = 5, delay = 5000) => {
      */
     const attemptConnection = async () => {
         try {
-            const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/frozenshield', {
+            // Get MongoDB URI and ensure authSource is set for root user
+            let mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/frozenshield';
+
+            // If using root user and authSource is not specified, add it
+            if (mongoUri.includes('root:') && !mongoUri.includes('authSource=')) {
+                mongoUri += (mongoUri.includes('?') ? '&' : '?') + 'authSource=admin';
+                console.log('MongoDB: Added authSource=admin for root user authentication');
+            }
+
+            const conn = await mongoose.connect(mongoUri, {
                 // Connection pooling configuration
                 maxPoolSize: 10, // Maximum number of connections in the pool
                 minPoolSize: 5, // Minimum number of connections to maintain

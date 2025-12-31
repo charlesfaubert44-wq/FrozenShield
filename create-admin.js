@@ -8,12 +8,19 @@ const mongoose = require('mongoose');
 const User = require('./server/models/User');
 
 // Connect to MongoDB
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://root:3STHRYyW2WFzJiiGc0jb1xcxvbDGxb538jpvi98ObQUbrXL0dFpVDoBrpJGrRPuM@g4ow4c844wwwkcwkw0cc8o4o:27017/frozenshield?directConnection=true';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://root:3STHRYyW2WFzJiiGc0jb1xcxvbDGxb538jpvi98ObQUbrXL0dFpVDoBrpJGrRPuM@g4ow4c844wwwkcwkw0cc8o4o:27017/frozenshield?directConnection=true&authSource=admin';
 
 async function createAdmin() {
     try {
         console.log('Connecting to MongoDB...');
-        await mongoose.connect(MONGODB_URI);
+
+        // Ensure authSource=admin is set for root user
+        let mongoUri = MONGODB_URI;
+        if (mongoUri.includes('root:') && !mongoUri.includes('authSource=')) {
+            mongoUri += (mongoUri.includes('?') ? '&' : '?') + 'authSource=admin';
+        }
+
+        await mongoose.connect(mongoUri);
         console.log('✓ Connected to MongoDB');
 
         // Check if any users exist

@@ -2,7 +2,7 @@
 
 ## Problem Summary
 
-The FrozenShield application had **3 critical bugs** preventing admin registration and login:
+The FrozenShield application had **4 critical bugs** preventing admin registration and login:
 
 ### Bug #1: Frontend/Backend Error Field Mismatch ✅ FIXED
 - **Issue**: Frontend checked `data.error` but backend sent `data.message`
@@ -19,11 +19,25 @@ The FrozenShield application had **3 critical bugs** preventing admin registrati
 - **Impact**: Users created passwords that passed frontend but failed backend
 - **Fix**: Updated frontend validation to match backend requirements
 
+### Bug #4: Missing MongoDB authSource Parameter ✅ FIXED
+- **Issue**: Connection string missing `&authSource=admin` when using root user
+- **Impact**: MongoDB authentication failed with "Authentication failed" error
+- **Fix**: Code now automatically adds `authSource=admin` for root user connections
+- **Root Cause**: When authenticating with MongoDB's `root` user, must specify `authSource=admin`
+
 ---
 
 ## Quick Fix for Production
 
-### Step 1: Connect to Production Server
+**IMPORTANT**: The code now automatically adds `authSource=admin` for root user connections, so the authentication issue is fixed! Just redeploy and run the diagnostic.
+
+### Step 1: Wait for Deployment
+
+The fix has been pushed to GitHub. Coolify will auto-deploy the new version with the MongoDB authentication fix.
+
+Check Coolify dashboard for deployment status.
+
+### Step 2: Connect to Production Server
 
 SSH into your Coolify server or Docker host:
 
@@ -31,25 +45,25 @@ SSH into your Coolify server or Docker host:
 ssh user@your-server
 ```
 
-### Step 2: Run Database Diagnostic
+### Step 3: Run Database Diagnostic
 
 Check if database has stale users:
 
 ```bash
-# Get the container name (should be: x0w0ck4sg8sg4sk08skogkog-213636601859)
-docker ps | grep frozenshield
-
-# Run diagnostic inside container
-docker exec -it x0w0ck4sg8sg4sk08skogkog-213636601859 node db-diagnostic.js
+# Auto-detect container and run diagnostic
+CONTAINER=$(docker ps --filter "name=x0w0ck4sg8sg4sk08skogkog" --format "{{.Names}}" | head -n 1)
+echo "Using container: $CONTAINER"
+docker exec $CONTAINER node db-diagnostic.js
 ```
 
-### Step 3: Clean Database and Create Admin
+### Step 4: Clean Database and Create Admin
 
 If diagnostic shows existing users, clean and create fresh admin:
 
 ```bash
-# Clean database and create default admin
-docker exec -it x0w0ck4sg8sg4sk08skogkog-213636601859 node db-diagnostic.js --clean --create-admin
+# Auto-detect container and clean database
+CONTAINER=$(docker ps --filter "name=x0w0ck4sg8sg4sk08skogkog" --format "{{.Names}}" | head -n 1)
+docker exec $CONTAINER node db-diagnostic.js --clean --create-admin
 ```
 
 This will:
@@ -58,7 +72,7 @@ This will:
   - **Email**: `admin@frozenshield.ca`
   - **Password**: `AdminPass123!`
 
-### Step 4: Login and Change Password
+### Step 5: Login and Change Password
 
 1. Go to https://frozenshield.ca/admin/login.html
 2. Login with default credentials
