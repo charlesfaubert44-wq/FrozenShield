@@ -12,7 +12,12 @@
     "dev": "nodemon server/server.js",
     "seed": "node server/seedTestData.js",
     "build": "echo 'No build step required for Node.js backend'",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "cross-env NODE_ENV=test jest --runInBand",
+    "test:watch": "cross-env NODE_ENV=test jest --watch --runInBand",
+    "test:coverage": "cross-env NODE_ENV=test jest --coverage --runInBand",
+    "test:models": "cross-env NODE_ENV=test jest tests/models --runInBand",
+    "test:api": "cross-env NODE_ENV=test jest tests/api --runInBand",
+    "test:integration": "cross-env NODE_ENV=test jest tests/integration --runInBand",
     "lint": "echo 'Run: npm install -D eslint && npx eslint .'",
     "security-check": "npm audit",
     "update-deps": "npm outdated && npm update",
@@ -62,6 +67,10 @@
     "sharp": "^0.34.5"
   },
   "devDependencies": {
-    "nodemon": "^3.0.2"
+    "@shelf/jest-mongodb": "^6.0.2",
+    "cross-env": "^10.1.0",
+    "jest": "^30.2.0",
+    "nodemon": "^3.0.2",
+    "supertest": "^7.1.4"
   }
 }

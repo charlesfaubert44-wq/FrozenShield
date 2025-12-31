@@ -746,6 +746,8 @@ async function updateStructuredData() {
 function initPortfolioFilters() {
     const filterButtons = document.querySelectorAll('.filter-btn');
     const projectCards = document.querySelectorAll('.project-card');
+    const projectsGrid = document.getElementById('projectsGrid');
+    const videosSection = document.getElementById('videosSection');
 
     filterButtons.forEach(button => {
         button.addEventListener('click', function() {
@@ -755,26 +757,35 @@ function initPortfolioFilters() {
             filterButtons.forEach(btn => btn.classList.remove('active'));
             this.classList.add('active');
 
-            // Filter project cards
-            projectCards.forEach(card => {
-                const category = card.getAttribute('data-category');
+            // Show/hide videos section
+            if (filterValue === 'videos') {
+                if (projectsGrid) projectsGrid.style.display = 'none';
+                if (videosSection) videosSection.style.display = 'block';
+            } else {
+                if (projectsGrid) projectsGrid.style.display = 'grid';
+                if (videosSection) videosSection.style.display = 'none';
 
-                if (filterValue === 'all' || category === filterValue) {
-                    // Show card with fade-in animation
-                    card.style.display = 'block';
-                    setTimeout(() => {
-                        card.style.opacity = '1';
-                        card.style.transform = 'translateY(0)';
-                    }, 10);
-                } else {
-                    // Hide card with fade-out
-                    card.style.opacity = '0';
-                    card.style.transform = 'translateY(20px)';
-                    setTimeout(() => {
-                        card.style.display = 'none';
-                    }, 300);
-                }
-            });
+                // Filter project cards
+                projectCards.forEach(card => {
+                    const category = card.getAttribute('data-category');
+
+                    if (filterValue === 'all' || category === filterValue) {
+                        // Show card with fade-in animation
+                        card.style.display = 'block';
+                        setTimeout(() => {
+                            card.style.opacity = '1';
+                            card.style.transform = 'translateY(0)';
+                        }, 10);
+                    } else {
+                        // Hide card with fade-out
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateY(20px)';
+                        setTimeout(() => {
+                            card.style.display = 'none';
+                        }, 300);
+                    }
+                });
+            }
         });
     });
 }

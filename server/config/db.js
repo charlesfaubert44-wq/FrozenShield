@@ -26,7 +26,22 @@ const connectDB = async (retries = 5, delay = 5000) => {
     const attemptConnection = async () => {
         try {
             const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/frozenshield', {
-                serverSelectionTimeoutMS: 5000,
+                // Connection pooling configuration
+                maxPoolSize: 10, // Maximum number of connections in the pool
+                minPoolSize: 5, // Minimum number of connections to maintain
+
+                // Timeout configurations
+                serverSelectionTimeoutMS: 5000, // Timeout for selecting a server
+                socketTimeoutMS: 45000, // Timeout for socket operations (45 seconds)
+                connectTimeoutMS: 10000, // Timeout for initial connection (10 seconds)
+
+                // Automatic reconnection
+                retryWrites: true, // Retry write operations on failure
+                retryReads: true, // Retry read operations on failure
+
+                // Performance optimizations
+                compressors: ['zlib'], // Enable compression for network traffic
+                maxIdleTimeMS: 60000, // Close idle connections after 60 seconds
             });
 
             console.log(`MongoDB Connected: ${conn.connection.host}`);

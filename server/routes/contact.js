@@ -1,26 +1,34 @@
 const express = require('express');
 const router = express.Router();
-const rateLimit = require('express-rate-limit');
+const { body, validationResult } = require('express-validator');
 const Contact = require('../models/Contact');
-
-// Contact form rate limiting: 10 requests per hour per IP
-const contactLimiter = rateLimit({
-    windowMs: 60 * 60 * 1000, // 1 hour
-    max: 10,
-    message: 'Too many contact form submissions from this IP, please try again later.',
-    standardHeaders: true,
-    legacyHeaders: false,
-});
+const { contactLimiter } = require('../middleware/rateLimiter');
+const { sanitizeString, sanitizeEmail } = require('../utils/sanitize');
+const { isValidEmail, isValidLength } = require('../utils/validate');
 
 // @route   POST /api/contact
-// @desc    Submit contact form
+// @desc    Submit contact form with enhanced validation and sanitization
 // @access  Public
-router.post('/', contactLimiter, async (req, res) => {
+router.post('/', contactLimiter, [
+    body('name')
+        .trim()
+        .isLength({ min: 2, max: 100 })
+        .withMessage('Name must be between 2 and 100 characters')
+        .matches(/^[a-zA-Z\s'-]+$/)
+        .withMessage('Name can only contain letters, spaces, hyphens, and apostrophes'),
+    body('email')
+        .trim()
+        .isEmail()
+        .withMessage('Please provide a valid email address')
+        .normalizeEmail(),
+    body('message')
+        .trim()
+        .isLength({ min: 10, max: 5000 })
+        .withMessage('Message must be between 10 and 5000 characters')
+], async (req, res) => {
     try {
-        const { name, email, message, honeypot } = req.body;
-
         // Honeypot field check (spam protection)
-        if (honeypot) {
+        if (req.body.honeypot) {
             // Silently discard spam
             return res.status(201).json({
                 success: true,
@@ -28,21 +36,20 @@ router.post('/', contactLimiter, async (req, res) => {
             });
         }
 
-        // Validation
-        if (!name || !email || !message) {
+        // Validate request
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
             return res.status(400).json({
                 success: false,
-                message: 'Please provide all required fields'
+                message: 'Validation failed',
+                errors: errors.array()
             });
         }
 
-        // Validate message length (minimum 10 characters)
-        if (message.trim().length < 10) {
-            return res.status(400).json({
-                success: false,
-                message: 'Message must be at least 10 characters long'
-            });
-        }
+        // Sanitize inputs
+        const name = sanitizeString(req.body.name, { maxLength: 100 });
+        const email = sanitizeEmail(req.body.email);
+        const message = sanitizeString(req.body.message, { maxLength: 5000 });
 
         // Create contact
         const contact = new Contact({

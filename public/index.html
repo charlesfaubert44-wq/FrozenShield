@@ -60,21 +60,110 @@
         </div>
     </section>
 
-    <!-- Projects Section -->
-    <section id="projects" class="projects">
+    <!-- Unified Portfolio Section -->
+    <section id="projects" class="projects unified-portfolio">
         <div class="container">
             <h2 class="section-title">Some of Our Work</h2>
 
-            <!-- Portfolio Filters -->
-            <div class="portfolio-filters">
-                <button class="filter-btn active" data-filter="all">All</button>
-                <button class="filter-btn" data-filter="albums">Albums</button>
-                <button class="filter-btn" data-filter="photography">Photography</button>
-                <button class="filter-btn" data-filter="videography">Videography</button>
-                <button class="filter-btn" data-filter="web">Web</button>
+            <!-- Unified Portfolio Controls -->
+            <div class="portfolio-controls">
+                <!-- Type Filters -->
+                <div class="portfolio-type-filters">
+                    <button class="portfolio-filter-btn active" data-type-filter="all">All</button>
+                    <button class="portfolio-filter-btn" data-type-filter="album">Albums</button>
+                    <button class="portfolio-filter-btn" data-type-filter="video">Videos</button>
+                    <button class="portfolio-filter-btn" data-type-filter="project">Projects</button>
+                </div>
+
+                <!-- Advanced Filters Row -->
+                <div class="portfolio-advanced-filters">
+                    <!-- Search Bar -->
+                    <div class="portfolio-search-wrapper">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="search-icon">
+                            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                            <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <input
+                            type="text"
+                            id="portfolioSearch"
+                            class="portfolio-search"
+                            placeholder="Search across all portfolio items..."
+                        >
+                    </div>
+
+                    <!-- Category Filter -->
+                    <select id="portfolioCategoryFilter" class="portfolio-select">
+                        <option value="all">All Categories</option>
+                    </select>
+
+                    <!-- Tag Filter -->
+                    <select id="portfolioTagFilter" class="portfolio-select">
+                        <option value="all">All Tags</option>
+                    </select>
+
+                    <!-- Featured Toggle -->
+                    <label class="portfolio-checkbox-label">
+                        <input type="checkbox" id="portfolioFeaturedToggle">
+                        <span>Featured Only</span>
+                    </label>
+
+                    <!-- Sort Dropdown -->
+                    <select id="portfolioSort" class="portfolio-select">
+                        <option value="latest">Latest First</option>
+                        <option value="featured">Featured First</option>
+                        <option value="views">Most Viewed</option>
+                        <option value="oldest">Oldest First</option>
+                    </select>
+
+                    <!-- View Toggle -->
+                    <div class="portfolio-view-toggle">
+                        <button id="viewToggleGrid" class="view-toggle-btn active" title="Grid View">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <rect x="3" y="3" width="7" height="7" stroke="currentColor" stroke-width="2"/>
+                                <rect x="14" y="3" width="7" height="7" stroke="currentColor" stroke-width="2"/>
+                                <rect x="3" y="14" width="7" height="7" stroke="currentColor" stroke-width="2"/>
+                                <rect x="14" y="14" width="7" height="7" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </button>
+                        <button id="viewToggleList" class="view-toggle-btn" title="List View">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                <line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2"/>
+                                <line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2"/>
+                                <line x1="3" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <div class="projects-grid" id="projectsGrid">
+            <!-- Unified Portfolio Grid -->
+            <div id="portfolioGrid" class="portfolio-grid grid-view"></div>
+
+            <!-- Loading Indicator -->
+            <div id="portfolioLoading" class="portfolio-loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>Loading portfolio...</p>
+            </div>
+
+            <!-- Empty State -->
+            <div id="portfolioEmpty" class="portfolio-empty" style="display: none;">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                    <line x1="8" y1="12" x2="16" y2="12" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <h3>No items found</h3>
+                <p>Try adjusting your filters or search criteria</p>
+            </div>
+
+            <!-- Load More Button -->
+            <div class="portfolio-load-more-wrapper">
+                <button id="portfolioLoadMore" class="portfolio-load-more-btn" style="display: none;">
+                    Load More
+                </button>
+            </div>
+
+            <!-- Legacy Projects Grid (kept for backwards compatibility) -->
+            <div class="projects-grid legacy-projects-grid" id="projectsGrid" style="display: none;">
 
                 <div class="project-card" data-project="aurora-photography" data-category="photography">
                     <div class="project-preview">
@@ -424,6 +513,126 @@
         </div>
     </div>
 
+    <!-- Video Player Modal -->
+    <div id="videoModal" class="modal video-modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content video-modal-content">
+            <button class="modal-close">&times;</button>
+            <button class="video-modal-nav video-modal-prev" aria-label="Previous video">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <button class="video-modal-nav video-modal-next" aria-label="Next video">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <div class="modal-body video-modal-body">
+                <!-- Video Player Container -->
+                <div id="videoPlayerContainer" class="video-player-container">
+                    <!-- Video player will be inserted here -->
+                </div>
+
+                <!-- Video Info -->
+                <div class="video-modal-info">
+                    <div class="video-modal-header">
+                        <h2 id="videoModalTitle" class="video-modal-title"></h2>
+                        <div class="video-modal-meta">
+                            <span id="videoModalViews" class="video-views"></span>
+                            <span id="videoCounter" class="video-counter"></span>
+                        </div>
+                    </div>
+                    <p id="videoModalDescription" class="video-modal-description"></p>
+                    <div id="videoModalTags" class="video-modal-tags"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Project Detail Modal -->
+    <div id="projectDetailModal" class="modal project-detail-modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content project-detail-content">
+            <button class="modal-close" aria-label="Close">&times;</button>
+
+            <!-- Navigation Arrows -->
+            <button class="project-nav-btn project-prev-btn" id="projectPrevBtn" aria-label="Previous project">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <button class="project-nav-btn project-next-btn" id="projectNextBtn" aria-label="Next project">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+
+            <div class="modal-body project-detail-body">
+                <!-- Hero Image -->
+                <div class="project-hero-image">
+                    <img id="projectHeroImage" src="" alt="" loading="lazy">
+                </div>
+
+                <!-- Project Content -->
+                <div class="project-detail-content-wrapper">
+                    <!-- Header -->
+                    <div class="project-detail-header">
+                        <div class="project-category-wrapper">
+                            <span id="projectDetailCategory" class="category-badge-large"></span>
+                        </div>
+                        <h2 id="projectDetailTitle" class="project-detail-title"></h2>
+                        <div id="projectDetailMetadata" class="project-metadata"></div>
+                    </div>
+
+                    <!-- Description -->
+                    <div id="projectDetailDescription" class="project-detail-description"></div>
+
+                    <!-- Technologies -->
+                    <div id="projectDetailTechnologies" class="project-technologies-section"></div>
+
+                    <!-- Image Gallery -->
+                    <div id="projectImageGallery" class="project-image-gallery"></div>
+
+                    <!-- Action Buttons -->
+                    <div class="project-actions">
+                        <a id="projectLiveButton" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-live">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <polyline points="15 3 21 3 21 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <line x1="10" y1="14" x2="21" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            View Live Site
+                        </a>
+                        <a id="projectCodeButton" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-code">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            View Code
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Lightbox Modal -->
+    <div id="projectLightbox" class="modal lightbox-modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content lightbox-content">
+            <button class="modal-close" aria-label="Close">&times;</button>
+            <button class="lightbox-nav lightbox-prev" aria-label="Previous image">&lsaquo;</button>
+            <button class="lightbox-nav lightbox-next" aria-label="Next image">&rsaquo;</button>
+            <div class="lightbox-body">
+                <img id="lightboxImage" src="" alt="" loading="lazy">
+                <div class="lightbox-info">
+                    <p id="lightboxCaption"></p>
+                    <div id="lightboxCounter"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json" id="structured-data">
     {
@@ -509,5 +718,8 @@
     </script>
 
     <script src="script.js"></script>
+    <script src="videos.js"></script>
+    <script src="js/projects.js"></script>
+    <script src="js/portfolio.js"></script>
 </body>
 </html>

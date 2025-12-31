@@ -55,23 +55,50 @@ const upload = multer({
 });
 
 /**
- * Process uploaded image - create optimized version and thumbnail
+ * Process uploaded image - create multiple optimized versions including WebP
+ * Creates: original, optimized (JPEG & WebP), thumbnail, and responsive sizes
  */
 const processImage = async (buffer, filename) => {
     const timestamp = Date.now();
     const randomNum = Math.floor(Math.random() * 1000000);
     const baseName = `${filename.split('.')[0]}-${timestamp}-${randomNum}`;
 
+    // Define multiple sizes for responsive images
+    const sizes = {
+        thumbnail: 300,
+        small: 640,
+        medium: 1024,
+        large: 1920,
+        xlarge: 2560
+    };
+
     const paths = {
         original: path.join(__dirname, '../../public/uploads/originals', `${baseName}.jpg`),
         optimized: path.join(__dirname, '../../public/uploads/optimized', `${baseName}.jpg`),
-        thumbnail: path.join(__dirname, '../../public/uploads/thumbnails', `thumb-${baseName}.jpg`)
+        optimizedWebP: path.join(__dirname, '../../public/uploads/optimized', `${baseName}.webp`),
+        thumbnail: path.join(__dirname, '../../public/uploads/thumbnails', `thumb-${baseName}.jpg`),
+        thumbnailWebP: path.join(__dirname, '../../public/uploads/thumbnails', `thumb-${baseName}.webp`),
+        small: path.join(__dirname, '../../public/uploads/optimized', `${baseName}-small.jpg`),
+        smallWebP: path.join(__dirname, '../../public/uploads/optimized', `${baseName}-small.webp`),
+        medium: path.join(__dirname, '../../public/uploads/optimized', `${baseName}-medium.jpg`),
+        mediumWebP: path.join(__dirname, '../../public/uploads/optimized', `${baseName}-medium.webp`)
     };
 
     const urls = {
         original: `/uploads/originals/${baseName}.jpg`,
         optimized: `/uploads/optimized/${baseName}.jpg`,
-        thumbnail: `/uploads/thumbnails/thumb-${baseName}.jpg`
+        optimizedWebP: `/uploads/optimized/${baseName}.webp`,
+        thumbnail: `/uploads/thumbnails/thumb-${baseName}.jpg`,
+        thumbnailWebP: `/uploads/thumbnails/thumb-${baseName}.webp`,
+        small: `/uploads/optimized/${baseName}-small.jpg`,
+        smallWebP: `/uploads/optimized/${baseName}-small.webp`,
+        medium: `/uploads/optimized/${baseName}-medium.jpg`,
+        mediumWebP: `/uploads/optimized/${baseName}-medium.webp`,
+        responsive: {
+            srcset: '',
+            srcsetWebP: '',
+            sizes: '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
+        }
     };
 
     try {
@@ -79,30 +106,94 @@ const processImage = async (buffer, filename) => {
         const image = sharp(buffer);
         const metadata = await image.metadata();
 
-        // Save original
-        await image
-            .jpeg({ quality: 95 })
+        // Save original (JPEG format)
+        await sharp(buffer)
+            .jpeg({ quality: 95, progressive: true })
             .toFile(paths.original);
 
-        // Create optimized version (max 2000px width, 85% quality)
+        // Create optimized version - Large (JPEG)
         await sharp(buffer)
-            .resize(2000, null, {
-                width: 2000,
+            .resize(sizes.large, null, {
+                width: sizes.large,
                 fit: 'inside',
                 withoutEnlargement: true
             })
             .jpeg({ quality: 85, progressive: true })
             .toFile(paths.optimized);
 
-        // Create thumbnail (300px width)
+        // Create optimized version - Large (WebP)
         await sharp(buffer)
-            .resize(300, null, {
-                width: 300,
+            .resize(sizes.large, null, {
+                width: sizes.large,
                 fit: 'inside',
                 withoutEnlargement: true
             })
+            .webp({ quality: 80 })
+            .toFile(paths.optimizedWebP);
+
+        // Create medium size (JPEG)
+        await sharp(buffer)
+            .resize(sizes.medium, null, {
+                width: sizes.medium,
+                fit: 'inside',
+                withoutEnlargement: true
+            })
+            .jpeg({ quality: 85, progressive: true })
+            .toFile(paths.medium);
+
+        // Create medium size (WebP)
+        await sharp(buffer)
+            .resize(sizes.medium, null, {
+                width: sizes.medium,
+                fit: 'inside',
+                withoutEnlargement: true
+            })
+            .webp({ quality: 80 })
+            .toFile(paths.mediumWebP);
+
+        // Create small size (JPEG)
+        await sharp(buffer)
+            .resize(sizes.small, null, {
+                width: sizes.small,
+                fit: 'inside',
+                withoutEnlargement: true
+            })
+            .jpeg({ quality: 85, progressive: true })
+            .toFile(paths.small);
+
+        // Create small size (WebP)
+        await sharp(buffer)
+            .resize(sizes.small, null, {
+                width: sizes.small,
+                fit: 'inside',
+                withoutEnlargement: true
+            })
+            .webp({ quality: 80 })
+            .toFile(paths.smallWebP);
+
+        // Create thumbnail (JPEG)
+        await sharp(buffer)
+            .resize(sizes.thumbnail, null, {
+                width: sizes.thumbnail,
+                fit: 'cover',
+                position: 'attention'
+            })
             .jpeg({ quality: 80 })
             .toFile(paths.thumbnail);
+
+        // Create thumbnail (WebP)
+        await sharp(buffer)
+            .resize(sizes.thumbnail, null, {
+                width: sizes.thumbnail,
+                fit: 'cover',
+                position: 'attention'
+            })
+            .webp({ quality: 75 })
+            .toFile(paths.thumbnailWebP);
+
+        // Build responsive srcset strings
+        urls.responsive.srcset = `${urls.small} 640w, ${urls.medium} 1024w, ${urls.optimized} 1920w`;
+        urls.responsive.srcsetWebP = `${urls.smallWebP} 640w, ${urls.mediumWebP} 1024w, ${urls.optimizedWebP} 1920w`;
 
         return {
             urls,

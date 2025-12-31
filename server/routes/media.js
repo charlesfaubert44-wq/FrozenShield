@@ -309,4 +309,39 @@ router.put('/reorder', async (req, res) => {
     }
 });
 
+// @route   POST /api/media/:id/view
+// @desc    Increment view count for a video
+// @access  Public
+router.post('/:id/view', async (req, res) => {
+    try {
+        const media = await Media.findById(req.params.id);
+
+        if (!media) {
+            return res.status(404).json({
+                success: false,
+                message: 'Media not found'
+            });
+        }
+
+        // Increment view count
+        media.stats.views = (media.stats.views || 0) + 1;
+        await media.save();
+
+        res.json({
+            success: true,
+            message: 'View count updated',
+            data: {
+                views: media.stats.views
+            }
+        });
+    } catch (error) {
+        console.error('Update view count error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to update view count',
+            error: error.message
+        });
+    }
+});
+
 module.exports = router;

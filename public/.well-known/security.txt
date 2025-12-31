@@ -1,0 +1,42 @@
+Contact: mailto:security@frozenshield.ca
+Expires: 2026-12-31T23:59:59.000Z
+Preferred-Languages: en
+Canonical: https://frozenshield.ca/.well-known/security.txt
+Policy: https://frozenshield.ca/security-policy
+Acknowledgments: https://frozenshield.ca/security-acknowledgments
+
+# Security Policy
+
+If you believe you have found a security vulnerability in our application,
+please report it to us as described below.
+
+## Reporting Security Issues
+
+**Please do not report security vulnerabilities through public GitHub issues.**
+
+Instead, please report them via email to security@frozenshield.ca
+
+You should receive a response within 48 hours. If for some reason you do not,
+please follow up via email to ensure we received your original message.
+
+Please include the following information (as much as you can provide):
+* Type of issue (e.g. buffer overflow, SQL injection, cross-site scripting, etc.)
+* Full paths of source file(s) related to the manifestation of the issue
+* The location of the affected source code (tag/branch/commit or direct URL)
+* Any special configuration required to reproduce the issue
+* Step-by-step instructions to reproduce the issue
+* Proof-of-concept or exploit code (if possible)
+* Impact of the issue, including how an attacker might exploit the issue
+
+This information will help us triage your report more quickly.
+
+## Safe Harbor
+
+We support safe harbor for security researchers who:
+* Make a good faith effort to avoid privacy violations, destruction of data,
+  and interruption or degradation of our services
+* Only interact with accounts you own or with explicit permission of the
+  account holder
+* Do not exploit a security issue you discover for any reason
+* Report any vulnerability you've discovered promptly
+* Do not violate any other applicable laws or regulations

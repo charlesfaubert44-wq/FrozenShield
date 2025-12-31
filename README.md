@@ -1,30 +1,55 @@
-# Frozen Shield Studio
+# FrozenShield Studio
 
-A modern, fullstack portfolio website for showcasing custom web development services and projects. Built with Node.js, Express, MongoDB, and vanilla JavaScript for a clean, professional presence.
+A modern, fullstack portfolio website for showcasing custom web development services, photography, videos, and projects. Built with Node.js, Express, MongoDB, and vanilla JavaScript for a clean, professional presence.
+
+**Version:** 1.0.0
+**License:** MIT
+**Node:** >= 18.0.0
+
+## Quick Start
+
+```bash
+# Install dependencies
+npm install
+
+# Configure environment
+cp .env.example .env
+# Edit .env with your settings
+
+# Run development server
+npm run dev
+
+# Run tests
+npm test
+```
 
 ## Features
 
-### Frontend
-- Modern dark theme with gradient accents
-- Fully responsive design (mobile, tablet, desktop)
-- Smooth scrolling navigation
-- Fade-in animations on scroll
-- Dynamic project loading from database
-- Working contact form with backend integration
-- Clean, minimalistic UI
+### Content Management
+- **Albums** - Photo gallery management with automatic optimization
+- **Videos** - YouTube, Vimeo, and direct video embedding
+- **Projects** - Portfolio project showcases with technologies and links
+- **Media** - Advanced image upload with EXIF data extraction
+- **Unified Portfolio** - Single endpoint for all content types
 
-### Backend & Admin
-- RESTful API with Express.js
-- MongoDB database with Mongoose ODM with automatic reconnection
-- JWT-based authentication (30-day token expiration)
-- Admin panel for content management
-- Contact form submission storage with spam protection
-- Full CRUD operations for projects
-- Rate limiting (100 req/15min global, 10 req/hour for contact form)
-- Security headers with Helmet.js
-- Graceful shutdown handling
-- Health check endpoint
-- SEO optimization with sitemap and structured data
+### Technical Features
+- **Authentication** - JWT-based auth with bcrypt password hashing
+- **File Upload** - Multer integration with Sharp image optimization
+- **API** - RESTful API with comprehensive endpoints
+- **Database** - MongoDB with Mongoose ODM and optimized indexes
+- **Security** - Helmet, CORS, rate limiting, input validation
+- **Testing** - Comprehensive test suite with Jest and Supertest
+- **SEO** - Dynamic sitemap, meta tags, structured data
+
+### Admin Features
+- Secure admin panel with JWT authentication
+- CRUD operations for all content types
+- Media library with bulk upload
+- Content visibility controls (public/private/unlisted)
+- Featured content designation
+- Tag-based organization
+- View statistics and analytics
+- Search and filter capabilities
 
 ## Tech Stack
 
@@ -131,29 +156,29 @@ Follow the prompts to create your admin account.
 ## API Endpoints
 
 ### Public Endpoints
+- `GET /api/health` - Health check
+- `GET /api/albums` - Get all public albums
+- `GET /api/albums/:id` - Get album with media
+- `GET /api/videos` - Get all public videos
+- `GET /api/videos/:id` - Get video details
+- `GET /api/projects` - Get all public projects
+- `GET /api/projects/:id` - Get project details
+- `GET /api/portfolio` - Get unified portfolio (albums, videos, projects)
+- `POST /api/contact` - Submit contact form
 
-- `GET /api/health` - Health check endpoint
-- `GET /api/projects` - Get all projects (sorted by order and date)
-- `GET /api/projects/featured` - Get featured projects only
-- `GET /api/projects/:id` - Get single project by ID
-- `POST /api/contact` - Submit contact form (10 req/hour rate limit, honeypot protected)
-
-### Protected Endpoints (Admin only)
-
+### Admin Endpoints (Protected)
 **Authentication:**
-- `POST /api/auth/register` - Register admin (disabled after first admin)
-- `POST /api/auth/login` - Admin login
-- `GET /api/auth/me` - Get current admin
+- `POST /api/auth/register` - Register first admin
+- `POST /api/auth/login` - Login
+- `GET /api/auth/me` - Get current user
 
-**Projects:**
-- `POST /api/projects` - Create project
-- `PUT /api/projects/:id` - Update project
-- `DELETE /api/projects/:id` - Delete project
+**Content Management:**
+- `/api/admin/albums` - Album CRUD
+- `/api/admin/videos` - Video CRUD
+- `/api/admin/projects` - Project CRUD
+- `/api/media/upload` - Media upload
 
-**Contacts:**
-- `GET /api/contact` - Get all contact submissions (sorted by date)
-- `PATCH /api/contact/:id` - Update contact status and notes
-- `DELETE /api/contact/:id` - Delete contact submission
+**See [docs/API.md](docs/API.md) for complete API documentation.**
 
 ## Customization
 
@@ -332,12 +357,35 @@ npm start
 
 Comprehensive documentation is available in the `/docs` directory:
 
-- **[Architecture Guide](./docs/architecture.md)** - System architecture, design patterns, and technical overview
-- **[API Reference](./docs/api-reference.md)** - Complete API documentation with examples
-- **[Troubleshooting Guide](./docs/troubleshooting.md)** - Common issues and solutions
-- **[Maintenance Guide](./docs/maintenance.md)** - Maintenance procedures, backup strategies, and monitoring
-- **[SEO System](./docs/SEO-SYSTEM.md)** - SEO implementation and optimization guide
-- **[Contributing Guide](./CONTRIBUTING.md)** - Guidelines for contributing to the project
+- **[API Documentation](./docs/API.md)** - Complete API reference with examples
+- **[Development Guide](./docs/DEVELOPMENT.md)** - Architecture, setup, and contribution guidelines
+- **[User Guide](./docs/USER_GUIDE.md)** - Admin panel usage and content management
+- **[Deployment Guide](./COOLIFY_DEPLOYMENT_STEPS.md)** - Production deployment instructions
+- **[Changelog](./CHANGELOG.md)** - Version history and release notes
+
+## Testing
+
+```bash
+# Run all tests
+npm test
+
+# Run with coverage
+npm run test:coverage
+
+# Run specific suites
+npm run test:models
+npm run test:api
+npm run test:integration
+
+# Watch mode
+npm run test:watch
+```
+
+**Test Coverage:**
+- Model tests: User, Album, Video, Project, Media
+- API tests: Authentication, Albums, and more
+- Integration tests: Complete user workflows
+- Test fixtures and helpers included
 
 ---
 

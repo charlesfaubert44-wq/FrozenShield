@@ -6,6 +6,8 @@
     <meta name="robots" content="noindex, nofollow">
     <title>Admin Dashboard - Frozen Shield</title>
     <link rel="stylesheet" href="/admin/css/dashboard.css">
+    <!-- Quill Rich Text Editor -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 </head>
 <body>
     <!-- Navigation Sidebar -->
@@ -269,94 +271,139 @@
         <section id="videos-section" class="content-section">
             <div class="section-header">
                 <h2>Videos</h2>
-                <button class="btn-primary" id="addVideoBtn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="12" y1="5" x2="12" y2="19"/>
-                        <line x1="5" y1="12" x2="19" y2="12"/>
-                    </svg>
-                    Add Video
-                </button>
-            </div>
-
-            <div class="card">
-                <div class="card-body">
-                    <div class="table-container">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Thumbnail</th>
-                                    <th>Title</th>
-                                    <th>Platform</th>
-                                    <th>Category</th>
-                                    <th>Added</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="videosTableBody">
-                                <tr class="empty-state">
-                                    <td colspan="6">No videos yet. Add your first video to get started.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="section-actions">
+                    <input type="search" id="video-search" placeholder="Search videos..." class="search-input">
+                    <select id="video-filter-category" class="filter-select">
+                        <option value="">All Categories</option>
+                        <option value="tutorial">Tutorial</option>
+                        <option value="showcase">Showcase</option>
+                        <option value="demo">Demo</option>
+                        <option value="presentation">Presentation</option>
+                    </select>
+                    <select id="video-filter-visibility" class="filter-select">
+                        <option value="">All Visibility</option>
+                        <option value="public">Public</option>
+                        <option value="private">Private</option>
+                        <option value="unlisted">Unlisted</option>
+                    </select>
+                    <select id="video-filter-featured" class="filter-select">
+                        <option value="">All Videos</option>
+                        <option value="true">Featured Only</option>
+                    </select>
+                    <button class="btn-primary" onclick="openCreateVideoModal()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        Add Video
+                    </button>
                 </div>
             </div>
+
+            <div class="videos-grid" id="videosList">
+                <!-- Videos will be loaded here by JavaScript -->
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination" id="videosPagination"></div>
         </section>
 
         <!-- Projects Section -->
         <section id="projects-section" class="content-section">
             <div class="section-header">
                 <h2>Projects</h2>
-                <button class="btn-primary" id="createProjectBtn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="12" y1="5" x2="12" y2="19"/>
-                        <line x1="5" y1="12" x2="19" y2="12"/>
-                    </svg>
-                    Create Project
-                </button>
-            </div>
-
-            <div class="card">
-                <div class="card-body">
-                    <div class="table-container">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Image</th>
-                                    <th>Title</th>
-                                    <th>Description</th>
-                                    <th>Technologies</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="projectsTableBody">
-                                <tr class="empty-state">
-                                    <td colspan="6">No projects yet. Create your first project to get started.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="section-actions">
+                    <input type="search" id="project-search" placeholder="Search projects..." class="search-input">
+                    <select id="project-filter-category" class="filter-select">
+                        <option value="">All Categories</option>
+                        <option value="web-app">Web App</option>
+                        <option value="ecommerce">E-commerce</option>
+                        <option value="portfolio">Portfolio</option>
+                        <option value="landing-page">Landing Page</option>
+                        <option value="dashboard">Dashboard</option>
+                        <option value="mobile-app">Mobile App</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <select id="project-filter-visibility" class="filter-select">
+                        <option value="">All Visibility</option>
+                        <option value="public">Public</option>
+                        <option value="private">Private</option>
+                        <option value="unlisted">Unlisted</option>
+                    </select>
+                    <select id="project-filter-featured" class="filter-select">
+                        <option value="">All Projects</option>
+                        <option value="true">Featured Only</option>
+                    </select>
+                    <button class="btn-primary" onclick="openCreateProjectModal()">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="5" x2="12" y2="19"/>
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                        Create Project
+                    </button>
                 </div>
             </div>
+
+            <div class="projects-grid" id="projectsList">
+                <!-- Projects will be loaded here by JavaScript -->
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination" id="projectsPagination"></div>
         </section>
 
         <!-- Media Library Section -->
         <section id="media-section" class="content-section">
             <div class="section-header">
                 <h2>Media Library</h2>
-                <button class="btn-primary" id="uploadMediaBtn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                        <polyline points="17 8 12 3 7 8"/>
-                        <line x1="12" y1="3" x2="12" y2="15"/>
-                    </svg>
-                    Upload Media
-                </button>
+                <div class="section-actions">
+                    <input type="search" id="media-search" placeholder="Search media..." class="search-input">
+                    <select id="media-filter-type" class="filter-select">
+                        <option value="">All Types</option>
+                        <option value="image">Images</option>
+                        <option value="video">Videos</option>
+                    </select>
+                    <select id="media-filter-album" class="filter-select">
+                        <option value="">All Albums</option>
+                        <!-- Albums will be loaded dynamically -->
+                    </select>
+                    <select id="media-sort" class="filter-select">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="name">Name (A-Z)</option>
+                        <option value="size">Size (Largest)</option>
+                    </select>
+                    <button class="btn-primary" id="uploadMediaBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                        Upload Media
+                    </button>
+                </div>
             </div>
 
-            <div class="card">
-                <div class="card-body">
+            <!-- Bulk Actions Toolbar -->
+            <div class="bulk-actions-toolbar" id="bulkActionsToolbar" style="display: none;">
+                <div class="bulk-actions-left">
+                    <span id="selectedCount">0 selected</span>
+                    <button class="btn-text" id="selectAllBtn">Select All</button>
+                    <button class="btn-text" id="deselectAllBtn">Deselect All</button>
+                </div>
+                <div class="bulk-actions-right">
+                    <button class="btn-danger" id="bulkDeleteBtn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                        Delete Selected
+                    </button>
+                </div>
+            </div>
+
+            <div class="media-library-container">
+                <div class="media-grid-container">
                     <div class="media-grid" id="mediaGrid">
                         <div class="empty-state-media">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -365,6 +412,27 @@
                                 <path d="M21 15l-5-5L5 21"/>
                             </svg>
                             <p>No media files yet. Upload your first file to get started.</p>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination" id="mediaPagination"></div>
+                </div>
+
+                <!-- Media Detail Sidebar -->
+                <div class="media-detail-sidebar" id="mediaDetailSidebar">
+                    <div class="media-detail-header">
+                        <h3>Media Details</h3>
+                        <button class="btn-icon" id="closeMediaDetailBtn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="media-detail-body" id="mediaDetailBody">
+                        <div class="empty-state-small">
+                            <p>Select a media file to view details</p>
                         </div>
                     </div>
                 </div>
@@ -377,45 +445,235 @@
                 <h2>Settings</h2>
             </div>
 
-            <div class="settings-grid">
+            <!-- Settings Tabs -->
+            <div class="settings-tabs">
+                <button class="settings-tab active" data-tab="profile">Profile</button>
+                <button class="settings-tab" data-tab="site">Site Settings</button>
+                <button class="settings-tab" data-tab="seo">SEO</button>
+                <button class="settings-tab" data-tab="contact">Contact</button>
+                <button class="settings-tab" data-tab="display">Display</button>
+            </div>
+
+            <!-- Profile Settings Tab -->
+            <div id="profile-tab" class="settings-tab-content active">
+                <div class="settings-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Profile Information</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="profileForm" class="form">
+                                <div class="form-group">
+                                    <label for="profileUsername">Username *</label>
+                                    <input type="text" id="profileUsername" class="form-input" placeholder="Enter username" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="profileEmail">Email *</label>
+                                    <input type="email" id="profileEmail" class="form-input" placeholder="Enter email" required>
+                                </div>
+                                <button type="submit" class="btn-primary">Save Profile</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Change Password</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="passwordForm" class="form">
+                                <div class="form-group">
+                                    <label for="currentPassword">Current Password *</label>
+                                    <input type="password" id="currentPassword" class="form-input" placeholder="Enter current password" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="newPassword">New Password *</label>
+                                    <input type="password" id="newPassword" class="form-input" placeholder="Enter new password" required>
+                                    <small class="form-help">Minimum 8 characters, with uppercase, lowercase, and number</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirmPassword">Confirm Password *</label>
+                                    <input type="password" id="confirmPassword" class="form-input" placeholder="Confirm new password" required>
+                                </div>
+                                <!-- Password Strength Indicator -->
+                                <div class="password-strength" id="passwordStrength">
+                                    <div class="strength-bar">
+                                        <div class="strength-fill" id="strengthFill"></div>
+                                    </div>
+                                    <span class="strength-text" id="strengthText">Password strength</span>
+                                </div>
+                                <button type="submit" class="btn-primary">Change Password</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Site Settings Tab -->
+            <div id="site-tab" class="settings-tab-content">
                 <div class="card">
                     <div class="card-header">
-                        <h3>Profile Settings</h3>
+                        <h3>Site Configuration</h3>
                     </div>
                     <div class="card-body">
-                        <form id="profileForm" class="form">
+                        <form id="siteSettingsForm" class="form">
                             <div class="form-group">
-                                <label for="profileUsername">Username</label>
-                                <input type="text" id="profileUsername" class="form-input" placeholder="Enter username">
+                                <label for="siteTitle">Site Title *</label>
+                                <input type="text" id="siteTitle" class="form-input" placeholder="Enter site title" required maxlength="100">
                             </div>
                             <div class="form-group">
-                                <label for="profileEmail">Email</label>
-                                <input type="email" id="profileEmail" class="form-input" placeholder="Enter email">
+                                <label for="siteDescription">Site Description</label>
+                                <textarea id="siteDescription" class="form-input" rows="3" placeholder="Brief description of your site" maxlength="500"></textarea>
+                                <small class="form-help">Used in site footer and meta tags</small>
                             </div>
-                            <button type="submit" class="btn-primary">Save Profile</button>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="siteLogo">Logo URL</label>
+                                    <input type="url" id="siteLogo" class="form-input" placeholder="https://example.com/logo.png">
+                                </div>
+                                <div class="form-group">
+                                    <label for="siteFavicon">Favicon URL</label>
+                                    <input type="url" id="siteFavicon" class="form-input" placeholder="https://example.com/favicon.ico">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-primary">Save Site Settings</button>
                         </form>
                     </div>
                 </div>
+            </div>
 
+            <!-- SEO Settings Tab -->
+            <div id="seo-tab" class="settings-tab-content">
                 <div class="card">
                     <div class="card-header">
-                        <h3>Change Password</h3>
+                        <h3>SEO & Analytics</h3>
                     </div>
                     <div class="card-body">
-                        <form id="passwordForm" class="form">
+                        <form id="seoSettingsForm" class="form">
                             <div class="form-group">
-                                <label for="currentPassword">Current Password</label>
-                                <input type="password" id="currentPassword" class="form-input" placeholder="Enter current password">
+                                <label for="metaDescription">Meta Description</label>
+                                <textarea id="metaDescription" class="form-input" rows="3" placeholder="Search engine description (160 characters max)" maxlength="160"></textarea>
+                                <small class="form-help"><span id="metaDescCount">0</span>/160 characters</small>
                             </div>
                             <div class="form-group">
-                                <label for="newPassword">New Password</label>
-                                <input type="password" id="newPassword" class="form-input" placeholder="Enter new password">
+                                <label for="metaKeywords">Meta Keywords</label>
+                                <input type="text" id="metaKeywords" class="form-input" placeholder="portfolio, web development, design" maxlength="255">
+                                <small class="form-help">Comma-separated keywords</small>
                             </div>
                             <div class="form-group">
-                                <label for="confirmPassword">Confirm Password</label>
-                                <input type="password" id="confirmPassword" class="form-input" placeholder="Confirm new password">
+                                <label for="googleAnalyticsId">Google Analytics ID</label>
+                                <input type="text" id="googleAnalyticsId" class="form-input" placeholder="UA-XXXXXXXX-X or G-XXXXXXXXXX">
+                                <small class="form-help">Format: UA-XXXXXXXX-X (Universal Analytics) or G-XXXXXXXXXX (GA4)</small>
                             </div>
-                            <button type="submit" class="btn-primary">Change Password</button>
+                            <button type="submit" class="btn-primary">Save SEO Settings</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Settings Tab -->
+            <div id="contact-tab" class="settings-tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Contact Information</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="contactSettingsForm" class="form">
+                            <div class="form-group">
+                                <label for="contactEmail">Contact Email</label>
+                                <input type="email" id="contactEmail" class="form-input" placeholder="contact@example.com">
+                                <small class="form-help">Public contact email address</small>
+                            </div>
+                            <div class="form-group">
+                                <label>Social Media Links</label>
+                            </div>
+                            <div class="social-links-group">
+                                <div class="form-group">
+                                    <label for="socialFacebook">
+                                        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                                        </svg>
+                                        Facebook
+                                    </label>
+                                    <input type="url" id="socialFacebook" class="form-input" placeholder="https://facebook.com/yourpage">
+                                </div>
+                                <div class="form-group">
+                                    <label for="socialTwitter">
+                                        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                                        </svg>
+                                        Twitter
+                                    </label>
+                                    <input type="url" id="socialTwitter" class="form-input" placeholder="https://twitter.com/yourhandle">
+                                </div>
+                                <div class="form-group">
+                                    <label for="socialInstagram">
+                                        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                                            <path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.896.419.42.679.819.896 1.381.164.422.36 1.057.413 2.227.057 1.266.07 1.646.07 4.85s-.015 3.585-.074 4.85c-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.896-.42.164-1.065.36-2.235.413-1.274.057-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/>
+                                        </svg>
+                                        Instagram
+                                    </label>
+                                    <input type="url" id="socialInstagram" class="form-input" placeholder="https://instagram.com/yourhandle">
+                                </div>
+                                <div class="form-group">
+                                    <label for="socialLinkedin">
+                                        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                        </svg>
+                                        LinkedIn
+                                    </label>
+                                    <input type="url" id="socialLinkedin" class="form-input" placeholder="https://linkedin.com/in/yourprofile">
+                                </div>
+                                <div class="form-group">
+                                    <label for="socialGithub">
+                                        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                                            <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+                                        </svg>
+                                        GitHub
+                                    </label>
+                                    <input type="url" id="socialGithub" class="form-input" placeholder="https://github.com/yourusername">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-primary">Save Contact Settings</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Display Settings Tab -->
+            <div id="display-tab" class="settings-tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Display Preferences</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="displaySettingsForm" class="form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="itemsPerPage">Items Per Page</label>
+                                    <input type="number" id="itemsPerPage" class="form-input" min="1" max="100" placeholder="12">
+                                    <small class="form-help">Number of items to display per page in galleries (1-100)</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="defaultSort">Default Sort Order</label>
+                                    <select id="defaultSort" class="form-input">
+                                        <option value="newest">Newest First</option>
+                                        <option value="oldest">Oldest First</option>
+                                        <option value="title-asc">Title (A-Z)</option>
+                                        <option value="title-desc">Title (Z-A)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="theme">Theme</label>
+                                <select id="theme" class="form-input">
+                                    <option value="dark">Dark</option>
+                                    <option value="light">Light</option>
+                                    <option value="auto">Auto (System Preference)</option>
+                                </select>
+                                <small class="form-help">Default theme for the site</small>
+                            </div>
+                            <button type="submit" class="btn-primary">Save Display Settings</button>
                         </form>
                     </div>
                 </div>
@@ -473,7 +731,305 @@
         </div>
     </div>
 
+    <!-- Video Modal -->
+    <div id="videoModal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content modal-content-large">
+            <div class="modal-header">
+                <h3 id="videoModalTitle">Add Video</h3>
+                <button class="modal-close" onclick="closeVideoModal()">&times;</button>
+            </div>
+            <form id="videoForm">
+                <div class="form-row">
+                    <div class="form-group form-group-full">
+                        <label for="video-title">Title *</label>
+                        <input type="text" name="title" id="video-title" required placeholder="Enter video title">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="video-description">Description</label>
+                    <textarea name="description" id="video-description" rows="3" placeholder="Describe this video..."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="video-type">Video Type *</label>
+                        <select name="videoType" id="video-type" required>
+                            <option value="">Select type...</option>
+                            <option value="youtube">YouTube</option>
+                            <option value="vimeo">Vimeo</option>
+                            <option value="direct">Direct Upload</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="video-category">Category</label>
+                        <select name="category" id="video-category">
+                            <option value="">Select category...</option>
+                            <option value="tutorial">Tutorial</option>
+                            <option value="showcase">Showcase</option>
+                            <option value="demo">Demo</option>
+                            <option value="presentation">Presentation</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" id="video-url-group">
+                    <label for="video-url">Video URL</label>
+                    <input type="url" name="videoUrl" id="video-url" placeholder="https://www.youtube.com/watch?v=...">
+                    <small class="form-help">Enter the full YouTube or Vimeo URL</small>
+                </div>
+
+                <div class="form-group" id="embed-code-group" style="display: none;">
+                    <label for="video-embed">Embed Code (Optional)</label>
+                    <textarea name="embedCode" id="video-embed" rows="4" placeholder="<iframe src=..."></textarea>
+                    <small class="form-help">Paste the embed iframe code from YouTube/Vimeo</small>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="video-thumbnail">Thumbnail URL</label>
+                        <input type="url" name="thumbnail" id="video-thumbnail" placeholder="https://example.com/thumb.jpg">
+                        <small class="form-help">Optional - Auto-generated for YouTube/Vimeo</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="video-duration">Duration (seconds)</label>
+                        <input type="number" name="duration" id="video-duration" min="0" placeholder="120">
+                        <small class="form-help">Video length in seconds</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="video-tags">Tags</label>
+                    <input type="text" name="tags" id="video-tags" placeholder="javascript, tutorial, webdev">
+                    <small class="form-help">Comma-separated tags</small>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="video-visibility">Visibility</label>
+                        <select name="visibility" id="video-visibility">
+                            <option value="public">Public</option>
+                            <option value="private">Private</option>
+                            <option value="unlisted">Unlisted</option>
+                        </select>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="featured" id="video-featured">
+                            <span>Featured Video</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Video Preview -->
+                <div id="video-preview-container" class="video-preview" style="display: none;">
+                    <label>Preview</label>
+                    <div id="video-preview" class="video-preview-frame">
+                        <!-- Preview will be inserted here -->
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeVideoModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Video</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Project Modal -->
+    <div id="projectModal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content modal-content-xlarge">
+            <div class="modal-header">
+                <h3 id="projectModalTitle">Create Project</h3>
+                <button class="modal-close" onclick="closeProjectModal()">&times;</button>
+            </div>
+            <form id="projectForm">
+                <div class="form-row">
+                    <div class="form-group form-group-full">
+                        <label for="project-title">Title *</label>
+                        <input type="text" name="title" id="project-title" required placeholder="Enter project title" maxlength="100">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="project-short-description">Short Description * <span class="char-count" id="shortDescCharCount">0/200</span></label>
+                    <textarea name="shortDescription" id="project-short-description" rows="2" required placeholder="Brief description for project cards (200 characters max)" maxlength="200"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="project-long-description">Long Description (Rich Text)</label>
+                    <div id="project-long-description" class="quill-editor"></div>
+                    <input type="hidden" name="longDescription" id="project-long-description-hidden">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="project-thumbnail">Thumbnail URL</label>
+                        <input type="url" name="thumbnail" id="project-thumbnail" placeholder="https://example.com/image.jpg">
+                        <small class="form-help">Main project image for cards</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="project-category">Category</label>
+                        <select name="category" id="project-category">
+                            <option value="">Select category...</option>
+                            <option value="web-app">Web App</option>
+                            <option value="ecommerce">E-commerce</option>
+                            <option value="portfolio">Portfolio</option>
+                            <option value="landing-page">Landing Page</option>
+                            <option value="dashboard">Dashboard</option>
+                            <option value="mobile-app">Mobile App</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Project Gallery</label>
+                    <div class="image-gallery-manager" id="imageGalleryManager">
+                        <div class="gallery-items" id="galleryItems">
+                            <!-- Gallery items will be added here -->
+                        </div>
+                        <button type="button" class="btn-secondary btn-add-image" onclick="addGalleryImage()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            Add Image
+                        </button>
+                    </div>
+                    <input type="hidden" name="images" id="project-images-hidden">
+                </div>
+
+                <div class="form-group">
+                    <label for="project-technologies">Technologies</label>
+                    <div class="tech-input-wrapper">
+                        <div class="tech-chips" id="techChips">
+                            <!-- Technology chips will be added here -->
+                        </div>
+                        <input type="text" id="tech-input" placeholder="Type technology and press Enter..." class="tech-input">
+                    </div>
+                    <input type="hidden" name="technologies" id="project-technologies-hidden">
+                    <small class="form-help">Press Enter to add. Common: React, Vue, Node.js, MongoDB, Express, Next.js, TypeScript, JavaScript, Python, etc.</small>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="project-url">Live Site URL</label>
+                        <input type="url" name="projectUrl" id="project-url" placeholder="https://example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="project-github">GitHub Repository</label>
+                        <input type="url" name="githubUrl" id="project-github" placeholder="https://github.com/username/repo">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="project-client">Client Name (Optional)</label>
+                        <input type="text" name="client" id="project-client" placeholder="Client or company name">
+                    </div>
+                    <div class="form-group">
+                        <label for="project-completed-date">Completed Date</label>
+                        <input type="date" name="completedDate" id="project-completed-date">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="project-album">Link to Album (Optional)</label>
+                        <select name="albumId" id="project-album">
+                            <option value="">No album</option>
+                            <!-- Albums will be loaded here -->
+                        </select>
+                        <small class="form-help">Link this project to a photo album</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="project-visibility">Visibility</label>
+                        <select name="visibility" id="project-visibility">
+                            <option value="public">Public</option>
+                            <option value="private">Private</option>
+                            <option value="unlisted">Unlisted</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="featured" id="project-featured">
+                        <span>Featured Project</span>
+                    </label>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeProjectModal()">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Media Upload Modal -->
+    <div id="mediaUploadModal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Upload Media</h3>
+                <button class="modal-close" onclick="closeMediaUploadModal()">&times;</button>
+            </div>
+            <form id="mediaUploadForm">
+                <div class="form-group">
+                    <label for="media-album-select">Select Album *</label>
+                    <select name="albumId" id="media-album-select" required>
+                        <option value="">Choose an album...</option>
+                        <!-- Albums will be loaded dynamically -->
+                    </select>
+                </div>
+
+                <!-- Drag & Drop Upload Area -->
+                <div class="upload-area" id="uploadArea">
+                    <input type="file" id="mediaFiles" name="files" multiple accept="image/*,video/*" style="display: none;">
+                    <div class="upload-area-content">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                        <h4>Drag & drop files here</h4>
+                        <p>or click to browse</p>
+                        <small>Supports: Images (JPG, PNG, GIF, WEBP) and Videos (MP4, MOV, WEBM)</small>
+                        <small>Max file size: 100MB</small>
+                    </div>
+                </div>
+
+                <!-- Selected Files List -->
+                <div class="selected-files-list" id="selectedFilesList" style="display: none;">
+                    <h4>Selected Files</h4>
+                    <div id="selectedFilesContainer"></div>
+                </div>
+
+                <!-- Upload Progress -->
+                <div class="upload-progress-container" id="uploadProgressContainer" style="display: none;">
+                    <h4>Uploading...</h4>
+                    <div id="uploadProgressList"></div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="closeMediaUploadModal()">Cancel</button>
+                    <button type="submit" class="btn-primary" id="uploadSubmitBtn">Upload Files</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script src="/admin/js/dashboard.js"></script>
     <script src="/admin/js/albums.js"></script>
+    <script src="/admin/js/videos.js"></script>
+    <script src="/admin/js/projects.js"></script>
+    <script src="/admin/js/media.js"></script>
+    <script src="/admin/js/settings.js"></script>
 </body>
 </html>

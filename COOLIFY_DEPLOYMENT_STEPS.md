@@ -43,6 +43,17 @@ PORT=5000
 MONGODB_URI=mongodb://root:3STHRYyW2WFzJiiGc0jb1xcxvbDGxb538jpvi98ObQUbrXL0dFpVDoBrpJGrRPuM@g4ow4c844wwwkcwkw0cc8o4o:27017/frozenshield?directConnection=true
 
 JWT_SECRET=fd39502429194d266430f281e9712d0c81de7ade36a38e22e021268bf0a9c038cff1a77290a8b03cf160a36c50c8f3b78bac34e349ae0ba82d149638f04498f0
+
+# Optional: File Upload Configuration
+MAX_FILE_SIZE=10485760
+UPLOAD_PATH=./uploads
+
+# Optional: Email Configuration (for contact form)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-app-password
+EMAIL_FROM=noreply@frozenshield.ca
 ```
 
 **How to add:**
@@ -274,8 +285,9 @@ git push
 
 **Common Fixes:**
 - Ensure `package.json` has all dependencies
-- Check Node.js version compatibility
-- Verify start command is correct
+- Check Node.js version compatibility (>=18.0.0)
+- Verify start command is correct: `npm start`
+- Clear npm cache: `npm cache clean --force`
 
 ### MongoDB Connection Fails
 
@@ -284,6 +296,7 @@ git push
 - [ ] Using internal hostname (g4ow4c844...)
 - [ ] MongoDB service is running in Coolify
 - [ ] Database name is `frozenshield`
+- [ ] Connection string has correct format
 
 **Test Connection:**
 ```bash
@@ -298,6 +311,53 @@ mongosh "$MONGODB_URI"
 - PORT environment variable is `5000`
 - Application settings port is `5000`
 - server.js uses `process.env.PORT`
+
+### File Upload Issues
+
+**Check:**
+- Uploads directory exists and is writable
+- MAX_FILE_SIZE is set appropriately
+- File type restrictions are configured
+- Disk space is available
+
+**Fix:**
+```bash
+# In Coolify terminal
+mkdir -p uploads
+chmod 755 uploads
+```
+
+### Security Checklist
+
+Before going to production:
+- [ ] Change JWT_SECRET to a strong random value
+- [ ] Use HTTPS (configured in Coolify)
+- [ ] Configure proper CORS origins
+- [ ] Set NODE_ENV=production
+- [ ] Review rate limiting settings
+- [ ] Enable MongoDB authentication
+- [ ] Backup your database regularly
+- [ ] Monitor error logs
+- [ ] Keep dependencies updated
+
+### Common Error Messages
+
+**"Admin already exists"**
+- An admin user has already been registered
+- Use login instead of register
+
+**"No token provided"**
+- JWT token is missing from Authorization header
+- Re-login to get a new token
+
+**"Token expired"**
+- JWT token has expired (30 days)
+- Login again to get a new token
+
+**"Validation failed"**
+- Check required fields are provided
+- Verify data types match schema requirements
+- Check field length constraints
 
 ---
 

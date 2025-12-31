@@ -181,22 +181,28 @@ function switchSection(sectionId) {
  */
 function loadSectionData(sectionId) {
     switch (sectionId) {
-        case 'dashboard':
+        case 'dashboard-section':
             loadDashboardStats();
             break;
-        case 'albums':
+        case 'albums-section':
             // Will be implemented in albums.js
             if (typeof loadAlbums === 'function') {
                 loadAlbums();
             }
             break;
-        case 'media':
+        case 'videos-section':
+            // Will be implemented in videos.js
+            if (typeof loadVideos === 'function') {
+                loadVideos();
+            }
+            break;
+        case 'media-section':
             // Will be implemented in media.js
             if (typeof loadMedia === 'function') {
                 loadMedia();
             }
             break;
-        case 'projects':
+        case 'projects-section':
             // Will be implemented in projects.js
             if (typeof loadProjects === 'function') {
                 loadProjects();
