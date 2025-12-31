@@ -99,7 +99,7 @@ async function handleLogin(e) {
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(data.error || 'Login failed');
+            throw new Error(data.message || data.error || 'Login failed');
         }
 
         // Store token
@@ -139,8 +139,29 @@ async function handleRegister(e) {
         return;
     }
 
-    if (password.length < 6) {
-        showError('register', 'Password must be at least 6 characters long');
+    // Validate password complexity (must match backend requirements)
+    if (password.length < 8) {
+        showError('register', 'Password must be at least 8 characters long');
+        return;
+    }
+
+    if (!/[a-z]/.test(password)) {
+        showError('register', 'Password must contain at least one lowercase letter');
+        return;
+    }
+
+    if (!/[A-Z]/.test(password)) {
+        showError('register', 'Password must contain at least one uppercase letter');
+        return;
+    }
+
+    if (!/[0-9]/.test(password)) {
+        showError('register', 'Password must contain at least one number');
+        return;
+    }
+
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+        showError('register', 'Password must contain at least one special character (!@#$%^&*...)');
         return;
     }
 
@@ -164,7 +185,7 @@ async function handleRegister(e) {
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(data.error || 'Registration failed');
+            throw new Error(data.message || data.error || 'Registration failed');
         }
 
         // Store token
