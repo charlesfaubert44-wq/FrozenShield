@@ -68,6 +68,7 @@
             <!-- Portfolio Filters -->
             <div class="portfolio-filters">
                 <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="albums">Albums</button>
                 <button class="filter-btn" data-filter="photography">Photography</button>
                 <button class="filter-btn" data-filter="videography">Videography</button>
                 <button class="filter-btn" data-filter="web">Web</button>
@@ -349,6 +350,41 @@
             </div>
         </div>
     </footer>
+
+    <!-- Album Gallery Modal -->
+    <div id="albumModal" class="modal album-modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content album-modal-content">
+            <button class="modal-close">&times;</button>
+            <div class="modal-body">
+                <div class="album-modal-header">
+                    <h2 id="albumModalTitle" class="modal-title"></h2>
+                    <p id="albumModalDescription" class="modal-description"></p>
+                    <div id="albumModalTags" class="modal-tags"></div>
+                </div>
+                <div id="albumMediaGrid" class="album-media-grid">
+                    <!-- Media items will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Lightbox Modal -->
+    <div id="lightboxModal" class="modal lightbox-modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content lightbox-content">
+            <button class="modal-close">&times;</button>
+            <button class="lightbox-nav lightbox-prev">&lsaquo;</button>
+            <button class="lightbox-nav lightbox-next">&rsaquo;</button>
+            <div class="lightbox-body">
+                <img id="lightboxImage" src="" alt="">
+                <div class="lightbox-info">
+                    <p id="lightboxCaption"></p>
+                    <div id="lightboxCounter"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Project Detail Modal -->
     <div id="projectModal" class="modal">

@@ -33,6 +33,9 @@ data/
 *.db
 *.sqlite
 
+# Uploads (generated content)
+uploads/
+
 # Logs
 logs
 npm-debug.log*

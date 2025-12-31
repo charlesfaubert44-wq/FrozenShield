@@ -779,12 +779,227 @@ function initPortfolioFilters() {
     });
 }
 
+// Album Gallery Functions
+let currentAlbumMedia = [];
+let currentLightboxIndex = 0;
+
+// Load and display albums
+async function loadAlbums() {
+    try {
+        const response = await fetch(`${API_URL}/albums`);
+        const result = await response.json();
+
+        if (result.success && result.data) {
+            displayAlbums(result.data);
+        }
+    } catch (error) {
+        console.error('Error loading albums:', error);
+    }
+}
+
+// Display albums in grid
+function displayAlbums(albums) {
+    const albumsGrid = document.getElementById('albumsGrid');
+    if (!albumsGrid) return;
+
+    albumsGrid.innerHTML = '';
+
+    albums.forEach((album, index) => {
+        const albumCard = document.createElement('div');
+        albumCard.className = 'album-card';
+        albumCard.style.opacity = '0';
+        albumCard.style.transform = 'translateY(30px)';
+
+        albumCard.innerHTML = `
+            <div class="album-cover" style="background-image: url('${album.coverImage || '/placeholder.jpg'}')">
+                <div class="album-overlay">
+                    <h3 class="album-title">${album.title}</h3>
+                    <p class="album-count">${album.stats?.totalMedia || 0} photos</p>
+                </div>
+            </div>
+        `;
+
+        albumCard.addEventListener('click', () => openAlbumModal(album));
+        albumsGrid.appendChild(albumCard);
+
+        // Staggered fade-in animation
+        setTimeout(() => {
+            albumCard.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            albumCard.style.opacity = '1';
+            albumCard.style.transform = 'translateY(0)';
+        }, index * 100);
+    });
+}
+
+// Open album modal and load media
+async function openAlbumModal(album) {
+    const modal = document.getElementById('albumModal');
+    const title = document.getElementById('albumModalTitle');
+    const description = document.getElementById('albumModalDescription');
+    const tags = document.getElementById('albumModalTags');
+    const mediaGrid = document.getElementById('albumMediaGrid');
+
+    if (!modal) return;
+
+    title.textContent = album.title;
+    description.textContent = album.description || '';
+
+    // Display tags
+    tags.innerHTML = '';
+    if (album.tags && album.tags.length > 0) {
+        album.tags.forEach(tag => {
+            const tagElement = document.createElement('span');
+            tagElement.className = 'tag';
+            tagElement.textContent = tag;
+            tags.appendChild(tagElement);
+        });
+    }
+
+    // Load media for this album
+    try {
+        const response = await fetch(`${API_URL}/albums/${album._id}`);
+        const result = await response.json();
+
+        if (result.success && result.data && result.data.media) {
+            currentAlbumMedia = result.data.media;
+            displayAlbumMedia(result.data.media, mediaGrid);
+        }
+    } catch (error) {
+        console.error('Error loading album media:', error);
+        mediaGrid.innerHTML = '<p>Failed to load media</p>';
+    }
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+// Display media items in album modal
+function displayAlbumMedia(mediaItems, container) {
+    container.innerHTML = '';
+
+    mediaItems.forEach((media, index) => {
+        const mediaItem = document.createElement('div');
+        mediaItem.className = 'media-item';
+
+        if (media.type === 'image') {
+            mediaItem.innerHTML = `
+                <img src="${media.thumbnail || media.optimized || media.url}"
+                     alt="${media.alt || ''}"
+                     loading="lazy">
+            `;
+            mediaItem.addEventListener('click', () => openLightbox(index));
+        } else if (media.type === 'video') {
+            mediaItem.innerHTML = `
+                <video src="${media.url}" controls>
+                    Your browser does not support the video tag.
+                </video>
+            `;
+        }
+
+        container.appendChild(mediaItem);
+    });
+}
+
+// Open lightbox for viewing full-size images
+function openLightbox(index) {
+    const lightbox = document.getElementById('lightboxModal');
+    if (!lightbox) return;
+
+    currentLightboxIndex = index;
+    updateLightboxContent();
+    lightbox.classList.add('active');
+}
+
+// Update lightbox content
+function updateLightboxContent() {
+    const media = currentAlbumMedia[currentLightboxIndex];
+    if (!media) return;
+
+    const image = document.getElementById('lightboxImage');
+    const caption = document.getElementById('lightboxCaption');
+    const counter = document.getElementById('lightboxCounter');
+
+    image.src = media.url;
+    image.alt = media.alt || '';
+    caption.textContent = media.caption || '';
+    counter.textContent = `${currentLightboxIndex + 1} / ${currentAlbumMedia.length}`;
+}
+
+// Navigate lightbox
+function navigateLightbox(direction) {
+    currentLightboxIndex += direction;
+
+    // Wrap around
+    if (currentLightboxIndex < 0) {
+        currentLightboxIndex = currentAlbumMedia.length - 1;
+    } else if (currentLightboxIndex >= currentAlbumMedia.length) {
+        currentLightboxIndex = 0;
+    }
+
+    updateLightboxContent();
+}
+
+// Initialize lightbox controls
+function initLightbox() {
+    const lightbox = document.getElementById('lightboxModal');
+    if (!lightbox) return;
+
+    const closeBtn = lightbox.querySelector('.modal-close');
+    const backdrop = lightbox.querySelector('.modal-backdrop');
+    const prevBtn = lightbox.querySelector('.lightbox-prev');
+    const nextBtn = lightbox.querySelector('.lightbox-next');
+
+    function closeLightbox() {
+        lightbox.classList.remove('active');
+    }
+
+    closeBtn?.addEventListener('click', closeLightbox);
+    backdrop?.addEventListener('click', closeLightbox);
+    prevBtn?.addEventListener('click', () => navigateLightbox(-1));
+    nextBtn?.addEventListener('click', () => navigateLightbox(1));
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (!lightbox.classList.contains('active')) return;
+
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowLeft') navigateLightbox(-1);
+        if (e.key === 'ArrowRight') navigateLightbox(1);
+    });
+}
+
+// Initialize album modal controls
+function initAlbumModal() {
+    const modal = document.getElementById('albumModal');
+    if (!modal) return;
+
+    const closeBtn = modal.querySelector('.modal-close');
+    const backdrop = modal.querySelector('.modal-backdrop');
+
+    function closeModal() {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    closeBtn?.addEventListener('click', closeModal);
+    backdrop?.addEventListener('click', closeModal);
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+}
+
 // Initialize interactivity when DOM is loaded
 window.addEventListener('DOMContentLoaded', () => {
     initServicesCarousel(); // Initialize carousel instead of cards
     initProjectCards();
     initPortfolioFilters(); // Initialize portfolio filters
     updateStructuredData(); // Load dynamic SEO data
+    loadAlbums(); // Load album gallery
+    initLightbox(); // Initialize lightbox
+    initAlbumModal(); // Initialize album modal
 
     // Add staggered fade-in animation to project cards only
     const cards = document.querySelectorAll('.project-card');

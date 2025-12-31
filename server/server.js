@@ -45,6 +45,8 @@ app.get('/api/health', (req, res) => {
 // API Routes
 app.use('/api/contact', require('./routes/contact'));
 app.use('/api/projects', require('./routes/projects'));
+app.use('/api/albums', require('./routes/albums'));
+app.use('/api/media', require('./routes/media'));
 
 // SEO Routes (before static files to handle sitemap.xml and structured data)
 app.use('/', require('./routes/seo'));

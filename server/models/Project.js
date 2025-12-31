@@ -17,6 +17,10 @@ const projectSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
+    albumId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Album'
+    },
     tags: [{
         type: String,
         trim: true
