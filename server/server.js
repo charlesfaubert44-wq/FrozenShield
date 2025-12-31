@@ -49,6 +49,10 @@ app.use('/api/projects', require('./routes/projects'));
 app.use('/api/albums', require('./routes/albums'));
 app.use('/api/media', require('./routes/media'));
 
+// Admin Routes (Protected)
+app.use('/api/admin/albums', require('./routes/admin/albums'));
+app.use('/api/admin/stats', require('./routes/admin/stats'));
+
 // SEO Routes (before static files to handle sitemap.xml and structured data)
 app.use('/', require('./routes/seo'));
 
