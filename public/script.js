@@ -808,6 +808,11 @@ function initServicesCarousel() {
     const prevBtn = document.querySelector('.carousel-prev');
     const nextBtn = document.querySelector('.carousel-next');
 
+    // Exit if carousel elements don't exist
+    if (!track || slides.length === 0 || !prevBtn || !nextBtn) {
+        return;
+    }
+
     let currentSlide = 0;
     let isTransitioning = false;
     let autoPlayInterval;
