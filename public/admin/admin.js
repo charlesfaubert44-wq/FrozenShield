@@ -16,11 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.warn('DEV MODE: Authentication bypassed!');
         currentAdmin = { username: 'dev', email: 'dev@localhost' };
 
-        // Hide login screen and show dashboard
-        document.getElementById('login-screen').classList.remove('active');
-        document.getElementById('register-screen').classList.remove('active');
-        document.getElementById('dashboard-screen').classList.add('active');
-
+        // Dashboard is already visible in dashboard.html
         setupEventListeners();
         loadDashboard();
         return;
@@ -78,9 +74,15 @@ function setupEventListeners() {
         switchSection('contacts');
         loadContactMessages();
     });
-    document.getElementById('nav-invoices').addEventListener('click', () => {
-        switchSection('invoices');
-    });
+
+    // Invoices nav (if it exists)
+    const navInvoices = document.getElementById('nav-invoices');
+    if (navInvoices) {
+        navInvoices.addEventListener('click', () => {
+            switchSection('invoices');
+        });
+    }
+
     document.getElementById('nav-analytics').addEventListener('click', () => {
         switchSection('analytics');
     });
@@ -110,31 +112,53 @@ function setupEventListeners() {
     document.getElementById('contact-search').addEventListener('input', handleContactSearch);
     document.getElementById('contact-status-filter').addEventListener('change', handleContactFilter);
 
-    // Invoice Management
-    document.getElementById('create-invoice-btn').addEventListener('click', () => {
-        openInvoiceModal();
-    });
-    document.getElementById('invoice-form').addEventListener('submit', handleInvoiceSubmit);
-    document.getElementById('cancel-invoice').addEventListener('click', closeInvoiceModal);
-    document.getElementById('close-invoice-modal').addEventListener('click', closeInvoiceModal);
-    document.getElementById('add-line-item').addEventListener('click', addLineItem);
-
-    // Invoice modal close on outside click
-    document.getElementById('invoice-modal').addEventListener('click', (e) => {
-        if (e.target.id === 'invoice-modal') {
-            closeInvoiceModal();
-        }
-    });
-
-    // Invoice filters
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            e.target.classList.add('active');
-            currentInvoiceFilter = e.target.dataset.status;
-            filterInvoices(currentInvoiceFilter);
+    // Invoice Management (if invoice elements exist)
+    const createInvoiceBtn = document.getElementById('create-invoice-btn');
+    if (createInvoiceBtn) {
+        createInvoiceBtn.addEventListener('click', () => {
+            openInvoiceModal();
         });
-    });
+
+        const invoiceForm = document.getElementById('invoice-form');
+        if (invoiceForm) {
+            invoiceForm.addEventListener('submit', handleInvoiceSubmit);
+        }
+
+        const cancelInvoice = document.getElementById('cancel-invoice');
+        if (cancelInvoice) {
+            cancelInvoice.addEventListener('click', closeInvoiceModal);
+        }
+
+        const closeInvoiceModalBtn = document.getElementById('close-invoice-modal');
+        if (closeInvoiceModalBtn) {
+            closeInvoiceModalBtn.addEventListener('click', closeInvoiceModal);
+        }
+
+        const addLineItemBtn = document.getElementById('add-line-item');
+        if (addLineItemBtn) {
+            addLineItemBtn.addEventListener('click', addLineItem);
+        }
+
+        // Invoice modal close on outside click
+        const invoiceModal = document.getElementById('invoice-modal');
+        if (invoiceModal) {
+            invoiceModal.addEventListener('click', (e) => {
+                if (e.target.id === 'invoice-modal') {
+                    closeInvoiceModal();
+                }
+            });
+        }
+
+        // Invoice filters
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentInvoiceFilter = e.target.dataset.status;
+                filterInvoices(currentInvoiceFilter);
+            });
+        });
+    }
 
     // Export
     document.getElementById('export-contacts').addEventListener('click', exportContacts);
