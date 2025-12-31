@@ -3,10 +3,10 @@ const router = express.Router();
 const Media = require('../../models/Media');
 const Album = require('../../models/Album');
 const { upload, processImage, processVideo, deleteMediaFiles } = require('../../middleware/mediaUpload');
-const { protect } = require('../../middleware/auth');
+const { authenticate } = require('../../middleware/auth');
 
 // Apply authentication middleware to all routes
-router.use(protect);
+router.use(authenticate);
 
 // @route   GET /api/admin/media
 // @desc    Get all media with filters, search, and pagination
