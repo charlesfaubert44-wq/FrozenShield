@@ -79,12 +79,17 @@ router.post('/register', registrationLimiter, [
 
         // Check if any users exist (only allow first admin)
         const userCount = await User.countDocuments();
+        console.log(`[Registration] Current user count: ${userCount}`);
+
         if (userCount > 0) {
+            console.log('[Registration] Blocking registration - admin already exists');
             return res.status(403).json({
                 success: false,
-                message: 'Admin already exists'
+                message: 'Admin already exists. Only one admin account is allowed during initial setup.'
             });
         }
+
+        console.log('[Registration] No users exist - allowing first admin registration');
 
         // Check if username or email already exists
         const existingUser = await User.findOne({
@@ -101,6 +106,7 @@ router.post('/register', registrationLimiter, [
         }
 
         // Create new user
+        console.log(`[Registration] Creating admin user: ${username} (${email})`);
         const user = new User({
             username,
             email,
@@ -109,6 +115,7 @@ router.post('/register', registrationLimiter, [
         });
 
         await user.save();
+        console.log(`[Registration] ✓ Admin user created successfully with ID: ${user._id}`);
 
         // Generate JWT token
         const token = generateToken(user._id);
@@ -122,6 +129,7 @@ router.post('/register', registrationLimiter, [
             createdAt: user.createdAt
         };
 
+        console.log(`[Registration] ✓ JWT token generated, sending response`);
         res.status(201).json({
             success: true,
             token,
