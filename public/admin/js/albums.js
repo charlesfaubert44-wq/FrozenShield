@@ -1,8 +1,8 @@
 // Albums Management JavaScript
 // Handles album CRUD operations for admin panel
 
-// API Configuration
-const API_BASE = window.location.origin;
+// API_BASE is defined in shared.js (loaded first)
+// Local state for albums module
 let currentPage = 1;
 let currentSearch = '';
 let currentFilters = {};

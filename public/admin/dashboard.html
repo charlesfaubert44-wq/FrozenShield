@@ -203,7 +203,7 @@
                     </div>
                     <div class="card-body">
                         <div class="quick-actions">
-                            <button class="btn-secondary" onclick="document.querySelector('[data-section=&quot;albums-section&quot;]').click()">
+                            <button id="quickAlbumBtn" class="btn-secondary">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <rect x="3" y="3" width="18" height="18" rx="2"/>
                                     <circle cx="8.5" cy="8.5" r="1.5"/>
@@ -211,19 +211,19 @@
                                 </svg>
                                 Create Album
                             </button>
-                            <button class="btn-secondary" onclick="document.querySelector('[data-section=&quot;videos-section&quot;]').click()">
+                            <button id="quickVideoBtn" class="btn-secondary">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <polygon points="5 3 19 12 5 21 5 3"/>
                                 </svg>
                                 Add Video
                             </button>
-                            <button class="btn-secondary" onclick="document.querySelector('[data-section=&quot;projects-section&quot;]').click()">
+                            <button id="quickProjectBtn" class="btn-secondary">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
                                 </svg>
                                 Create Project
                             </button>
-                            <button class="btn-secondary" onclick="document.querySelector('[data-section=&quot;media-section&quot;]').click()">
+                            <button id="quickMediaBtn" class="btn-secondary">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                                     <polyline points="17 8 12 3 7 8"/>
@@ -249,7 +249,7 @@
                         <option value="private">Private</option>
                         <option value="unlisted">Unlisted</option>
                     </select>
-                    <button class="btn-primary" onclick="openCreateAlbumModal()">
+                    <button id="createAlbumBtn" class="btn-primary">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="12" y1="5" x2="12" y2="19"/>
                             <line x1="5" y1="12" x2="19" y2="12"/>
@@ -290,7 +290,7 @@
                         <option value="">All Videos</option>
                         <option value="true">Featured Only</option>
                     </select>
-                    <button class="btn-primary" onclick="openCreateVideoModal()">
+                    <button id="createVideoBtn" class="btn-primary">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="12" y1="5" x2="12" y2="19"/>
                             <line x1="5" y1="12" x2="19" y2="12"/>
@@ -334,7 +334,7 @@
                         <option value="">All Projects</option>
                         <option value="true">Featured Only</option>
                     </select>
-                    <button class="btn-primary" onclick="openCreateProjectModal()">
+                    <button id="createProjectBtn" class="btn-primary">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="12" y1="5" x2="12" y2="19"/>
                             <line x1="5" y1="12" x2="19" y2="12"/>
@@ -687,7 +687,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 id="albumModalTitle">Create Album</h3>
-                <button class="modal-close" onclick="closeAlbumModal()">&times;</button>
+                <button id="closeAlbumModalBtn" class="modal-close">&times;</button>
             </div>
             <form id="albumForm">
                 <div class="form-group">
@@ -724,7 +724,7 @@
                     </label>
                 </div>
                 <div class="modal-actions">
-                    <button type="button" class="btn-secondary" onclick="closeAlbumModal()">Cancel</button>
+                    <button id="cancelAlbumBtn" type="button" class="btn-secondary">Cancel</button>
                     <button type="submit" class="btn-primary">Save Album</button>
                 </div>
             </form>
@@ -737,7 +737,7 @@
         <div class="modal-content modal-content-large">
             <div class="modal-header">
                 <h3 id="videoModalTitle">Add Video</h3>
-                <button class="modal-close" onclick="closeVideoModal()">&times;</button>
+                <button id="closeVideoModalBtn" class="modal-close">&times;</button>
             </div>
             <form id="videoForm">
                 <div class="form-row">
@@ -831,7 +831,7 @@
                 </div>
 
                 <div class="modal-actions">
-                    <button type="button" class="btn-secondary" onclick="closeVideoModal()">Cancel</button>
+                    <button id="cancelVideoBtn" type="button" class="btn-secondary">Cancel</button>
                     <button type="submit" class="btn-primary">Save Video</button>
                 </div>
             </form>
@@ -844,7 +844,7 @@
         <div class="modal-content modal-content-xlarge">
             <div class="modal-header">
                 <h3 id="projectModalTitle">Create Project</h3>
-                <button class="modal-close" onclick="closeProjectModal()">&times;</button>
+                <button id="closeProjectModalBtn" class="modal-close">&times;</button>
             </div>
             <form id="projectForm">
                 <div class="form-row">
@@ -892,7 +892,7 @@
                         <div class="gallery-items" id="galleryItems">
                             <!-- Gallery items will be added here -->
                         </div>
-                        <button type="button" class="btn-secondary btn-add-image" onclick="addGalleryImage()">
+                        <button id="addGalleryImageBtn" type="button" class="btn-secondary btn-add-image">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <line x1="12" y1="5" x2="12" y2="19"/>
                                 <line x1="5" y1="12" x2="19" y2="12"/>
@@ -964,7 +964,7 @@
                 </div>
 
                 <div class="modal-actions">
-                    <button type="button" class="btn-secondary" onclick="closeProjectModal()">Cancel</button>
+                    <button id="cancelProjectBtn" type="button" class="btn-secondary">Cancel</button>
                     <button type="submit" class="btn-primary">Save Project</button>
                 </div>
             </form>
@@ -977,7 +977,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Upload Media</h3>
-                <button class="modal-close" onclick="closeMediaUploadModal()">&times;</button>
+                <button id="closeMediaUploadModalBtn" class="modal-close">&times;</button>
             </div>
             <form id="mediaUploadForm">
                 <div class="form-group">
@@ -1017,7 +1017,7 @@
                 </div>
 
                 <div class="modal-actions">
-                    <button type="button" class="btn-secondary" onclick="closeMediaUploadModal()">Cancel</button>
+                    <button id="cancelMediaUploadBtn" type="button" class="btn-secondary">Cancel</button>
                     <button type="submit" class="btn-primary" id="uploadSubmitBtn">Upload Files</button>
                 </div>
             </form>
@@ -1025,6 +1025,8 @@
     </div>
 
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <!-- Load shared constants FIRST to prevent duplicate declarations -->
+    <script src="/admin/js/shared.js"></script>
     <script src="/admin/js/dashboard.js"></script>
     <script src="/admin/js/albums.js"></script>
     <script src="/admin/js/videos.js"></script>

@@ -1,8 +1,8 @@
 // Projects Management JavaScript
 // Handles project CRUD operations with rich text editor and multi-image gallery
 
-// API Configuration
-const API_BASE = window.location.origin;
+// API_BASE is defined in shared.js (loaded first)
+// Local state for projects module
 let currentPage = 1;
 let currentSearch = '';
 let currentFilters = {};

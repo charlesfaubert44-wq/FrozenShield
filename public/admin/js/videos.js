@@ -1,8 +1,8 @@
 // Videos Management JavaScript
 // Handles video CRUD operations for admin panel
 
-// API Configuration
-const API_BASE = window.location.origin;
+// API_BASE is defined in shared.js (loaded first)
+// Local state for videos module
 let videoCurrentPage = 1;
 let videoCurrentSearch = '';
 let videoCurrentFilters = {};

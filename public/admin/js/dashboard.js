@@ -48,8 +48,8 @@ function showNotification(message, type = 'info') {
  */
 async function api(endpoint, options = {}) {
     try {
-        // Get token from localStorage
-        const token = localStorage.getItem('authToken');
+        // Get token from localStorage (must match key used in auth.js)
+        const token = localStorage.getItem('token');
 
         // Set default headers
         const headers = {
@@ -73,7 +73,7 @@ async function api(endpoint, options = {}) {
 
         // Handle 401 Unauthorized (token expired or invalid)
         if (response.status === 401) {
-            localStorage.removeItem('authToken');
+            localStorage.removeItem('token');
             window.location.href = '/admin/login.html';
             throw new Error('Authentication failed. Please login again.');
         }
@@ -98,7 +98,7 @@ async function api(endpoint, options = {}) {
  */
 async function checkAuth() {
     try {
-        const token = localStorage.getItem('authToken');
+        const token = localStorage.getItem('token');
 
         // No token, redirect to login
         if (!token) {
@@ -123,7 +123,7 @@ async function checkAuth() {
 
     } catch (error) {
         console.error('Auth check failed:', error);
-        localStorage.removeItem('authToken');
+        localStorage.removeItem('token');
         window.location.href = '/admin/login.html';
     }
 }
@@ -133,7 +133,7 @@ async function checkAuth() {
  * Clears token and redirects to login
  */
 function logout() {
-    localStorage.removeItem('authToken');
+    localStorage.removeItem('token');
     showNotification('Logged out successfully', 'success');
     setTimeout(() => {
         window.location.href = '/admin/login.html';
@@ -387,10 +387,112 @@ async function initDashboard() {
         });
     }
 
+    // Set up modal event listeners (CSP-compliant, no inline onclick)
+    setupModalEventListeners();
+
     // Load section from URL hash or default to dashboard
     const hash = window.location.hash.substring(1);
     const initialSection = hash || 'dashboard';
     switchSection(initialSection);
+}
+
+/**
+ * Set up event listeners for modals and quick actions
+ * Replaces inline onclick handlers for CSP compliance
+ */
+function setupModalEventListeners() {
+    // Quick action buttons (dashboard)
+    const quickAlbumBtn = document.getElementById('quickAlbumBtn');
+    if (quickAlbumBtn) {
+        quickAlbumBtn.addEventListener('click', () => {
+            document.querySelector('[data-section="albums-section"]')?.click();
+        });
+    }
+
+    const quickVideoBtn = document.getElementById('quickVideoBtn');
+    if (quickVideoBtn) {
+        quickVideoBtn.addEventListener('click', () => {
+            document.querySelector('[data-section="videos-section"]')?.click();
+        });
+    }
+
+    const quickProjectBtn = document.getElementById('quickProjectBtn');
+    if (quickProjectBtn) {
+        quickProjectBtn.addEventListener('click', () => {
+            document.querySelector('[data-section="projects-section"]')?.click();
+        });
+    }
+
+    const quickMediaBtn = document.getElementById('quickMediaBtn');
+    if (quickMediaBtn) {
+        quickMediaBtn.addEventListener('click', () => {
+            document.querySelector('[data-section="media-section"]')?.click();
+        });
+    }
+
+    // Album modal buttons
+    const createAlbumBtn = document.getElementById('createAlbumBtn');
+    if (createAlbumBtn && typeof openCreateAlbumModal === 'function') {
+        createAlbumBtn.addEventListener('click', openCreateAlbumModal);
+    }
+
+    const closeAlbumModalBtn = document.getElementById('closeAlbumModalBtn');
+    if (closeAlbumModalBtn && typeof closeAlbumModal === 'function') {
+        closeAlbumModalBtn.addEventListener('click', closeAlbumModal);
+    }
+
+    const cancelAlbumBtn = document.getElementById('cancelAlbumBtn');
+    if (cancelAlbumBtn && typeof closeAlbumModal === 'function') {
+        cancelAlbumBtn.addEventListener('click', closeAlbumModal);
+    }
+
+    // Video modal buttons
+    const createVideoBtn = document.getElementById('createVideoBtn');
+    if (createVideoBtn && typeof openCreateVideoModal === 'function') {
+        createVideoBtn.addEventListener('click', openCreateVideoModal);
+    }
+
+    const closeVideoModalBtn = document.getElementById('closeVideoModalBtn');
+    if (closeVideoModalBtn && typeof closeVideoModal === 'function') {
+        closeVideoModalBtn.addEventListener('click', closeVideoModal);
+    }
+
+    const cancelVideoBtn = document.getElementById('cancelVideoBtn');
+    if (cancelVideoBtn && typeof closeVideoModal === 'function') {
+        cancelVideoBtn.addEventListener('click', closeVideoModal);
+    }
+
+    // Project modal buttons
+    const createProjectBtn = document.getElementById('createProjectBtn');
+    if (createProjectBtn && typeof openCreateProjectModal === 'function') {
+        createProjectBtn.addEventListener('click', openCreateProjectModal);
+    }
+
+    const closeProjectModalBtn = document.getElementById('closeProjectModalBtn');
+    if (closeProjectModalBtn && typeof closeProjectModal === 'function') {
+        closeProjectModalBtn.addEventListener('click', closeProjectModal);
+    }
+
+    const cancelProjectBtn = document.getElementById('cancelProjectBtn');
+    if (cancelProjectBtn && typeof closeProjectModal === 'function') {
+        cancelProjectBtn.addEventListener('click', closeProjectModal);
+    }
+
+    const addGalleryImageBtn = document.getElementById('addGalleryImageBtn');
+    if (addGalleryImageBtn && typeof addGalleryImage === 'function') {
+        addGalleryImageBtn.addEventListener('click', addGalleryImage);
+    }
+
+    // Media upload modal buttons
+    const closeMediaUploadModalBtn = document.getElementById('closeMediaUploadModalBtn');
+    if (closeMediaUploadModalBtn && typeof closeMediaUploadModal === 'function') {
+        closeMediaUploadModalBtn.addEventListener('click', closeMediaUploadModal);
+    }
+
+    const cancelMediaUploadBtn = document.getElementById('cancelMediaUploadBtn');
+    if (cancelMediaUploadBtn && typeof closeMediaUploadModal === 'function') {
+        cancelMediaUploadBtn.addEventListener('click', closeMediaUploadModal);
+    }
 }
 
 // Initialize when DOM is ready
