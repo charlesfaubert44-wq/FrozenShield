@@ -81,6 +81,27 @@ body {
     background-clip: text;
 }
 
+.admin-version-badge {
+    margin-left: auto;
+    background: rgba(102, 126, 234, 0.1);
+    border: 1px solid rgba(102, 126, 234, 0.3);
+    color: #667eea;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.5px;
+    cursor: help;
+    transition: all 0.2s ease;
+}
+
+.admin-version-badge:hover {
+    background: rgba(102, 126, 234, 0.2);
+    border-color: rgba(102, 126, 234, 0.5);
+    transform: scale(1.05);
+}
+
 .nav-menu {
     flex: 1;
     list-style: none;

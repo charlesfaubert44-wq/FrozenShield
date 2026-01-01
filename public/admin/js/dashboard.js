@@ -366,6 +366,9 @@ async function initDashboard() {
     // Check authentication
     await checkAuth();
 
+    // Load and display version
+    loadAdminVersion();
+
     // Set up navigation
     const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach(item => {
@@ -492,6 +495,31 @@ function setupModalEventListeners() {
     const cancelMediaUploadBtn = document.getElementById('cancelMediaUploadBtn');
     if (cancelMediaUploadBtn && typeof closeMediaUploadModal === 'function') {
         cancelMediaUploadBtn.addEventListener('click', closeMediaUploadModal);
+    }
+}
+
+/**
+ * Load and display application version in admin panel
+ */
+async function loadAdminVersion() {
+    try {
+        const response = await fetch('/api/version');
+        const data = await response.json();
+
+        if (data.success && data.version) {
+            const badge = document.getElementById('adminVersionBadge');
+            if (badge) {
+                badge.textContent = `v${data.version}`;
+                badge.title = `FrozenShield ${data.version} - Updated ${new Date(data.timestamp).toLocaleString()}`;
+            }
+        }
+    } catch (error) {
+        console.error('Failed to load version:', error);
+        const badge = document.getElementById('adminVersionBadge');
+        if (badge) {
+            badge.textContent = 'v?.?.?';
+            badge.title = 'Version unavailable';
+        }
     }
 }
 

@@ -1165,3 +1165,36 @@ function initServicesCarousel() {
         }
     });
 }
+
+// ==========================================
+// VERSION BADGE
+// ==========================================
+// Fetch and display application version
+async function loadVersion() {
+    try {
+        const response = await fetch('/api/version');
+        const data = await response.json();
+
+        if (data.success && data.version) {
+            const badge = document.getElementById('versionBadge');
+            if (badge) {
+                badge.textContent = `v${data.version}`;
+                badge.title = `FrozenShield ${data.version} - Updated ${new Date(data.timestamp).toLocaleString()}`;
+            }
+        }
+    } catch (error) {
+        console.error('Failed to load version:', error);
+        const badge = document.getElementById('versionBadge');
+        if (badge) {
+            badge.textContent = 'v?.?.?';
+            badge.title = 'Version unavailable';
+        }
+    }
+}
+
+// Load version on page load
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadVersion);
+} else {
+    loadVersion();
+}

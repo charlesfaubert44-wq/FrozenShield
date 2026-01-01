@@ -104,6 +104,17 @@ app.get('/api/health', (req, res) => {
     });
 });
 
+// Version endpoint - returns current app version
+app.get('/api/version', (req, res) => {
+    const packageJson = require('../package.json');
+    res.json({
+        success: true,
+        version: packageJson.version,
+        name: packageJson.name,
+        timestamp: new Date().toISOString()
+    });
+});
+
 // Performance metrics endpoint (admin only)
 app.get('/api/admin/metrics', authenticate, (req, res) => {
     try {

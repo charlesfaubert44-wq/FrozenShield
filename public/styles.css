@@ -60,6 +60,33 @@ body {
     z-index: -1;
 }
 
+.version-badge {
+    position: absolute;
+    top: -40px;
+    right: 10px;
+    background: linear-gradient(135deg, rgba(0, 255, 150, 0.15), rgba(100, 220, 255, 0.15));
+    border: 1px solid rgba(0, 255, 150, 0.3);
+    color: rgba(0, 255, 150, 0.9);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    font-family: 'Courier New', monospace;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 20px rgba(0, 255, 150, 0.2);
+    transition: all 0.3s ease;
+    cursor: help;
+    z-index: 10;
+}
+
+.version-badge:hover {
+    background: linear-gradient(135deg, rgba(0, 255, 150, 0.25), rgba(100, 220, 255, 0.25));
+    border-color: rgba(0, 255, 150, 0.5);
+    box-shadow: 0 0 30px rgba(0, 255, 150, 0.4);
+    transform: scale(1.05);
+}
+
 .brand-container {
     display: flex;
     flex-direction: column;
