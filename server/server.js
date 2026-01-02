@@ -22,6 +22,7 @@ app.use(helmet({
         directives: {
             defaultSrc: ["'self'"],
             scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdn.quilljs.com"], // Quill.js CDN
+            scriptSrcAttr: ["'unsafe-inline'"], // Temporary: allow inline event handlers while refactoring
             styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.quilljs.com"], // Quill.js styles
             fontSrc: ["'self'", "https://fonts.gstatic.com"],
             imgSrc: ["'self'", "data:", "https:", "blob:"],
