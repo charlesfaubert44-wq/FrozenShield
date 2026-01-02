@@ -1,7 +1,7 @@
 // Video Gallery Management
 // Handles video display, filtering, search, and video player modal
 
-const API_URL = window.location.origin + '/api';
+// API_URL is defined in script.js (loaded first)
 
 // Video gallery state
 let allVideos = [];
