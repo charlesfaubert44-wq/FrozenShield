@@ -23,6 +23,37 @@ const mediaSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
+    // Enhanced multi-size storage for photos
+    fileSizes: {
+        thumbnail: {
+            path: String,
+            width: Number,
+            height: Number,
+            size: Number // bytes
+        },
+        medium: {
+            path: String,
+            width: Number,
+            height: Number,
+            size: Number
+        },
+        full: {
+            path: String,
+            width: Number,
+            height: Number,
+            size: Number
+        },
+        original: {
+            path: String,
+            width: Number,
+            height: Number,
+            size: Number
+        }
+    },
+    originalFilename: {
+        type: String,
+        trim: true
+    },
     caption: {
         type: String,
         trim: true,

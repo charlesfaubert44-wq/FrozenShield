@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Album Media | Admin</title>
+    <link rel="stylesheet" href="/admin/css/admin.css">
+    <style>
+        /* Media Management Specific Styles */
+        .media-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .media-header h1 {
+            margin: 0;
+            font-size: 1.75rem;
+        }
+
+        .album-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-secondary, #2a2d3a);
+            border: 1px solid var(--border-color, #3a3d4a);
+            border-radius: 8px;
+            color: var(--text-primary, #e0e0e0);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background: var(--bg-tertiary, #363947);
+            border-color: var(--accent-primary, #6366f1);
+        }
+
+        /* Upload Zone */
+        .upload-zone {
+            border: 2px dashed var(--border-color, #3a3d4a);
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            text-align: center;
+            background: var(--bg-secondary, #2a2d3a);
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-zone.drag-over {
+            border-color: var(--accent-primary, #6366f1);
+            background: rgba(99, 102, 241, 0.1);
+            transform: scale(1.02);
+        }
+
+        .upload-zone svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .upload-zone h3 {
+            margin: 0 0 0.5rem 0;
+            color: var(--text-primary, #e0e0e0);
+        }
+
+        .upload-zone p {
+            margin: 0;
+            color: var(--text-secondary, #9ca3af);
+            font-size: 0.875rem;
+        }
+
+        .upload-zone input[type="file"] {
+            display: none;
+        }
+
+        /* Upload Progress */
+        .upload-progress {
+            display: none;
+            margin-bottom: 2rem;
+        }
+
+        .upload-progress.active {
+            display: block;
+        }
+
+        .progress-item {
+            background: var(--bg-secondary, #2a2d3a);
+            border: 1px solid var(--border-color, #3a3d4a);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: var(--bg-tertiary, #363947);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            transition: width 0.3s ease;
+        }
+
+        /* Media Grid */
+        .media-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .media-item {
+            position: relative;
+            background: var(--bg-secondary, #2a2d3a);
+            border: 1px solid var(--border-color, #3a3d4a);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+            cursor: move;
+        }
+
+        .media-item:hover {
+            border-color: var(--accent-primary, #6366f1);
+            transform: translateY(-2px);
+        }
+
+        .media-item.dragging {
+            opacity: 0.5;
+        }
+
+        .media-thumbnail {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            background: var(--bg-tertiary, #363947);
+        }
+
+        .media-info {
+            padding: 0.75rem;
+        }
+
+        .media-filename {
+            font-size: 0.75rem;
+            color: var(--text-secondary, #9ca3af);
+            margin: 0 0 0.25rem 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .media-meta {
+            font-size: 0.75rem;
+            color: var(--text-tertiary, #6b7280);
+        }
+
+        .media-actions {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            display: flex;
+            gap: 0.25rem;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .media-item:hover .media-actions {
+            opacity: 1;
+        }
+
+        .media-action-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.7);
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .media-action-btn:hover {
+            background: var(--accent-primary, #6366f1);
+        }
+
+        .media-action-btn.danger:hover {
+            background: var(--danger-color, #ef4444);
+        }
+
+        /* Empty State */
+        .empty-media {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-secondary, #9ca3af);
+        }
+
+        .empty-media svg {
+            width: 64px;
+            height: 64px;
+            opacity: 0.3;
+            margin-bottom: 1rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            position: relative;
+            background: var(--bg-primary, #1a1d2e);
+            border: 1px solid var(--border-color, #3a3d4a);
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary, #9ca3af);
+            cursor: pointer;
+            padding: 0.5rem;
+            margin: -0.5rem;
+        }
+
+        .modal-close:hover {
+            color: var(--text-primary, #e0e0e0);
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary, #e0e0e0);
+            font-size: 0.875rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg-secondary, #2a2d3a);
+            border: 1px solid var(--border-color, #3a3d4a);
+            border-radius: 6px;
+            color: var(--text-primary, #e0e0e0);
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="container">
+                <div class="media-header">
+                    <div>
+                        <a href="/admin/dashboard.html#albums-section" class="back-btn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="19" y1="12" x2="5" y2="12"></line>
+                                <polyline points="12 19 5 12 12 5"></polyline>
+                            </svg>
+                            Back to Albums
+                        </a>
+                        <h1 id="albumTitle">Album Media</h1>
+                        <div class="album-info">
+                            <span id="albumDescription"></span>
+                            <span id="photoCount" style="color: var(--text-secondary, #9ca3af); font-size: 0.875rem;"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="admin-main">
+            <div class="container">
+                <!-- Upload Zone -->
+                <div class="upload-zone" id="uploadZone">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <h3>Drop photos here or click to browse</h3>
+                    <p>Support for JPG, PNG, WEBP, HEIC (max 20MB per file)</p>
+                    <input type="file" id="fileInput" accept="image/*" multiple>
+                </div>
+
+                <!-- Upload Progress -->
+                <div class="upload-progress" id="uploadProgress">
+                    <!-- Progress items will be added here -->
+                </div>
+
+                <!-- Media Grid -->
+                <div id="mediaContainer">
+                    <div class="media-grid" id="mediaGrid">
+                        <!-- Media items will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit Photo Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Photo</h2>
+                <button class="modal-close" id="closeEditModal">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <form id="editForm">
+                <div class="form-group">
+                    <label for="photoCaption">Caption</label>
+                    <input type="text" id="photoCaption" name="caption" maxlength="500">
+                </div>
+                <div class="form-group">
+                    <label for="photoAlt">Alt Text</label>
+                    <input type="text" id="photoAlt" name="alt" maxlength="200">
+                </div>
+                <div class="form-group">
+                    <label for="photoTags">Tags (comma-separated)</label>
+                    <input type="text" id="photoTags" name="tags" placeholder="landscape, nature, sunset">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="cancelEdit">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/admin/js/shared.js"></script>
+    <script src="/admin/js/album-media.js"></script>
+</body>
+</html>

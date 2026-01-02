@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Media = require('../models/Media');
 const Album = require('../models/Album');
-const { upload, processImage, processVideo, deleteMediaFiles } = require('../middleware/mediaUpload');
+const { upload, processImage, processImageForAlbum, processVideo, deleteMediaFiles, deleteImageFiles } = require('../middleware/mediaUpload');
 
 // @route   POST /api/media/upload
 // @desc    Upload media (image or video) to an album
@@ -41,8 +41,8 @@ router.post('/upload', upload.single('file'), async (req, res) => {
         let processedMedia;
 
         if (isImage) {
-            // Process image
-            processedMedia = await processImage(req.file.buffer, req.file.originalname);
+            // Process image with album-specific organization
+            processedMedia = await processImageForAlbum(req.file.buffer, req.file.originalname, albumId);
         } else if (isVideo) {
             // Process video
             processedMedia = await processVideo(req.file.buffer, req.file.originalname);
@@ -53,20 +53,22 @@ router.post('/upload', upload.single('file'), async (req, res) => {
             });
         }
 
-        // Create media record
+        // Create media record with enhanced fileSizes structure
         const media = new Media({
             albumId,
             type: isImage ? 'image' : 'video',
             url: processedMedia.urls.original,
             optimized: processedMedia.urls.optimized,
             thumbnail: processedMedia.urls.thumbnail,
+            fileSizes: processedMedia.fileSizes || undefined,
+            originalFilename: req.file.originalname,
             caption: caption || '',
             alt: alt || '',
             tags: tags ? tags.split(',').map(t => t.trim()) : [],
             order: order || 0,
             metadata: {
                 filename: req.file.originalname,
-                size: processedMedia.metadata.size,
+                size: processedMedia.metadata.size || processedMedia.fileSizes?.original?.size,
                 width: processedMedia.metadata.width,
                 height: processedMedia.metadata.height,
                 format: processedMedia.metadata.format
@@ -139,7 +141,7 @@ router.post('/upload-multiple', upload.array('files', 20), async (req, res) => {
                 let processedMedia;
 
                 if (isImage) {
-                    processedMedia = await processImage(file.buffer, file.originalname);
+                    processedMedia = await processImageForAlbum(file.buffer, file.originalname, albumId);
                 } else if (isVideo) {
                     processedMedia = await processVideo(file.buffer, file.originalname);
                 } else {
@@ -153,12 +155,14 @@ router.post('/upload-multiple', upload.array('files', 20), async (req, res) => {
                     url: processedMedia.urls.original,
                     optimized: processedMedia.urls.optimized,
                     thumbnail: processedMedia.urls.thumbnail,
+                    fileSizes: processedMedia.fileSizes || undefined,
+                    originalFilename: file.originalname,
                     alt: file.originalname.split('.')[0],
                     tags: tags ? tags.split(',').map(t => t.trim()) : [],
                     order: i,
                     metadata: {
                         filename: file.originalname,
-                        size: processedMedia.metadata.size,
+                        size: processedMedia.metadata.size || processedMedia.fileSizes?.original?.size,
                         width: processedMedia.metadata.width,
                         height: processedMedia.metadata.height,
                         format: processedMedia.metadata.format
@@ -194,6 +198,42 @@ router.post('/upload-multiple', upload.array('files', 20), async (req, res) => {
     }
 });
 
+// @route   GET /api/media/album/:albumId
+// @desc    Get all media in an album
+// @access  Public
+router.get('/album/:albumId', async (req, res) => {
+    try {
+        const { albumId } = req.params;
+
+        // Verify album exists
+        const album = await Album.findById(albumId);
+        if (!album) {
+            return res.status(404).json({
+                success: false,
+                message: 'Album not found'
+            });
+        }
+
+        // Get all media sorted by order
+        const media = await Media.find({ albumId })
+            .sort({ order: 1, uploadedAt: 1 })
+            .lean();
+
+        res.json({
+            success: true,
+            count: media.length,
+            data: media
+        });
+    } catch (error) {
+        console.error('Get album media error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to retrieve media',
+            error: error.message
+        });
+    }
+});
+
 // @route   DELETE /api/media/:id
 // @desc    Delete media file
 // @access  Public (will add auth later)
@@ -209,11 +249,17 @@ router.delete('/:id', async (req, res) => {
         }
 
         // Delete files from filesystem
-        await deleteMediaFiles({
-            original: media.url,
-            optimized: media.optimized,
-            thumbnail: media.thumbnail
-        });
+        if (media.fileSizes) {
+            // New structure with multiple sizes
+            await deleteImageFiles(media.fileSizes);
+        } else {
+            // Legacy structure
+            await deleteMediaFiles({
+                original: media.url,
+                optimized: media.optimized,
+                thumbnail: media.thumbnail
+            });
+        }
 
         // Delete from database
         await Media.findByIdAndDelete(req.params.id);

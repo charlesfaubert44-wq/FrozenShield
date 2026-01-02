@@ -2,6 +2,7 @@ const multer = require('multer');
 const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs').promises;
+const { processImage: processImageUtil, deleteImageFiles } = require('../utils/imageProcessor');
 
 // Ensure upload directories exist
 const ensureDirectories = async () => {
@@ -9,7 +10,8 @@ const ensureDirectories = async () => {
         path.join(__dirname, '../../public/uploads/originals'),
         path.join(__dirname, '../../public/uploads/optimized'),
         path.join(__dirname, '../../public/uploads/thumbnails'),
-        path.join(__dirname, '../../public/uploads/videos')
+        path.join(__dirname, '../../public/uploads/videos'),
+        path.join(__dirname, '../../public/uploads/albums')
     ];
 
     for (const dir of dirs) {
@@ -218,6 +220,43 @@ const processImage = async (buffer, filename) => {
 };
 
 /**
+ * Process image for album with enhanced multi-size generation
+ * Uses the new fileSizes structure for better organization
+ */
+const processImageForAlbum = async (buffer, filename, albumId) => {
+    try {
+        // Use the new imageProcessor utility
+        const results = await processImageUtil(buffer, filename, albumId);
+
+        // Convert to format compatible with Media model
+        return {
+            fileSizes: {
+                thumbnail: results.thumbnail,
+                medium: results.medium,
+                full: results.full,
+                original: results.original
+            },
+            metadata: results.metadata,
+            // Also provide backward-compatible URLs
+            urls: {
+                original: results.original.path,
+                optimized: results.full.path,
+                thumbnail: results.thumbnail.path,
+                medium: results.medium.path,
+                webp: {
+                    thumbnail: results.thumbnail.webpPath,
+                    medium: results.medium.webpPath,
+                    full: results.full.webpPath
+                }
+            }
+        };
+    } catch (error) {
+        console.error('Error processing image for album:', error);
+        throw error;
+    }
+};
+
+/**
  * Process uploaded video - just save to videos directory
  */
 const processVideo = async (buffer, filename) => {
@@ -276,6 +315,8 @@ const deleteMediaFiles = async (urls) => {
 module.exports = {
     upload,
     processImage,
+    processImageForAlbum,
     processVideo,
-    deleteMediaFiles
+    deleteMediaFiles,
+    deleteImageFiles
 };

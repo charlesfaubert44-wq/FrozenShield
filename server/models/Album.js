@@ -22,6 +22,10 @@ const albumSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
+    coverPhotoId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Media'
+    },
     tags: [{
         type: String,
         trim: true
