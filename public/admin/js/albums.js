@@ -137,7 +137,7 @@ function displayAlbums(albums) {
         albumsList.innerHTML = `
             <div class="empty-state">
                 <p>No albums found</p>
-                <button class="btn-primary" onclick="openCreateAlbumModal()">Create Your First Album</button>
+                <button class="btn-primary" data-action="create-album">Create Your First Album</button>
             </div>
         `;
         return;
@@ -164,21 +164,21 @@ function createAlbumCard(album) {
                 <span class="badge badge-${visibilityClass}">${visibilityClass}</span>
             </div>
             <div class="album-actions">
-                <button onclick="viewAlbum('${album._id}')" class="btn-view" title="View Photos">
+                <button data-action="view-album" data-id="${album._id}" class="btn-view" title="View Photos">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                     View
                 </button>
-                <button onclick="editAlbum('${album._id}')" class="btn-edit" title="Edit Album">
+                <button data-action="edit-album" data-id="${album._id}" class="btn-edit" title="Edit Album">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                     </svg>
                     Edit
                 </button>
-                <button onclick="deleteAlbum('${album._id}')" class="btn-danger" title="Delete Album">
+                <button data-action="delete-album" data-id="${album._id}" class="btn-danger" title="Delete Album">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="3 6 5 6 21 6"></polyline>
                         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -205,14 +205,14 @@ function displayPagination(pagination) {
 
     // Previous button
     if (page > 1) {
-        paginationHTML += `<button onclick="changePage(${page - 1})" class="page-btn">Previous</button>`;
+        paginationHTML += `<button data-action="change-page" data-page="${page - 1}" class="page-btn">Previous</button>`;
     }
 
     // Page numbers
     for (let i = 1; i <= pages; i++) {
         if (i === 1 || i === pages || (i >= page - 2 && i <= page + 2)) {
             const activeClass = i === page ? 'active' : '';
-            paginationHTML += `<button onclick="changePage(${i})" class="page-btn ${activeClass}">${i}</button>`;
+            paginationHTML += `<button data-action="change-page" data-page="${i}" class="page-btn ${activeClass}">${i}</button>`;
         } else if (i === page - 3 || i === page + 3) {
             paginationHTML += `<span class="page-ellipsis">...</span>`;
         }
@@ -220,7 +220,7 @@ function displayPagination(pagination) {
 
     // Next button
     if (page < pages) {
-        paginationHTML += `<button onclick="changePage(${page + 1})" class="page-btn">Next</button>`;
+        paginationHTML += `<button data-action="change-page" data-page="${page + 1}" class="page-btn">Next</button>`;
     }
 
     paginationHTML += '</div>';
@@ -464,9 +464,59 @@ function escapeHtml(text) {
         '<': '&lt;',
         '>': '&gt;',
         '"': '&quot;',
-        "'": '&#039;'
+        "'": '&#039'
     };
     return text.replace(/[&<>"']/g, m => map[m]);
+}
+
+/**
+ * Event Delegation for Albums Section (CSP Compliant)
+ * Handles all click events using data-action attributes
+ */
+function setupAlbumsEventDelegation() {
+    // Event delegation for albums list
+    if (albumsList) {
+        albumsList.addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-action]');
+            if (!btn) return;
+
+            const action = btn.dataset.action;
+            const id = btn.dataset.id;
+
+            switch (action) {
+                case 'create-album':
+                    openCreateAlbumModal();
+                    break;
+                case 'view-album':
+                    if (id) viewAlbum(id);
+                    break;
+                case 'edit-album':
+                    if (id) editAlbum(id);
+                    break;
+                case 'delete-album':
+                    if (id) deleteAlbum(id);
+                    break;
+            }
+        });
+    }
+
+    // Event delegation for pagination
+    if (albumsPagination) {
+        albumsPagination.addEventListener('click', (e) => {
+            const btn = e.target.closest('[data-action="change-page"]');
+            if (!btn) return;
+
+            const page = parseInt(btn.dataset.page);
+            if (page) changePage(page);
+        });
+    }
+}
+
+// Initialize event delegation when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupAlbumsEventDelegation);
+} else {
+    setupAlbumsEventDelegation();
 }
 
 // Make functions globally available
