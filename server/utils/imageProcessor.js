@@ -85,7 +85,7 @@ async function processImage(buffer, originalFilename, albumId) {
     const originalStats = await fs.stat(originalPath);
 
     results.original = {
-        path: originalPath.replace(/\\/g, '/'),
+        path: originalPath.replace(/\\/g, '/').replace('public/', '/'),
         width: metadata.width,
         height: metadata.height,
         size: originalStats.size
@@ -129,8 +129,8 @@ async function processImage(buffer, originalFilename, albumId) {
         const stats = await fs.stat(outputPath);
 
         results[sizeName] = {
-            path: outputPath.replace(/\\/g, '/'),
-            webpPath: webpPath.replace(/\\/g, '/'),
+            path: outputPath.replace(/\\/g, '/').replace('public/', '/'),
+            webpPath: webpPath.replace(/\\/g, '/').replace('public/', '/'),
             width: processedMetadata.width,
             height: processedMetadata.height,
             size: stats.size
