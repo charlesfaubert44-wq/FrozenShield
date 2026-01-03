@@ -5,6 +5,7 @@ const Media = require('../../models/Media');
 const { authenticate } = require('../../middleware/auth');
 const { deleteImageFiles, deleteMediaFiles } = require('../../middleware/mediaUpload');
 const { deleteAlbumDirectory } = require('../../utils/imageProcessor');
+const { generateAlbumCover, deleteAlbumCover } = require('../../utils/albumCoverGenerator');
 
 // All routes are protected - require authentication
 router.use(authenticate);
@@ -355,6 +356,9 @@ router.delete('/:id', async (req, res) => {
         // Delete the empty album directory to free up space
         await deleteAlbumDirectory(album._id.toString());
 
+        // Delete the generated album cover thumbnail
+        await deleteAlbumCover(album._id.toString());
+
         // Delete the album
         await Album.findByIdAndDelete(req.params.id);
 
@@ -390,46 +394,24 @@ router.delete('/:id', async (req, res) => {
 });
 
 /**
- * POST /api/admin/albums/sync-covers
- * Sync all album cover images from first media photo
- * Updates database with actual coverImage values
+ * POST /api/admin/albums/generate-covers
+ * Generate dedicated thumbnail images for all album covers
+ * Creates new 800x800 JPG thumbnails from first photo in each album
  */
-router.post('/sync-covers', async (req, res) => {
+router.post('/generate-covers', async (req, res) => {
     try {
-        const Album = require('../../models/Album');
-        const Media = require('../../models/Media');
-
         const albums = await Album.find({});
-        let updated = 0;
+        let generated = 0;
         let skipped = 0;
         let failed = 0;
         const results = [];
 
         for (const album of albums) {
             try {
-                // Find first media
-                const firstMedia = await Media.findOne({ albumId: album._id })
-                    .sort({ order: 1, uploadedAt: 1 })
-                    .select('fileSizes thumbnail optimized url')
-                    .lean();
+                console.log(`\n--- Processing: ${album.title} ---`);
 
-                if (!firstMedia) {
-                    skipped++;
-                    results.push({
-                        albumId: album._id,
-                        title: album.title,
-                        status: 'skipped',
-                        reason: 'No media found'
-                    });
-                    continue;
-                }
-
-                // Get path in priority order
-                let coverPath = (firstMedia.fileSizes?.medium?.path) ||
-                               (firstMedia.fileSizes?.thumbnail?.path) ||
-                               firstMedia.thumbnail ||
-                               firstMedia.optimized ||
-                               firstMedia.url;
+                // Generate cover thumbnail using the utility function
+                const coverPath = await generateAlbumCover(album._id.toString(), Media);
 
                 if (!coverPath) {
                     skipped++;
@@ -437,32 +419,28 @@ router.post('/sync-covers', async (req, res) => {
                         albumId: album._id,
                         title: album.title,
                         status: 'skipped',
-                        reason: 'No valid path found in media'
+                        reason: 'Could not generate cover (no media or source file not found)'
                     });
                     continue;
                 }
 
-                // Clean path
-                coverPath = coverPath.replace(/^public[\/\\]/, '/').replace(/\\/g, '/');
-                if (!coverPath.startsWith('/')) {
-                    coverPath = '/' + coverPath;
-                }
-                coverPath = coverPath.replace(/\/+/g, '/');
-
-                // Update album in database
+                // Update album in database with new cover path
                 album.coverImage = coverPath;
                 await album.save();
 
-                updated++;
+                generated++;
                 results.push({
                     albumId: album._id,
                     title: album.title,
-                    status: 'updated',
+                    status: 'generated',
                     coverImage: coverPath
                 });
 
+                console.log(`✅ ${album.title}: ${coverPath}`);
+
             } catch (err) {
                 failed++;
+                console.error(`❌ ${album.title}: ${err.message}`);
                 results.push({
                     albumId: album._id,
                     title: album.title,
@@ -472,12 +450,15 @@ router.post('/sync-covers', async (req, res) => {
             }
         }
 
+        console.log(`\n=== COMPLETE ===`);
+        console.log(`Generated: ${generated}, Skipped: ${skipped}, Failed: ${failed}`);
+
         res.json({
             success: true,
-            message: 'Album covers synced',
+            message: 'Album covers generation complete',
             data: {
                 total: albums.length,
-                updated,
+                generated,
                 skipped,
                 failed,
                 results
@@ -485,10 +466,10 @@ router.post('/sync-covers', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Sync covers error:', error);
+        console.error('Generate covers error:', error);
         res.status(500).json({
             success: false,
-            message: 'Failed to sync album covers',
+            message: 'Failed to generate album covers',
             error: error.message
         });
     }
