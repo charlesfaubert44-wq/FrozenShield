@@ -6,26 +6,35 @@
     <title>Manage Album Media | Admin</title>
     <link rel="stylesheet" href="/admin/css/admin.css">
     <style>
-        /* Media Management Specific Styles */
-        .media-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        :root {
+            --bg-primary: #1a1d2e;
+            --bg-secondary: #2a2d3a;
+            --bg-tertiary: #363947;
+            --border-color: #3a3d4a;
+            --text-primary: #e0e0e0;
+            --text-secondary: #9ca3af;
+            --text-tertiary: #6b7280;
+            --accent-purple: #6366f1;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .page-header {
             margin-bottom: 2rem;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .media-header h1 {
-            margin: 0;
-            font-size: 1.75rem;
-        }
-
-        .album-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
         }
 
         .back-btn {
@@ -33,95 +42,442 @@
             align-items: center;
             gap: 0.5rem;
             padding: 0.5rem 1rem;
-            background: var(--bg-secondary, #2a2d3a);
-            border: 1px solid var(--border-color, #3a3d4a);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
-            color: var(--text-primary, #e0e0e0);
+            color: var(--text-primary);
             text-decoration: none;
             transition: all 0.2s ease;
+            margin-bottom: 1rem;
         }
 
         .back-btn:hover {
-            background: var(--bg-tertiary, #363947);
-            border-color: var(--accent-primary, #6366f1);
+            background: var(--bg-tertiary);
+            border-color: var(--accent-purple);
+            transform: translateX(-4px);
         }
 
-        /* Upload Zone */
-        .upload-zone {
-            border: 2px dashed var(--border-color, #3a3d4a);
-            border-radius: 12px;
-            padding: 3rem 2rem;
-            text-align: center;
-            background: var(--bg-secondary, #2a2d3a);
+        .album-title-section h1 {
+            margin: 0.5rem 0;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .album-meta {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Stats Dashboard */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
             margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
             transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.2);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+        }
+
+        .stat-content {
+            flex: 1;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Beautiful Upload Zone */
+        .upload-section {
+            margin-bottom: 2rem;
+        }
+
+        .upload-zone {
+            position: relative;
+            border: 3px dashed var(--border-color);
+            border-radius: 16px;
+            padding: 4rem 2rem;
+            text-align: center;
+            background: var(--bg-secondary);
             cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .upload-zone::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            padding: 3px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue), var(--accent-purple));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .upload-zone:hover::before {
+            opacity: 1;
+            animation: borderRotate 3s linear infinite;
+        }
+
+        @keyframes borderRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .upload-zone:hover {
+            transform: scale(1.02);
+            background: rgba(99, 102, 241, 0.05);
+            border-color: transparent;
         }
 
         .upload-zone.drag-over {
-            border-color: var(--accent-primary, #6366f1);
-            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--accent-purple);
+            background: rgba(99, 102, 241, 0.15);
             transform: scale(1.02);
         }
 
-        .upload-zone svg {
-            width: 64px;
-            height: 64px;
-            margin-bottom: 1rem;
-            opacity: 0.5;
+        .upload-zone.drag-over::before {
+            opacity: 1;
         }
 
-        .upload-zone h3 {
-            margin: 0 0 0.5rem 0;
-            color: var(--text-primary, #e0e0e0);
+        .upload-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            border-radius: 20px;
+            animation: iconPulse 2s ease-in-out infinite;
         }
 
-        .upload-zone p {
-            margin: 0;
-            color: var(--text-secondary, #9ca3af);
-            font-size: 0.875rem;
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
+            50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+        }
+
+        .upload-icon svg {
+            width: 40px;
+            height: 40px;
+            stroke: white;
+        }
+
+        .upload-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .file-types {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .file-type-badge {
+            padding: 0.5rem 1rem;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent-purple);
+            text-transform: uppercase;
         }
 
         .upload-zone input[type="file"] {
             display: none;
         }
 
-        /* Upload Progress */
-        .upload-progress {
-            display: none;
-            margin-bottom: 2rem;
+        /* Preview Grid (Before Upload) */
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
         }
 
-        .upload-progress.active {
-            display: block;
+        .preview-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            animation: slideIn 0.3s ease;
         }
 
-        .progress-item {
-            background: var(--bg-secondary, #2a2d3a);
-            border: 1px solid var(--border-color, #3a3d4a);
-            border-radius: 8px;
-            padding: 1rem;
-            margin-bottom: 0.5rem;
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .progress-header {
+        .preview-card.uploading {
+            border-color: var(--accent-purple);
+        }
+
+        .preview-card.success {
+            border-color: var(--accent-green);
+        }
+
+        .preview-card.error {
+            border-color: var(--accent-red);
+        }
+
+        .preview-image-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            background: var(--bg-tertiary);
+        }
+
+        .preview-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-remove {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            width: 28px;
+            height: 28px;
+            background: rgba(0, 0, 0, 0.7);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.5rem;
+            justify-content: center;
+            transition: all 0.2s ease;
+            opacity: 0;
         }
 
-        .progress-bar {
+        .preview-card:hover .preview-remove {
+            opacity: 1;
+        }
+
+        .preview-remove:hover {
+            background: var(--accent-red);
+            transform: scale(1.1);
+        }
+
+        .preview-progress {
+            position: absolute;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .preview-card.uploading .preview-progress {
+            display: flex;
+        }
+
+        .progress-ring {
+            width: 60px;
+            height: 60px;
+        }
+
+        .progress-ring-circle {
+            fill: none;
+            stroke: var(--accent-purple);
+            stroke-width: 4;
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            transition: stroke-dashoffset 0.3s ease;
+        }
+
+        .progress-text {
+            position: absolute;
+            font-size: 0.875rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .preview-status {
+            position: absolute;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .preview-card.success .preview-status {
+            display: flex;
+            background: rgba(16, 185, 129, 0.2);
+        }
+
+        .status-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: iconBounce 0.5s ease;
+        }
+
+        @keyframes iconBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        .preview-info {
+            padding: 0.75rem;
+        }
+
+        .preview-filename {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 0.25rem;
+        }
+
+        .preview-size {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Upload Summary */
+        .upload-summary {
+            position: sticky;
+            top: 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 10;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .upload-summary.active {
+            display: flex;
+        }
+
+        .summary-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .summary-text {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .summary-progress-bar {
+            width: 200px;
             height: 6px;
-            background: var(--bg-tertiary, #363947);
+            background: var(--bg-tertiary);
             border-radius: 3px;
             overflow: hidden;
         }
 
-        .progress-fill {
+        .summary-progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-blue), var(--accent-green));
+            border-radius: 3px;
             transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-progress-fill::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .cancel-all-btn {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: 1px solid var(--accent-red);
+            border-radius: 6px;
+            color: var(--accent-red);
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .cancel-all-btn:hover {
+            background: var(--accent-red);
+            color: white;
         }
 
         /* Media Grid */
@@ -129,51 +485,46 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 1rem;
-            margin-bottom: 2rem;
         }
 
         .media-item {
-            position: relative;
-            background: var(--bg-secondary, #2a2d3a);
-            border: 1px solid var(--border-color, #3a3d4a);
-            border-radius: 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
             overflow: hidden;
-            transition: all 0.2s ease;
             cursor: move;
+            transition: all 0.3s ease;
+            position: relative;
         }
 
         .media-item:hover {
-            border-color: var(--accent-primary, #6366f1);
-            transform: translateY(-2px);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.2);
+            border-color: var(--accent-purple);
         }
 
         .media-item.dragging {
             opacity: 0.5;
+            cursor: grabbing;
+        }
+
+        .media-thumbnail-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            background: var(--bg-tertiary);
+            overflow: hidden;
         }
 
         .media-thumbnail {
             width: 100%;
-            aspect-ratio: 1;
+            height: 100%;
             object-fit: cover;
-            background: var(--bg-tertiary, #363947);
+            transition: transform 0.3s ease;
         }
 
-        .media-info {
-            padding: 0.75rem;
-        }
-
-        .media-filename {
-            font-size: 0.75rem;
-            color: var(--text-secondary, #9ca3af);
-            margin: 0 0 0.25rem 0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .media-meta {
-            font-size: 0.75rem;
-            color: var(--text-tertiary, #6b7280);
+        .media-item:hover .media-thumbnail {
+            transform: scale(1.05);
         }
 
         .media-actions {
@@ -193,47 +544,71 @@
         .media-action-btn {
             width: 32px;
             height: 32px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(0, 0, 0, 0.7);
-            border: none;
-            border-radius: 4px;
-            color: white;
-            cursor: pointer;
             transition: all 0.2s ease;
         }
 
         .media-action-btn:hover {
-            background: var(--accent-primary, #6366f1);
+            background: var(--accent-purple);
+            transform: scale(1.1);
         }
 
         .media-action-btn.danger:hover {
-            background: var(--danger-color, #ef4444);
+            background: var(--accent-red);
+        }
+
+        .media-info {
+            padding: 0.75rem;
+        }
+
+        .media-filename {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .media-meta {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
         }
 
         /* Empty State */
-        .empty-media {
+        .empty-state {
             text-align: center;
-            padding: 3rem 1rem;
-            color: var(--text-secondary, #9ca3af);
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
         }
 
-        .empty-media svg {
-            width: 64px;
-            height: 64px;
+        .empty-icon {
+            width: 128px;
+            height: 128px;
+            margin: 0 auto 2rem;
             opacity: 0.3;
-            margin-bottom: 1rem;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
         }
 
         /* Modal */
         .modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            inset: 0;
             z-index: 1000;
             align-items: center;
             justify-content: center;
@@ -245,24 +620,33 @@
 
         .modal-backdrop {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(4px);
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
         }
 
         .modal-content {
             position: relative;
-            background: var(--bg-primary, #1a1d2e);
-            border: 1px solid var(--border-color, #3a3d4a);
-            border-radius: 12px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
             max-width: 500px;
             width: 90%;
             max-height: 90vh;
             overflow-y: auto;
-            padding: 1.5rem;
+            padding: 2rem;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .modal-header {
@@ -274,42 +658,51 @@
 
         .modal-header h2 {
             margin: 0;
-            font-size: 1.25rem;
+            font-size: 1.5rem;
         }
 
         .modal-close {
             background: none;
             border: none;
-            color: var(--text-secondary, #9ca3af);
+            color: var(--text-secondary);
             cursor: pointer;
             padding: 0.5rem;
-            margin: -0.5rem;
+            transition: color 0.2s ease;
         }
 
         .modal-close:hover {
-            color: var(--text-primary, #e0e0e0);
+            color: var(--text-primary);
         }
 
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
-            color: var(--text-primary, #e0e0e0);
+            color: var(--text-primary);
             font-size: 0.875rem;
+            font-weight: 500;
         }
 
         .form-group input,
         .form-group textarea {
             width: 100%;
             padding: 0.75rem;
-            background: var(--bg-secondary, #2a2d3a);
-            border: 1px solid var(--border-color, #3a3d4a);
-            border-radius: 6px;
-            color: var(--text-primary, #e0e0e0);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
             font-family: inherit;
+            transition: all 0.2s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-purple);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
 
         .form-group textarea {
@@ -321,61 +714,153 @@
             display: flex;
             gap: 0.75rem;
             justify-content: flex-end;
-            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-tertiary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .upload-zone {
+                padding: 2rem 1rem;
+            }
+
+            .preview-grid,
+            .media-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .upload-summary {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .summary-progress-bar {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="admin-container">
+    <div class="container">
         <!-- Header -->
-        <header class="admin-header">
-            <div class="container">
-                <div class="media-header">
-                    <div>
-                        <a href="/admin/dashboard.html#albums-section" class="back-btn">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="19" y1="12" x2="5" y2="12"></line>
-                                <polyline points="12 19 5 12 12 5"></polyline>
-                            </svg>
-                            Back to Albums
-                        </a>
-                        <h1 id="albumTitle">Album Media</h1>
-                        <div class="album-info">
-                            <span id="albumDescription"></span>
-                            <span id="photoCount" style="color: var(--text-secondary, #9ca3af); font-size: 0.875rem;"></span>
-                        </div>
-                    </div>
+        <div class="page-header">
+            <a href="/admin/dashboard.html#albums-section" class="back-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Back to Albums
+            </a>
+            <div class="album-title-section">
+                <h1 id="albumTitle">Album Media</h1>
+                <div class="album-meta">
+                    <span id="albumDescription"></span>
                 </div>
             </div>
-        </header>
+        </div>
 
-        <main class="admin-main">
-            <div class="container">
-                <!-- Upload Zone -->
-                <div class="upload-zone" id="uploadZone">
+        <!-- Stats Dashboard -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-content">
+                    <div class="stat-label">Total Photos</div>
+                    <div class="stat-value" id="statTotalPhotos">0</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💾</div>
+                <div class="stat-content">
+                    <div class="stat-label">Storage Used</div>
+                    <div class="stat-value" id="statStorage">0 MB</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-content">
+                    <div class="stat-label">Last Upload</div>
+                    <div class="stat-value" id="statLastUpload">Never</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upload Summary (Sticky) -->
+        <div class="upload-summary" id="uploadSummary">
+            <div class="summary-info">
+                <span class="summary-text" id="summaryText">Uploading 0 of 0 photos...</span>
+                <div class="summary-progress-bar">
+                    <div class="summary-progress-fill" id="summaryProgressFill" style="width: 0%"></div>
+                </div>
+            </div>
+            <button class="cancel-all-btn" id="cancelAllBtn">Cancel All</button>
+        </div>
+
+        <!-- Beautiful Upload Zone -->
+        <div class="upload-section">
+            <div class="upload-zone" id="uploadZone">
+                <div class="upload-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                         <polyline points="17 8 12 3 7 8"></polyline>
                         <line x1="12" y1="3" x2="12" y2="15"></line>
                     </svg>
-                    <h3>Drop photos here or click to browse</h3>
-                    <p>Support for JPG, PNG, WEBP, HEIC (max 20MB per file)</p>
-                    <input type="file" id="fileInput" accept="image/*" multiple>
                 </div>
-
-                <!-- Upload Progress -->
-                <div class="upload-progress" id="uploadProgress">
-                    <!-- Progress items will be added here -->
+                <h3 class="upload-title">Drop your photos here or click to browse</h3>
+                <p class="upload-subtitle">Upload multiple files at once</p>
+                <div class="file-types">
+                    <span class="file-type-badge">JPG</span>
+                    <span class="file-type-badge">PNG</span>
+                    <span class="file-type-badge">WEBP</span>
+                    <span class="file-type-badge">HEIC</span>
+                    <span class="file-type-badge" style="opacity: 0.5;">Max 20MB</span>
                 </div>
-
-                <!-- Media Grid -->
-                <div id="mediaContainer">
-                    <div class="media-grid" id="mediaGrid">
-                        <!-- Media items will be loaded here -->
-                    </div>
-                </div>
+                <input type="file" id="fileInput" accept="image/*" multiple>
             </div>
-        </main>
+
+            <!-- Preview Grid -->
+            <div class="preview-grid" id="previewGrid"></div>
+        </div>
+
+        <!-- Media Grid -->
+        <div id="mediaContainer">
+            <div class="media-grid" id="mediaGrid"></div>
+        </div>
     </div>
 
     <!-- Edit Photo Modal -->
@@ -405,14 +890,14 @@
                     <input type="text" id="photoTags" name="tags" placeholder="landscape, nature, sunset">
                 </div>
                 <div class="form-actions">
-                    <button type="button" class="btn-secondary" id="cancelEdit">Cancel</button>
-                    <button type="submit" class="btn-primary">Save Changes</button>
+                    <button type="button" class="btn btn-secondary" id="cancelEdit">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
                 </div>
             </form>
         </div>
     </div>
 
     <script src="/admin/js/shared.js"></script>
-    <script src="/admin/js/album-media.js"></script>
+    <script src="/admin/js/album-media-enhanced.js"></script>
 </body>
 </html>
