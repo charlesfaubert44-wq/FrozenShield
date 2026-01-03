@@ -29,19 +29,24 @@ router.get('/', async (req, res) => {
             .select('-__v')
             .lean();
 
-        // Populate cover images from first photo if not set
+        // Populate cover images from first photo if not set and add media count
         for (const album of albums) {
-            if (!album.coverImage) {
-                const firstMedia = await Media.findOne({ albumId: album._id, type: 'image' })
+            // Get first media for cover if not set or empty string
+            if (!album.coverImage || album.coverImage === '') {
+                const firstMedia = await Media.findOne({ albumId: album._id })
                     .sort({ order: 1, uploadedAt: 1 })
-                    .select('fileSizes thumbnail optimized')
+                    .select('fileSizes thumbnail optimized url')
                     .lean();
 
                 if (firstMedia) {
-                    // Use thumbnail from fileSizes structure or fallback to old structure
+                    // Priority: medium size > thumbnail > optimized > url
                     album.coverImage = (firstMedia.fileSizes?.medium?.path) ||
+                                      (firstMedia.fileSizes?.thumbnail?.path) ||
+                                      firstMedia.thumbnail ||
                                       firstMedia.optimized ||
-                                      firstMedia.thumbnail;
+                                      firstMedia.url;
+
+                    console.log(`Auto-populated cover for album "${album.title}":`, album.coverImage);
                 }
             }
 
