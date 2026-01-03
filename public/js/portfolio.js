@@ -370,8 +370,10 @@ const PortfolioManager = (() => {
             // Process albums
             if (albumsRes.ok) {
                 const albumsData = await albumsRes.json();
+                console.log('Albums API response:', albumsData);
                 if (albumsData.success && albumsData.data) {
                     albumsData.data.forEach(album => {
+                        console.log(`Album "${album.title}" - coverImage:`, album.coverImage);
                         items.push(normalizeAlbum(album));
                     });
                 }

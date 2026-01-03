@@ -31,14 +31,29 @@ router.get('/', async (req, res) => {
 
         // Populate cover images from first photo if not set and add media count
         for (const album of albums) {
+            console.log(`\n=== Processing Album: ${album.title} ===`);
+            console.log(`Current coverImage: "${album.coverImage}"`);
+            console.log(`Album ID: ${album._id}`);
+
             // Get first media for cover if not set or empty string
             if (!album.coverImage || album.coverImage === '') {
+                console.log('No coverImage set, searching for first media...');
+
                 const firstMedia = await Media.findOne({ albumId: album._id })
                     .sort({ order: 1, uploadedAt: 1 })
                     .select('fileSizes thumbnail optimized url')
                     .lean();
 
+                console.log('First media found:', firstMedia ? 'YES' : 'NO');
                 if (firstMedia) {
+                    console.log('Media data:', JSON.stringify({
+                        id: firstMedia._id,
+                        fileSizes: firstMedia.fileSizes,
+                        thumbnail: firstMedia.thumbnail,
+                        optimized: firstMedia.optimized,
+                        url: firstMedia.url
+                    }, null, 2));
+
                     // Priority: medium size > thumbnail > optimized > url
                     album.coverImage = (firstMedia.fileSizes?.medium?.path) ||
                                       (firstMedia.fileSizes?.thumbnail?.path) ||
@@ -46,13 +61,18 @@ router.get('/', async (req, res) => {
                                       firstMedia.optimized ||
                                       firstMedia.url;
 
-                    console.log(`Auto-populated cover for album "${album.title}":`, album.coverImage);
+                    console.log(`✅ Set coverImage to: "${album.coverImage}"`);
+                } else {
+                    console.log('❌ No media found for this album');
                 }
+            } else {
+                console.log(`✓ Album already has coverImage: "${album.coverImage}"`);
             }
 
             // Add media count for frontend
             album.stats = album.stats || {};
             album.stats.totalMedia = await Media.countDocuments({ albumId: album._id });
+            console.log(`Media count: ${album.stats.totalMedia}`);
         }
 
         res.json({
