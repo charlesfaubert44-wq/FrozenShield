@@ -4,6 +4,33 @@ const Album = require('../models/Album');
 const Media = require('../models/Media');
 const { authenticate } = require('../middleware/auth');
 
+/**
+ * Clean image path - remove 'public/' prefix and handle edge cases
+ * @param {string} path - Image path to clean
+ * @returns {string|null} - Cleaned path or null
+ */
+function cleanImagePath(path) {
+    if (!path || typeof path !== 'string') return null;
+
+    // Remove 'public/' or 'public\' prefix (handles Windows paths too)
+    let cleaned = path.replace(/^public[\/\\]/, '/');
+
+    // Replace backslashes with forward slashes
+    cleaned = cleaned.replace(/\\/g, '/');
+
+    // Ensure path starts with /
+    if (!cleaned.startsWith('/')) {
+        cleaned = '/' + cleaned;
+    }
+
+    // Remove duplicate slashes
+    cleaned = cleaned.replace(/\/+/g, '/');
+
+    console.log(`Path cleaning: "${path}" -> "${cleaned}"`);
+
+    return cleaned;
+}
+
 // @route   GET /api/albums
 // @desc    Get all public albums
 // @access  Public
@@ -31,12 +58,17 @@ router.get('/', async (req, res) => {
 
         // Populate cover images from first photo if not set and add media count
         for (const album of albums) {
+            console.log(`\n=== Album: ${album.title} (${album._id}) ===`);
+            console.log(`Current coverImage: "${album.coverImage}"`);
+
             // Get first media for cover if not set or empty string
             if (!album.coverImage || album.coverImage === '') {
                 const firstMedia = await Media.findOne({ albumId: album._id })
                     .sort({ order: 1, uploadedAt: 1 })
                     .select('fileSizes thumbnail optimized url')
                     .lean();
+
+                console.log(`First media found: ${firstMedia ? 'YES' : 'NO'}`);
 
                 if (firstMedia) {
                     // Priority: medium size > thumbnail > optimized > url
@@ -46,19 +78,26 @@ router.get('/', async (req, res) => {
                                    firstMedia.optimized ||
                                    firstMedia.url;
 
-                    // Clean up path - remove 'public/' prefix if present (legacy data fix)
-                    if (coverPath) {
-                        album.coverImage = coverPath.replace(/^public\//, '/');
-                    }
+                    console.log(`Raw coverPath extracted: "${coverPath}"`);
+
+                    // Clean up path using robust cleaner
+                    album.coverImage = cleanImagePath(coverPath);
+                    console.log(`✅ Auto-populated coverImage: "${album.coverImage}"`);
                 }
-            } else if (album.coverImage.startsWith('public/')) {
-                // Also clean existing coverImage if it starts with 'public/' (legacy data fix)
-                album.coverImage = album.coverImage.replace(/^public\//, '/');
+            } else {
+                // Clean existing coverImage
+                const cleaned = cleanImagePath(album.coverImage);
+                if (cleaned && cleaned !== album.coverImage) {
+                    console.log(`🔧 Cleaned existing coverImage: "${album.coverImage}" -> "${cleaned}"`);
+                    album.coverImage = cleaned;
+                }
             }
 
             // Add media count for frontend
             album.stats = album.stats || {};
             album.stats.totalMedia = await Media.countDocuments({ albumId: album._id });
+            console.log(`Media count: ${album.stats.totalMedia}`);
+            console.log(`Final coverImage: "${album.coverImage}"`);
         }
 
         res.json({
