@@ -3,6 +3,32 @@ const router = express.Router();
 const Video = require('../models/Video');
 
 /**
+ * Extract YouTube video ID from various YouTube URL formats
+ */
+function extractYouTubeID(url) {
+    if (!url) return null;
+    const patterns = [
+        /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/,
+        /youtube\.com\/embed\/([^&\n?#]+)/,
+        /youtube\.com\/v\/([^&\n?#]+)/
+    ];
+    for (const pattern of patterns) {
+        const match = url.match(pattern);
+        if (match && match[1]) return match[1];
+    }
+    return null;
+}
+
+/**
+ * Extract Vimeo video ID from Vimeo URL
+ */
+function extractVimeoID(url) {
+    if (!url) return null;
+    const match = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+    return match ? match[1] : null;
+}
+
+/**
  * GET /api/videos
  * Get all public videos with filtering and sorting
  */
@@ -33,7 +59,43 @@ router.get('/', async (req, res) => {
 
         const videos = await Video.find(filter)
             .sort(sort)
-            .select('-__v');
+            .select('-__v')
+            .lean();
+
+        // Auto-generate thumbnails and format duration
+        videos.forEach(video => {
+            // Auto-generate thumbnails for videos without thumbnails
+            if (!video.thumbnail) {
+                if (video.videoType === 'youtube') {
+                    const videoId = extractYouTubeID(video.videoUrl);
+                    if (videoId) {
+                        video.thumbnail = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+                    }
+                } else if (video.videoType === 'vimeo') {
+                    const videoId = extractVimeoID(video.videoUrl);
+                    if (videoId) {
+                        // Vimeo thumbnail - will need to be fetched from their API ideally
+                        // For now, use a placeholder or the embed thumbnail
+                        video.thumbnail = `https://vumbnail.com/${videoId}.jpg`;
+                    }
+                }
+            }
+
+            // Format duration if it exists (convert seconds to MM:SS or HH:MM:SS)
+            if (video.duration && typeof video.duration === 'number') {
+                const hours = Math.floor(video.duration / 3600);
+                const minutes = Math.floor((video.duration % 3600) / 60);
+                const seconds = Math.floor(video.duration % 60);
+
+                if (hours > 0) {
+                    video.formattedDuration = `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                } else {
+                    video.formattedDuration = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                }
+            } else {
+                video.formattedDuration = '0:00';
+            }
+        });
 
         res.json({
             success: true,

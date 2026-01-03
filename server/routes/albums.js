@@ -26,7 +26,29 @@ router.get('/', async (req, res) => {
 
         const albums = await Album.find(filter)
             .sort({ featured: -1, order: 1, createdAt: -1 })
-            .select('-__v');
+            .select('-__v')
+            .lean();
+
+        // Populate cover images from first photo if not set
+        for (const album of albums) {
+            if (!album.coverImage) {
+                const firstMedia = await Media.findOne({ albumId: album._id, type: 'image' })
+                    .sort({ order: 1, uploadedAt: 1 })
+                    .select('fileSizes thumbnail optimized')
+                    .lean();
+
+                if (firstMedia) {
+                    // Use thumbnail from fileSizes structure or fallback to old structure
+                    album.coverImage = (firstMedia.fileSizes?.medium?.path) ||
+                                      firstMedia.optimized ||
+                                      firstMedia.thumbnail;
+                }
+            }
+
+            // Add media count for frontend
+            album.stats = album.stats || {};
+            album.stats.totalMedia = await Media.countDocuments({ albumId: album._id });
+        }
 
         res.json({
             success: true,

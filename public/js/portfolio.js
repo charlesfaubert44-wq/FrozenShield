@@ -442,11 +442,11 @@ const PortfolioManager = (() => {
             category: video.category || 'Videography',
             tags: video.tags || [],
             featured: video.featured || false,
-            views: video.views || 0,
+            views: video.stats?.views || 0,
             createdAt: new Date(video.createdAt || video.uploadDate),
             metadata: {
-                duration: video.duration || '0:00',
-                videoType: video.type || 'html5'
+                duration: video.formattedDuration || '0:00',
+                videoType: video.videoType || 'html5'
             },
             data: video
         };
