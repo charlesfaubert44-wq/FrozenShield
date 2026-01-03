@@ -389,4 +389,109 @@ router.delete('/:id', async (req, res) => {
     }
 });
 
+/**
+ * POST /api/admin/albums/sync-covers
+ * Sync all album cover images from first media photo
+ * Updates database with actual coverImage values
+ */
+router.post('/sync-covers', async (req, res) => {
+    try {
+        const Album = require('../../models/Album');
+        const Media = require('../../models/Media');
+
+        const albums = await Album.find({});
+        let updated = 0;
+        let skipped = 0;
+        let failed = 0;
+        const results = [];
+
+        for (const album of albums) {
+            try {
+                // Find first media
+                const firstMedia = await Media.findOne({ albumId: album._id })
+                    .sort({ order: 1, uploadedAt: 1 })
+                    .select('fileSizes thumbnail optimized url')
+                    .lean();
+
+                if (!firstMedia) {
+                    skipped++;
+                    results.push({
+                        albumId: album._id,
+                        title: album.title,
+                        status: 'skipped',
+                        reason: 'No media found'
+                    });
+                    continue;
+                }
+
+                // Get path in priority order
+                let coverPath = (firstMedia.fileSizes?.medium?.path) ||
+                               (firstMedia.fileSizes?.thumbnail?.path) ||
+                               firstMedia.thumbnail ||
+                               firstMedia.optimized ||
+                               firstMedia.url;
+
+                if (!coverPath) {
+                    skipped++;
+                    results.push({
+                        albumId: album._id,
+                        title: album.title,
+                        status: 'skipped',
+                        reason: 'No valid path found in media'
+                    });
+                    continue;
+                }
+
+                // Clean path
+                coverPath = coverPath.replace(/^public[\/\\]/, '/').replace(/\\/g, '/');
+                if (!coverPath.startsWith('/')) {
+                    coverPath = '/' + coverPath;
+                }
+                coverPath = coverPath.replace(/\/+/g, '/');
+
+                // Update album in database
+                album.coverImage = coverPath;
+                await album.save();
+
+                updated++;
+                results.push({
+                    albumId: album._id,
+                    title: album.title,
+                    status: 'updated',
+                    coverImage: coverPath
+                });
+
+            } catch (err) {
+                failed++;
+                results.push({
+                    albumId: album._id,
+                    title: album.title,
+                    status: 'failed',
+                    error: err.message
+                });
+            }
+        }
+
+        res.json({
+            success: true,
+            message: 'Album covers synced',
+            data: {
+                total: albums.length,
+                updated,
+                skipped,
+                failed,
+                results
+            }
+        });
+
+    } catch (error) {
+        console.error('Sync covers error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to sync album covers',
+            error: error.message
+        });
+    }
+});
+
 module.exports = router;
