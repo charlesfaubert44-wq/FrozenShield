@@ -191,6 +191,33 @@ async function getAlbumStorageSize(albumId) {
 }
 
 /**
+ * Delete album directory after all files are removed
+ * @param {string} albumId - Album ID
+ */
+async function deleteAlbumDirectory(albumId) {
+    if (!albumId) return;
+
+    const albumDir = path.join('public', 'uploads', 'albums', albumId);
+
+    try {
+        // Check if directory exists and is empty before deleting
+        const files = await fs.readdir(albumDir);
+
+        if (files.length === 0) {
+            await fs.rmdir(albumDir);
+            console.log(`Deleted empty album directory: ${albumDir}`);
+        } else {
+            console.log(`Album directory ${albumDir} not empty, skipping deletion. Files remaining: ${files.length}`);
+        }
+    } catch (error) {
+        // Directory might not exist or already deleted, which is fine
+        if (error.code !== 'ENOENT') {
+            console.error(`Error deleting album directory ${albumDir}:`, error);
+        }
+    }
+}
+
+/**
  * Format bytes to human readable size
  */
 function formatBytes(bytes, decimals = 2) {
@@ -208,6 +235,7 @@ function formatBytes(bytes, decimals = 2) {
 module.exports = {
     processImage,
     deleteImageFiles,
+    deleteAlbumDirectory,
     getAlbumStorageSize,
     formatBytes,
     IMAGE_SIZES,

@@ -3,6 +3,8 @@ const router = express.Router();
 const Album = require('../../models/Album');
 const Media = require('../../models/Media');
 const { authenticate } = require('../../middleware/auth');
+const { deleteImageFiles, deleteMediaFiles } = require('../../middleware/mediaUpload');
+const { deleteAlbumDirectory } = require('../../utils/imageProcessor');
 
 // All routes are protected - require authentication
 router.use(authenticate);
@@ -305,7 +307,7 @@ router.put('/:id', async (req, res) => {
 
 /**
  * DELETE /api/admin/albums/:id
- * Delete an album and all its media
+ * Delete an album and all its media (including physical files)
  */
 router.delete('/:id', async (req, res) => {
     try {
@@ -319,8 +321,39 @@ router.delete('/:id', async (req, res) => {
             });
         }
 
-        // Delete all media in this album
+        // Fetch all media items to delete physical files
+        const mediaItems = await Media.find({ albumId: album._id });
+
+        let filesDeleted = 0;
+        let filesDeletedErrors = 0;
+
+        // Delete physical files for each media item
+        for (const media of mediaItems) {
+            try {
+                if (media.fileSizes) {
+                    // New structure with multiple sizes (thumbnail, medium, full, original)
+                    await deleteImageFiles(media.fileSizes);
+                    filesDeleted++;
+                } else {
+                    // Legacy structure
+                    await deleteMediaFiles({
+                        original: media.url,
+                        optimized: media.optimized,
+                        thumbnail: media.thumbnail
+                    });
+                    filesDeleted++;
+                }
+            } catch (fileError) {
+                console.error(`Error deleting files for media ${media._id}:`, fileError);
+                filesDeletedErrors++;
+            }
+        }
+
+        // Delete all media records from database
         const mediaDeleteResult = await Media.deleteMany({ albumId: album._id });
+
+        // Delete the empty album directory to free up space
+        await deleteAlbumDirectory(album._id.toString());
 
         // Delete the album
         await Album.findByIdAndDelete(req.params.id);
@@ -331,7 +364,9 @@ router.delete('/:id', async (req, res) => {
             data: {
                 albumId: album._id,
                 albumTitle: album.title,
-                mediaDeleted: mediaDeleteResult.deletedCount
+                mediaDeleted: mediaDeleteResult.deletedCount,
+                filesDeleted,
+                filesDeletedErrors
             }
         });
 
