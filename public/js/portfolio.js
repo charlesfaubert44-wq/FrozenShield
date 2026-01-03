@@ -754,24 +754,12 @@ const PortfolioManager = (() => {
         card.style.transform = 'translateY(20px)';
         card.style.transition = 'all 0.4s ease';
 
-        // Simple album card - just photo with icon and title
+        // Ultra-simple album card - just the photo thumbnail
         if (item.type === 'album') {
+            card.className = 'portfolio-card portfolio-card-album-simple';
             card.innerHTML = `
-                <div class="portfolio-thumbnail">
-                    <img src="${item.thumbnail}" alt="${item.title}" loading="lazy">
-                    <div class="portfolio-overlay">
-                        <div class="album-icon">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"></circle>
-                                <polyline points="21 15 16 10 5 21"></polyline>
-                            </svg>
-                        </div>
-                    </div>
-                    <span class="portfolio-badge count-badge">${item.metadata.photoCount} Photos</span>
-                </div>
-                <div class="portfolio-info-simple">
-                    <h3 class="portfolio-title">${item.title}</h3>
+                <div class="album-thumbnail-simple">
+                    <img src="${item.thumbnail || '/placeholder-album.jpg'}" alt="${item.title}" loading="lazy" onerror="this.src='/placeholder-album.jpg'">
                 </div>
             `;
         } else {
