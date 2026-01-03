@@ -754,57 +754,70 @@ const PortfolioManager = (() => {
         card.style.transform = 'translateY(20px)';
         card.style.transition = 'all 0.4s ease';
 
-        // Type indicator
-        const typeIndicator = getTypeIndicator(item.type);
-
-        // Featured badge
-        const featuredBadge = item.featured
-            ? '<span class="portfolio-badge featured-badge">Featured</span>'
-            : '';
-
-        // Type-specific badges
-        let typeBadge = '';
+        // Simple album card - just photo with icon and title
         if (item.type === 'album') {
-            typeBadge = `<span class="portfolio-badge count-badge">${item.metadata.photoCount} Photos</span>`;
-        } else if (item.type === 'video') {
-            typeBadge = `<span class="portfolio-badge duration-badge">${item.metadata.duration}</span>`;
-        }
-
-        card.innerHTML = `
-            <div class="portfolio-thumbnail">
-                <img src="${item.thumbnail}" alt="${item.title}" loading="lazy">
-                <div class="portfolio-overlay">
-                    ${typeIndicator}
-                    <button class="portfolio-view-btn">
-                        ${getViewButtonText(item.type)}
-                    </button>
-                </div>
-                ${typeBadge}
-                ${featuredBadge}
-            </div>
-            <div class="portfolio-info">
-                <div class="portfolio-meta">
-                    <span class="portfolio-type-badge ${item.type}">${item.type}</span>
-                    <span class="portfolio-category">${item.category}</span>
-                </div>
-                <h3 class="portfolio-title">${item.title}</h3>
-                <p class="portfolio-description">${truncateText(item.description, 120)}</p>
-                <div class="portfolio-footer">
-                    <div class="portfolio-tags">
-                        ${item.tags.slice(0, 3).map(tag => `<span class="portfolio-tag">${tag}</span>`).join('')}
-                    </div>
-                    <div class="portfolio-stats">
-                        <span class="portfolio-views">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
-                                <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+            card.innerHTML = `
+                <div class="portfolio-thumbnail">
+                    <img src="${item.thumbnail}" alt="${item.title}" loading="lazy">
+                    <div class="portfolio-overlay">
+                        <div class="album-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
                             </svg>
-                            ${formatViews(item.views)}
-                        </span>
+                        </div>
+                    </div>
+                    <span class="portfolio-badge count-badge">${item.metadata.photoCount} Photos</span>
+                </div>
+                <div class="portfolio-info-simple">
+                    <h3 class="portfolio-title">${item.title}</h3>
+                </div>
+            `;
+        } else {
+            // Regular card for videos and projects
+            const typeIndicator = getTypeIndicator(item.type);
+            const featuredBadge = item.featured ? '<span class="portfolio-badge featured-badge">Featured</span>' : '';
+            const typeBadge = item.type === 'video'
+                ? `<span class="portfolio-badge duration-badge">${item.metadata.duration}</span>`
+                : '';
+
+            card.innerHTML = `
+                <div class="portfolio-thumbnail">
+                    <img src="${item.thumbnail}" alt="${item.title}" loading="lazy">
+                    <div class="portfolio-overlay">
+                        ${typeIndicator}
+                        <button class="portfolio-view-btn">
+                            ${getViewButtonText(item.type)}
+                        </button>
+                    </div>
+                    ${typeBadge}
+                    ${featuredBadge}
+                </div>
+                <div class="portfolio-info">
+                    <div class="portfolio-meta">
+                        <span class="portfolio-type-badge ${item.type}">${item.type}</span>
+                        <span class="portfolio-category">${item.category}</span>
+                    </div>
+                    <h3 class="portfolio-title">${item.title}</h3>
+                    <p class="portfolio-description">${truncateText(item.description, 120)}</p>
+                    <div class="portfolio-footer">
+                        <div class="portfolio-tags">
+                            ${item.tags.slice(0, 3).map(tag => `<span class="portfolio-tag">${tag}</span>`).join('')}
+                        </div>
+                        <div class="portfolio-stats">
+                            <span class="portfolio-views">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/>
+                                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                                ${formatViews(item.views)}
+                            </span>
+                        </div>
                     </div>
                 </div>
-            </div>
-        `;
+            `;
+        }
 
         // Add click handler
         card.addEventListener('click', () => openPortfolioItem(item));

@@ -3394,6 +3394,42 @@ section {
     padding: 1.5rem;
 }
 
+/* Simplified Album Card Info */
+.portfolio-info-simple {
+    padding: 1rem 1.25rem;
+    background: rgba(29, 84, 108, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.portfolio-info-simple .portfolio-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Album Icon in Overlay */
+.album-icon {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    width: 48px;
+    height: 48px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.portfolio-card-album:hover .album-icon {
+    opacity: 1;
+}
+
 .portfolio-meta {
     display: flex;
     align-items: center;
