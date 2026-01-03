@@ -10,6 +10,7 @@ let draggedItem = null;
 let selectedFiles = [];
 let uploadQueue = [];
 let uploadedCount = 0;
+let selectedPhotoIds = new Set();
 
 const elements = {
     uploadZone: document.getElementById('uploadZone'),
@@ -49,7 +50,32 @@ function setupEventListeners() {
     elements.editModal.querySelector('.modal-backdrop').addEventListener('click', closeEdit);
     elements.editForm.addEventListener('submit', handleEditSubmit);
     elements.mediaGrid.addEventListener('click', handleMediaAction);
+    elements.mediaGrid.addEventListener('change', handleCheckboxChange);
     elements.cancelAllBtn.addEventListener('click', cancelAllUploads);
+
+    // Create and add bulk actions toolbar
+    const bulkToolbar = document.createElement('div');
+    bulkToolbar.id = 'bulkActionsToolbar';
+    bulkToolbar.className = 'bulk-actions-toolbar';
+    bulkToolbar.style.display = 'none';
+    bulkToolbar.innerHTML = `
+        <div class="bulk-actions-content">
+            <div class="bulk-selection-info">
+                <input type="checkbox" id="selectAllCheckbox">
+                <span id="selectionCount">0 selected</span>
+            </div>
+            <div class="bulk-actions-buttons">
+                <button id="deselectAllBtn" class="btn-secondary">Deselect All</button>
+                <button id="deleteSelectedBtn" class="btn-danger">Delete Selected</button>
+            </div>
+        </div>
+    `;
+    elements.mediaContainer.insertBefore(bulkToolbar, elements.mediaGrid);
+
+    // Bulk action event listeners
+    document.getElementById('selectAllCheckbox').addEventListener('change', handleSelectAll);
+    document.getElementById('deselectAllBtn').addEventListener('click', deselectAll);
+    document.getElementById('deleteSelectedBtn').addEventListener('click', deleteSelected);
 }
 
 async function loadAlbumInfo() {
@@ -101,10 +127,36 @@ function createPhotoCard(photo) {
     const fileSize = formatBytes((photo.fileSizes && photo.fileSizes.original && photo.fileSizes.original.size) || (photo.metadata && photo.metadata.size) || 0);
     const width = (photo.fileSizes && photo.fileSizes.original && photo.fileSizes.original.width) || (photo.metadata && photo.metadata.width) || 0;
     const height = (photo.fileSizes && photo.fileSizes.original && photo.fileSizes.original.height) || (photo.metadata && photo.metadata.height) || 0;
-    const dimensions = width + ' × ' + height;
+    const dimensions = width + ' Ã— ' + height;
     const filename = photo.originalFilename || (photo.metadata && photo.metadata.filename) || 'Untitled';
+    const isSelected = selectedPhotoIds.has(photo._id);
 
-    return '<div class="media-item" data-id="' + photo._id + '" draggable="true"><div class="media-thumbnail-container"><img src="' + thumbnailUrl + '" alt="' + (photo.alt || '') + '" class="media-thumbnail"><div class="media-actions"><button class="media-action-btn" data-action="edit" data-id="' + photo._id + '" title="Edit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button><button class="media-action-btn danger" data-action="delete" data-id="' + photo._id + '" title="Delete"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg></button></div></div><div class="media-info"><p class="media-filename">' + filename + '</p><div class="media-meta">' + dimensions + ' " ' + fileSize + '</div></div></div>';
+    return `<div class="media-item ${isSelected ? 'selected' : ''}" data-id="${photo._id}" draggable="true">
+        <div class="media-select-checkbox">
+            <input type="checkbox" class="photo-checkbox" data-photo-id="${photo._id}" ${isSelected ? 'checked' : ''}>
+        </div>
+        <div class="media-thumbnail-container">
+            <img src="${thumbnailUrl}" alt="${photo.alt || ''}" class="media-thumbnail">
+            <div class="media-actions">
+                <button class="media-action-btn" data-action="edit" data-id="${photo._id}" title="Edit">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                </button>
+                <button class="media-action-btn danger" data-action="delete" data-id="${photo._id}" title="Delete">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="media-info">
+            <p class="media-filename">${filename}</p>
+            <div class="media-meta">${dimensions} Â· ${fileSize}</div>
+        </div>
+    </div>`;
 }
 
 function handleMediaAction(e) {
@@ -161,7 +213,7 @@ function createPreviewCard(file, index) {
     };
     reader.readAsDataURL(file);
 
-    return '<div class="preview-card" data-preview-index="' + index + '"><div class="preview-image-container"><img class="preview-image" src="" alt="Preview"><button class="preview-remove" data-remove-index="' + index + '">×</button><div class="preview-progress"><svg class="progress-ring" viewBox="0 0 60 60"><circle class="progress-ring-circle" cx="30" cy="30" r="26" stroke-dasharray="163.36" stroke-dashoffset="0"></circle></svg><span class="progress-text">0%</span></div><div class="preview-status"><div class="status-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></div></div></div><div class="preview-info"><p class="preview-filename">' + file.name + '</p><p class="preview-size">' + fileSize + '</p></div></div>';
+    return '<div class="preview-card" data-preview-index="' + index + '"><div class="preview-image-container"><img class="preview-image" src="" alt="Preview"><button class="preview-remove" data-remove-index="' + index + '">ï¿½</button><div class="preview-progress"><svg class="progress-ring" viewBox="0 0 60 60"><circle class="progress-ring-circle" cx="30" cy="30" r="26" stroke-dasharray="163.36" stroke-dashoffset="0"></circle></svg><span class="progress-text">0%</span></div><div class="preview-status"><div class="status-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"></polyline></svg></div></div></div><div class="preview-info"><p class="preview-filename">' + file.name + '</p><p class="preview-size">' + fileSize + '</p></div></div>';
 }
 
 document.addEventListener('click', (e) => {
@@ -438,6 +490,114 @@ function getTimeSince(date) {
         }
     }
     return 'Just now';
+}
+
+// Multi-select functionality
+function handleCheckboxChange(e) {
+    if (!e.target.classList.contains('photo-checkbox')) return;
+    const photoId = e.target.dataset.photoId;
+    const mediaItem = e.target.closest('.media-item');
+
+    if (e.target.checked) {
+        selectedPhotoIds.add(photoId);
+        mediaItem.classList.add('selected');
+    } else {
+        selectedPhotoIds.delete(photoId);
+        mediaItem.classList.remove('selected');
+    }
+
+    updateBulkActionsToolbar();
+}
+
+function handleSelectAll(e) {
+    const checkboxes = document.querySelectorAll('.photo-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = e.target.checked;
+        const photoId = checkbox.dataset.photoId;
+        const mediaItem = checkbox.closest('.media-item');
+
+        if (e.target.checked) {
+            selectedPhotoIds.add(photoId);
+            mediaItem.classList.add('selected');
+        } else {
+            selectedPhotoIds.delete(photoId);
+            mediaItem.classList.remove('selected');
+        }
+    });
+
+    updateBulkActionsToolbar();
+}
+
+function deselectAll() {
+    selectedPhotoIds.clear();
+    document.querySelectorAll('.photo-checkbox').forEach(checkbox => checkbox.checked = false);
+    document.querySelectorAll('.media-item').forEach(item => item.classList.remove('selected'));
+    updateBulkActionsToolbar();
+}
+
+function updateBulkActionsToolbar() {
+    const toolbar = document.getElementById('bulkActionsToolbar');
+    const countEl = document.getElementById('selectionCount');
+    const selectAllCheckbox = document.getElementById('selectAllCheckbox');
+
+    if (selectedPhotoIds.size > 0) {
+        toolbar.style.display = 'block';
+        countEl.textContent = `${selectedPhotoIds.size} selected`;
+        selectAllCheckbox.checked = selectedPhotoIds.size === currentPhotos.length;
+    } else {
+        toolbar.style.display = 'none';
+        selectAllCheckbox.checked = false;
+    }
+}
+
+async function deleteSelected() {
+    if (selectedPhotoIds.size === 0) return;
+
+    const count = selectedPhotoIds.size;
+    if (!confirm(`Are you sure you want to delete ${count} photo${count > 1 ? 's' : ''}? This action cannot be undone.`)) {
+        return;
+    }
+
+    const deleteBtn = document.getElementById('deleteSelectedBtn');
+    deleteBtn.disabled = true;
+    deleteBtn.textContent = `Deleting...`;
+
+    let deletedCount = 0;
+    let errorCount = 0;
+
+    for (const photoId of selectedPhotoIds) {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(API_BASE + '/api/media/' + photoId, {
+                method: 'DELETE',
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+
+            if (response.ok) {
+                deletedCount++;
+            } else {
+                errorCount++;
+            }
+        } catch (error) {
+            console.error('Error deleting photo:', photoId, error);
+            errorCount++;
+        }
+    }
+
+    // Clear selection and reload
+    selectedPhotoIds.clear();
+    await loadPhotos();
+    updateBulkActionsToolbar();
+
+    deleteBtn.disabled = false;
+    deleteBtn.textContent = 'Delete Selected';
+
+    if (deletedCount > 0) {
+        showNotification(`Successfully deleted ${deletedCount} photo${deletedCount > 1 ? 's' : ''}`, 'success');
+    }
+    if (errorCount > 0) {
+        showNotification(`Failed to delete ${errorCount} photo${errorCount > 1 ? 's' : ''}`, 'error');
+    }
 }
 
 function formatBytes(bytes, decimals) {
