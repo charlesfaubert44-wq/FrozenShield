@@ -440,4 +440,50 @@ router.patch('/admin/albums/:id/cover', authenticate, async (req, res) => {
     }
 });
 
+// @route   POST /api/albums/:id/view
+// @desc    Track album view (increment view count)
+// @access  Public
+router.post('/:id/view', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Validate ObjectId
+        if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid album ID'
+            });
+        }
+
+        // Find and increment view count
+        const album = await Album.findByIdAndUpdate(
+            id,
+            { $inc: { 'stats.views': 1 } },
+            { new: true }
+        );
+
+        if (!album) {
+            return res.status(404).json({
+                success: false,
+                message: 'Album not found'
+            });
+        }
+
+        res.json({
+            success: true,
+            message: 'View tracked',
+            data: {
+                views: album.stats?.views || 0
+            }
+        });
+    } catch (error) {
+        console.error('Track album view error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to track view',
+            error: error.message
+        });
+    }
+});
+
 module.exports = router;
