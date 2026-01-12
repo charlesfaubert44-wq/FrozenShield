@@ -11,6 +11,8 @@
     "start": "node server/server.js",
     "dev": "nodemon server/server.js",
     "seed": "node server/seedTestData.js",
+    "seed:albums": "node server/seedAlbums.js",
+    "seed:albums:clear": "node server/seedAlbums.js --clear",
     "build": "echo 'No build step required for Node.js backend'",
     "test": "cross-env NODE_ENV=test jest --runInBand",
     "test:watch": "cross-env NODE_ENV=test jest --watch --runInBand",
